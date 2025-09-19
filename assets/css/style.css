@@ -316,6 +316,12 @@ p{
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+.Cadastro{
+  text-align: center;
+  color: var(--cor-primaria-azul);
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
 
 .contact-info h3, .contact-form-card h3 {
     font-size: 1.8rem;
@@ -428,3 +434,166 @@ footer {
     font-size: 0.9rem;
     color: #adb5bd;
 }
+/*Formulario do cadastro do adm do Empresario*
+
+/* Para o corpo da página de cadastro, se quiser um fundo diferente */
+body.cadastro-page {
+    background-color: #f8f9fa; /* Fundo cinza claro, igual à seção de contato */
+}
+
+/* 1. Centraliza o card do formulário na tela */
+body.cadastro-page main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem; /* Espaçamento para telas menores */
+    min-height: calc(100vh - 150px); /* Garante que o main ocupe a altura da tela menos o header e footer (aprox) */
+}
+
+/* 2. Ajusta a largura máxima do card na página de cadastro */
+/* A classe .contact-form-card já existe, só estamos ajustando ela dentro do 'main' */
+body.cadastro-page main .contact-form-card {
+    width: 100%;
+    max-width: 500px; /* Largura máxima do formulário */
+}
+
+/* 3. Estilo para o container dos botões (Voltar e Cadastrar-se) */
+.form-buttons {
+    display: flex;
+    gap: 1rem; /* Espaço entre os botões */
+    margin-top: 1.5rem; /* Espaço acima dos botões */
+}
+
+/* 4. Estilo para o novo botão "Voltar" (secundário) */
+.botãovoltra {
+    width: 100%;
+    padding: 1rem;
+    background-color: transparent;
+    color: var(--cor-primaria-azul);
+    border: 2px solid var(--cor-primaria-azul);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.botãovoltra:hover {
+    background-color: var(--cor-primaria-azul);
+    color: white;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: var(--cor-cinza-aco);
+}
+
+.login-link a {
+    color: var(--cor-primaria-azul);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --- LOGIN E CADASTRO --- */
+/* Centraliza o card do formulário na tela */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    min-height: calc(100vh - 150px);
+    background-color: var(--cor-bege-claro);
+}
+
+.loginBox {
+    width: 100%;
+    max-width: 500px;
+}
+
+.loginBox h2 {
+    text-align: center;
+    color: var(--cor-primaria-azul);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.loginBox .inputBox {
+    margin-bottom: 1.5rem;
+}
+
+.loginBox .inputBox label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--cor-primaria-azul);
+    font-weight: 600;
+}
+
+.loginBox .inputBox input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--cor-primaria-azul);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.loginBox .inputBox input:focus {
+    outline: none;
+    border-color: var(--cor-primaria-azul);
+    box-shadow: 0 0 0 3px rgba(57, 95, 249, 0.2);
+}
+
+.login-checkbox-group {
+    margin-top: 2rem;
+}
+
+.checkbox {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.checkbox input {
+    margin-top: 0.2rem;
+    margin-right: 0.5rem;
+    width: auto;
+}
+
+.checkbox label {
+    font-size: 0.8rem;
+    color: var(--cor-cinza-aco);
+    line-height: 1.4;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.form-buttons .btn {
+    width: 100%;
+    text-align: center;
+    background-color: var(--cor-primaria-azul);
+}
+
+/* O link "Esqueceu a senha?" foi removido pois não estava nas imagens de exemplo, mas se precisar é fácil de adicionar. */
+
