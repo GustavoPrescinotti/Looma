@@ -1,0 +1,298 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+
+.sidebar {
+    width: 256px;
+    background: white;
+    border-right: 1px solid #e0d8d8;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: auto;
+}
+
+.logo {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #395ff9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.logo-text {
+    color: #4b4b4b;
+    font-weight: 600;
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.user-profile {
+    padding: 0 24px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+}
+
+.user-name {
+    color: #4b4b4b;
+    font-weight: 500;
+}
+
+.navigation {
+    flex: 1;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-button {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-button.active {
+    background: #395ff9;
+    color: white;
+}
+
+.nav-button.inactive {
+    background: transparent;
+    color: #4b4b4b;
+    border: 1px solid #d8d8d8;
+}
+
+.nav-button.inactive:hover {
+    background: #f8f8f8;
+}
+
+.sign-out {
+    padding: 24px;
+}
+
+.bottom-profile {
+    padding: 24px;
+    border-top: 1px solid #e0d8d8;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bottom-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    color: #4b4b4b;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.profile-email {
+    color: #acacac;
+    font-size: 12px;
+}
+
+/* Main content styles */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.form-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 448px;
+    background: white;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    padding: 32px;
+}
+
+.form-card h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #526cef;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    color: #4b4b4b;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #526cef;
+    border-radius: 4px;
+    padding: 0 12px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-static-user {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: #f8f8f8;
+    border: 1px solid #526cef;
+    border-radius: 4px;
+    color: #4b4b4b;
+    font-size: 14px;
+    font-weight: 500;
+}
+.form-input:focus,
+.form-select:focus {
+    border-color: #395ff9;
+    box-shadow: 0 0 0 2px rgba(82, 108, 239, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    height: 48px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: white;
+    border: 1px solid #526cef;
+    color: #526cef;
+}
+
+.btn-primary:hover {
+    background-color: #395ff9;
+}
+
+.btn-secondary {
+    background-color: #526cef;
+    border: 1px solid #526cef;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #526cef;
+    color: white;
+}
+
+
+.bottom-nav {
+    background: #0e1a47;
+    padding: 48px;
+
+}
+
+.bottom-nav-container {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.bottom-nav-button {
+    flex: 1;
+    height: 48px;
+    background: white;
+    color: #0e1a47;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.bottom-nav-button:hover {
+    background: #f8f8f8;
+}
+
+
