@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<body>
-    <header class="main-header">
+<body class="cadastro-page">
+    <header class="cabecalho-principal">
         <a href="index.html" class="logo">
             <img width="115" src="assets/img/Logo.png" alt="logo da empresa">
         </a>
 
-        <nav class="main-nav">
+        <nav class="navegacao-principal">
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="#">Quem Somos</a></li>
@@ -25,57 +25,66 @@
             </ul>
         </nav>
 
-        <a href="Login.html" class="btn-login">Login</a>
+        <a href="Login.html" class="botao-entrar">Login</a>
     </header>
 
     <main>
-        <div class="contact-form-card loginBox">
-            <h2>Login</h2>
+        <div class="cartao-formulario">
+            <h2 class="Cadastroelogin">Login do ADM</h2>
             <form>
-                <div class="form-group">
+                <div class="grupo-formulario">
                     <label for="email">Email:</label>
-                    <input type="text" name="email" placeholder="Digite seu email" required>
+                    <input type="email" id="email" name="email" placeholder="Digite seu email" required>
                 </div>
-                <div class="form-group">
+                <div class="grupo-formulario">
                     <label for="password">Senha:</label>
-                    <input type="password" name="password" placeholder="Digite sua senha" required>
+                    <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
                 </div>
 
-                <div class="login-checkbox-group">
+                <div class="grupo-termos">
                     <div class="checkbox">
                         <input type="checkbox" id="termos">
-                        <label for="termos"> Ao acessar e utilizar o website, você concorda em ficar vinculado a estes Termos de Uso e a nossa Política de Privacidade, que está incorporada aqui por referência.</label>
-                    </div>
+                        <label for="termos" class="termos"> Ao acessar e utilizar o website, você concorda em ficar
+                            vinculado a estes Termos de Uso e a nossa Política de Privacidade, que está incorporada aqui
+                            por referência.</label>
+                    </div> <br>
 
                     <div class="checkbox">
                         <input type="checkbox" id="promo">
-                        <label for="promo">Para acessar alguns recursos da Plataforma, poderá ser necessário criar uma conta. Você é responsável por manter a confidencialidade das informações de sua conta, incluindo sua senha, e por toda e qualquer atividade que ocorra sob sua conta.</label>
-                    </div>
+                        <label for="promo" class="promo">Para acessar alguns recursos da Plataforma, poderá ser
+                            necessário criar uma conta. Você é responsável por manter a confidencialidade das
+                            informações de sua conta, incluindo sua senha, e por toda e qualquer atividade que ocorra
+                            sob sua conta.</label>
+                    </div> <br>
+
                 </div>
 
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">Logar</button>
-                    <a href="cadastro.html" class="btn btn-secondary">Cadastrar-se</a>
+                <div class="BotaoFormulario">
+                    <button type="submit" class="BotaoLogin">Logar</button>
+                    <button type="submit" class="BotaoCadastrar"><a
+                            href="cadastroAdm.html">Cadastrar-se</a></button>
                 </div>
             </form>
         </div>
     </main>
 
     <footer>
-        <div class="footer-content">
-            <a href="index.html" class="footer-logo">
+        <div class="conteudo-rodape">
+            <a href="index.html" class="logo-rodape">
                 <img width="150" src="assets/img/Logo do footer.png" alt="Logo Looma">
             </a>
-            <div class="social-icons">
+            <div class="icones-sociais">
                 <a href="#"><img src="assets/img/FACEBOOK.png" alt="Facebook"></a>
                 <a href="#"><img src="assets/img/WHATSAPP.png" alt="WhatsApp"></a>
                 <a href="#"><img src="assets/img/INSTAGRAM.png" alt="Instagram"></a>
                 <a href="#"><img src="assets/img/TWITTER.png" alt="Twitter"></a>
             </div>
         </div>
-        <div class="footer-copyright">
+        <div class="direitos-autorais">
             <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
         </div>
     </footer>
+
 </body>
+
 </html>
