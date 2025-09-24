@@ -165,6 +165,7 @@ body {
     border-radius: var(--radius-lg);
     border: 1px solid var(--gray-200);
     background: #fff;
+    margin: 10px;
 }
 .panel-title {
     font-size: 32px;
@@ -190,15 +191,35 @@ body {
 /* Saldo */
 .balance {
     margin: 22px 0 24px;
-    border: 1px solid var(--blue-primary);
-    background: var(--cream);
-    border-radius: var(--radius-sm);
-    padding: 24px;
-    max-width: 969px;
+    border: 2px solid var(--blue-primary);
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 12px rgba(82, 108, 239, 0.10);
+    padding: 32px 40px;
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     align-items: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--blue-secondary);
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.balance .label {
+    border-color: var( --blue-border);
+    color: var(--gray-text);
+    font-weight: 500;
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.balance .value {
+    color: var(--blue-secondary);
+    font-weight: 700;
+    font-size: 1.5rem;
 }
 
 /* Botões de ação */
@@ -206,6 +227,7 @@ body {
     display: flex;
     gap: 18px;
     margin-bottom: 24px;
+    justify-content: center; /* Centraliza os botões */
 }
 
 .cta {

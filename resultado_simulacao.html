@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
+    <link rel="stylesheet" href="assets/css/resultado_simulacao.css">
+    <title>Resultado da Simulação</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
+                </div>
+                <span class="logo-text">Looma</span>
+            </div>
+            <div class="user-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="avatar">
+                <span class="user-name">Olá, Paulo Cavalin</span>
+            </div>
+            <div class="navigation">
+                <button class="nav-button active">Painel</button>
+                <button class="nav-button active">+ Nova Simulação</button>
+                <button class="nav-button inactive">Transações</button>
+                <button class="nav-button inactive">Perfil</button>
+                <button class="nav-button inactive">Tabela de Taxas</button>
+               
+            </div>
+            <div class="sign-out">
+                <button class="nav-button inactive">Sair da Conta</button>
+            </div>
+            <div class="bottom-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
+                <div class="profile-info">
+                    <div class="profile-name">Paulo Cavalin</div>
+                    <div class="profile-email">paulo@email.com</div>
+                </div>
+            </div>
+        </div>
+
+        <main class="main">
+      <section class="card">
+        <h2 class="card-title">Simulação de Empréstimo</h2>
+
+        <form class="form" action="#" method="get">
+          <div class="field">
+            <label class="label" for="valor">Valor Desejado:</label>
+            <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado" />
+          </div>
+
+          <div class="field">
+            <label class="label label--center" for="ano">Ano do Empréstimo</label>
+            <input id="ano" name="ano" type="text" class="input" placeholder="Digite o ano" />
+          </div>
+
+          <div class="field">
+            <label class="label" for="adm">Administrador da Taxa Anual:</label>
+            <input id="adm" name="adm" type="text" class="input" placeholder="Digite o administrador" />
+          </div>
+
+          <div class="field">
+            <label class="label" for="prazo">Prazo (Meses):</label>
+            <input id="prazo" name="prazo" type="text" class="input" placeholder="Digite o prazo em meses" />
+          </div>
+
+          <div class="actions-row">
+            
+            <button type="reset" class="btn btn--outline">Voltar</button>
+            <button type="submit" class="btn btn--primary">Confirmar Empréstimo</button>
+        
+          </div>
+        </form>
+      </section>
+
+
+      <section class="resultado-cards">
+    <div class="resultado-card">
+        <span class="resultado-label">Parcela:</span>
+        <span class="resultado-valor">R$ 0,00</span>
+    </div>
+    <div class="resultado-card">
+        <span class="resultado-label">Total a pagar:</span>
+        <span class="resultado-valor">R$ 0,00</span>
+    </div>
+    <div class="resultado-card">
+        <span class="resultado-label">Lucro mensal:</span>
+        <span class="resultado-valor">R$ 0,00</span>
+    </div>
+    <div class="resultado-card">
+        <span class="resultado-label">Comprometimento:</span>
+        <span class="resultado-valor">0%</span>
+    </div>
+    <div class="resultado-card">
+        <span class="resultado-label">Risco:</span>
+        <span class="resultado-valor">Baixo</span>
+    </div>
+</section>
+    </main>
+</div>
+    </div>
+    <footer>
+
+        <div class="bottom-nav">
+        <div class="bottom-nav-container">
+            <button class="bottom-nav-button">Painel</button>
+            <button class="bottom-nav-button">Transações</button>
+            <button class="bottom-nav-button">Perfil</button>
+            <button class="bottom-nav-button">Tabela de Taxas</button>
+            <button class="bottom-nav-button">+ Nova Simulação</button>
+        </div>
+    </div>
+    </footer>
+
+</body>
+</html>
+
+
+
+
+
+

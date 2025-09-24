@@ -1,0 +1,259 @@
+@media (max-width: 426px) {
+    html, body {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    main {
+    padding-top: 0px;
+}
+
+    
+    .cabecalho-principal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 999;
+}
+    .logo img {
+        height: 36px;
+        width: auto;
+    }
+    .botao-entrar {
+        background: #fff;
+        color: var(--cor-primaria-azul, #2567f9);
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 0.7rem 1.5rem;
+        border: none;
+        font-size: 1.2rem;
+        margin-left: auto;
+        margin-right: 0;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        min-width: 120px;
+        text-align: center;
+    }
+    .menu-hamburguer {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        margin-right: 10px;
+        z-index: 101;
+    }
+    .menu-hamburguer span {
+        display: block;
+        width: 28px;
+        height: 4px;
+        background: #fff;
+        border-radius: 2px;
+    }
+    .navegacao-principal {
+        display: none;
+    }
+    
+    .menu-mobile {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: -100vw;
+        width: 100vw;
+        height: 100vh;
+        background: var(--cor-primaria-azul, #2567f9);
+        z-index: 100;
+        padding: 32px 24px 24px 24px;
+        transition: left 0.3s;
+        box-sizing: border-box;
+    }
+    .menu-mobile.aberto {
+        left: 0;
+    }
+    .menu-mobile .fechar-menu {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 2.5rem;      
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        cursor: pointer;
+        display: block;
+        width: 38px;            
+        height: 38px;           
+        line-height: 38px;
+        text-align: center;
+        padding: 0;
+    }
+    .menu-mobile ul {
+        list-style: none;
+        margin-top: 48px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+    }
+    .menu-mobile ul li a {
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .menu-mobile .botao-entrar {
+        margin-top: 32px;
+        background: #fff;
+        color: var(--cor-primaria-azul, #2567f9);
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 0.7rem 1.5rem;
+        display: block;
+        text-align: center;
+        font-size: 1.2rem;
+        width: 100%;
+        max-width: 200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    
+    .cabecalho-principal.menu-aberto .menu-hamburguer,
+    .cabecalho-principal.menu-aberto .botao-entrar {
+        display: none !important;
+    }
+
+    
+    .secao-guia {
+        padding: 2rem 0.5rem;
+    }
+    .painel-guia {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        text-align: left;
+    }
+    .cartao-guia {
+        width: 100%;
+        min-width: 0;
+        margin: 0 auto;
+        border-radius: 18px;
+        font-size: 1rem;
+        padding: 1.3rem 1rem;
+    }
+    .cartao-guia.cartao-destaque {
+        background: var(--cor-primaria-azul, #2567f9);
+        color: #fff;
+        border-color: var(--cor-primaria-azul, #2567f9);
+    }
+    .cartao-guia.cartao-destaque h3,
+    .cartao-guia.cartao-destaque p {
+        color: #fff;
+    }
+    .cartao-guia h3 {
+        font-size: 1.35rem;
+        margin-bottom: 0.7rem;
+    }
+    .cartao-guia p {
+        font-size: 1.15rem;
+    }
+
+    /* Benefícios */
+    .secao-beneficios {
+        padding: 2.5rem 0.5rem;
+    }
+    .conteudo-beneficios {
+        padding: 1.5rem 0.5rem;
+    }
+    .painel-beneficios {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        align-items: center;
+    }
+    .cartao-beneficio {
+        width: 100%;
+        max-width: 340px;
+        margin: 0 auto;
+        border-radius: 18px;
+        padding: 1.3rem 1rem;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    
+    .secao-contato {
+        padding: 2.5rem 0.5rem;
+    }
+    .container-contato {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 0;
+    }
+    .informacoes-contato, .cartao-formulario {
+        padding: 1.3rem 1rem;
+        border-radius: 18px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        font-size: 1rem;
+    }
+    .informacoes-contato h3, .cartao-formulario h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    .item-informacao p {
+        font-size: 1rem;
+    }
+    .grupo-formulario label,
+    .grupo-formulario input,
+    .grupo-formulario textarea {
+        font-size: 1rem;
+    }
+    .botao-enviar {
+        font-size: 1.25rem;
+        padding: 1.2rem;
+        border-radius: 10px;
+    }
+
+    
+    .conteudo-rodape {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+    .logo-rodape img {
+        width: 110px;
+    }
+    .icones-sociais a img {
+        width: 28px;
+    }
+    .direitos-autorais {
+        font-size: 0.8rem;
+        padding-top: 1rem;
+    }
+}
+
+
+body {
+    overflow-x: hidden;
+}
+
+
+.menu-hamburguer {
+    display: none;
+}
+.menu-mobile {
+    display: none;
+}
+@media (max-width: 426px) {
+    .menu-mobile {
+        display: flex;
+    }
+}

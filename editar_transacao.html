@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
+    <link rel="stylesheet" href="assets/css/editar_transacao.css">
+    <title>Editar Transação</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
+                </div>
+                <span class="logo-text">Looma</span>
+            </div>
+            <div class="user-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="avatar">
+                <span class="user-name">Olá, Paulo Cavalin</span>
+            </div>
+            <div class="navigation">
+                <button class="nav-button active">Painel</button>
+                <button class="nav-button active">+ Nova Simulação</button>
+                <button class="nav-button inactive">Transações</button>
+                <button class="nav-button inactive">Perfil</button>
+                <button class="nav-button inactive">Tabela de Taxas</button>
+            </div>
+            <div class="sign-out">
+                <button class="nav-button inactive">Sair da Conta</button>
+            </div>
+            <div class="bottom-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
+                <div class="profile-info">
+                    <div class="profile-name">Paulo Cavalin</div>
+                    <div class="profile-email">paulo@email.com</div>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <main class="content">
+                <section class="card">
+                    <h1 class="card-title">Editar Transação</h1>
+                    <form class="form" aria-label="Nova Receita">
+                        <div class="field">
+                            <label class="label" for="data">Data:</label>
+                            <input class="input" id="data" name="data" type="date" required>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="tipo">Tipo:</label>
+                            <div class="select-wrap">
+                                <select class="input select" id="tipo" name="tipo" required>
+                                    <option value="" disabled>Selecione um tipo</option>
+                                    <option value="Receita" selected>Receita</option>
+                                    <option value="Despesa">Despesa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="valor">Valor:</label>
+                            <input class="input" id="valor" name="valor" type="text" inputmode="decimal" placeholder="R$ 0,00" required>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="descricao">Descrição:</label>
+                            <textarea class="input textarea" id="descricao" name="descricao" rows="3" placeholder="Escreva aqui..."></textarea>
+                        </div>
+                        <div class="actions-row">
+                            <button type="button" class="btn-outline btn-lg">Cancelar</button>
+                            <button type="submit" class="btn-primary btn-lg">Salvar</button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+    </div>
+    <div class="bottom-nav">
+        <div class="bottom-nav-container">
+            <button class="bottom-nav-button">Painel</button>
+            <button class="bottom-nav-button">Transações</button>
+            <button class="bottom-nav-button">Perfil</button>
+            <button class="bottom-nav-button">Tabela de Taxas</button>
+            <button class="bottom-nav-button">+ Nova Simulação</button>
+        </div>
+    </div>
+</body>
+</html>
