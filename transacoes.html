@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
+    <link rel="stylesheet" href="assets/css/transacoes.css">
+    <title>Tabela de Transações</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
+                </div>
+                <span class="logo-text">Looma</span>
+            </div>
+            <div class="user-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="avatar">
+                <span class="user-name">Olá, Paulo Cavalin</span>
+            </div>
+            <div class="navigation">
+                <button class="nav-button active">Painel</button>
+                <button class="nav-button active">+ Nova Simulação</button>
+                <button class="nav-button inactive">Transações</button>
+                <button class="nav-button inactive">Perfil</button>
+                <button class="nav-button inactive">Tabela de Taxas</button>
+            </div>
+            <div class="sign-out">
+                <button class="nav-button inactive">Sair da Conta</button>
+            </div>
+            <div class="bottom-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
+                <div class="profile-info">
+                    <div class="profile-name">Paulo Cavalin</div>
+                    <div class="profile-email">paulo@email.com</div>
+                </div>
+            </div>
+        </div>
+
+        <main class="panel">
+      <h1 class="panel-title">Transações Realizadas:</h1>
+
+      <div class="balance">
+        <span class="label">Saldo Atual:</span>
+        <span class="value">R$0,00</span>
+      </div>
+
+      <div class="actions-row">
+        <button class="cta cta-primary">Nova Receita</button>
+        <button class="cta cta-outline">Nova Despesa</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Descrição</th>
+              <th class="th-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Data">27/09/2025</td>
+              <td data-label="Tipo">Receita</td>
+              <td data-label="Valor">R$ 9.000,00</td>
+              <td data-label="Descrição">Investimento</td>
+              <td class="td-actions" data-label="Ações">
+                <button class="chip chip-primary">Editar</button>
+                <button class="chip chip-outline">Excluir</button>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Data">18/07/2025</td>
+              <td data-label="Tipo">Receita</td>
+              <td data-label="Valor">R$ 15.000,00</td>
+              <td data-label="Descrição">Investimento</td>
+              <td class="td-actions" data-label="Ações">
+                <button class="chip chip-primary">Editar</button>
+                <button class="chip chip-outline">Excluir</button>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Data">09/07/2025</td>
+              <td data-label="Tipo">Despesa</td>
+              <td data-label="Valor">R$ 6.000,00</td>
+              <td data-label="Descrição">Gasto com máquinas</td>
+              <td class="td-actions" data-label="Ações">
+                <button class="chip chip-primary">Editar</button>
+                <button class="chip chip-outline">Excluir</button>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Data">10/06/2025</td>
+              <td data-label="Tipo">Despesa</td>
+              <td data-label="Valor">R$ 1518,00</td>
+              <td data-label="Descrição">Pagamento do Igor</td>
+              <td class="td-actions" data-label="Ações">
+                <button class="chip chip-primary">Editar</button>
+                <button class="chip chip-outline">Excluir</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+      
+        </div>
+    </div>
+    <div class="bottom-nav">
+        <div class="bottom-nav-container">
+            <button class="bottom-nav-button">Painel</button>
+            <button class="bottom-nav-button">Transações</button>
+            <button class="bottom-nav-button">Perfil</button>
+            <button class="bottom-nav-button">Tabela de Taxas</button>
+            <button class="bottom-nav-button">+ Nova Simulação</button>
+        </div>
+    </div>
+</body>
+</html>

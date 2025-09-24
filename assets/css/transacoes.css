@@ -1,0 +1,352 @@
+:root {
+    --blue-primary: #526CEF;
+    --blue-secondary: #395FF9;
+    --blue-border: #4163F6;
+    --cream: #FAF7F3;
+    --gray-text: #4B4B4B;
+    --gray-200: #D8D8D8;
+    --gray-400: #B1B1B1;
+    --gray-500: #ACACAC;
+    --dark-footer: #0E1A47;
+    --radius-lg: 21px;
+    --radius-md: 11px;
+    --radius-sm: 9px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar {
+    width: 256px;
+    background: white;
+}
+
+.logo {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #395ff9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.logo-text {
+    color: #4b4b4b;
+    font-weight: 600;
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.user-profile {
+    padding: 0 24px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+}
+
+.user-name {
+    color: #4b4b4b;
+    font-weight: 500;
+}
+
+.navigation {
+    flex: 1;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-button {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-button.active {
+    background: #395ff9;
+    color: white;
+}
+
+.nav-button.inactive {
+    background: transparent;
+    color: #4b4b4b;
+    border: 1px solid #d8d8d8;
+}
+
+.nav-button.inactive:hover {
+    background: #f8f8f8;
+}
+
+.sign-out {
+    padding: 24px;
+}
+
+.bottom-profile {
+    padding: 24px;
+    border-top: 1px solid #e0d8d8;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bottom-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    color: #4b4b4b;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.profile-email {
+    color: #acacac;
+    font-size: 12px;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel {
+    padding: 32px;
+    background: transparent;
+    min-height: calc(100vh - 115px - 178px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    background: #fff;
+}
+.panel-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 20px;
+}
+.card {
+    background: #fff;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+}
+.panel > .card {
+    padding: 24px;
+}
+.panel > .card + .card {
+    margin-top: 16px;
+}
+.panel > * {
+    max-width: 1644px;
+    margin-inline: auto;
+}
+
+/* Saldo */
+.balance {
+    margin: 22px 0 24px;
+    border: 1px solid var(--blue-primary);
+    background: var(--cream);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    max-width: 969px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+}
+
+/* Botões de ação */
+.actions-row {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.cta {
+    font-size: 22px;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    padding: 16px 32px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.cta-primary {
+    background: var(--blue-secondary);
+    color: #fff;
+    border: none;
+}
+
+.cta-primary:hover {
+    background: var(--blue-primary);
+}
+
+.cta-outline {
+    background: #fff;
+    color: var(--blue-secondary);
+    border: 2px solid var(--blue-secondary);
+}
+
+.cta-outline:hover {
+    background: var(--blue-secondary);
+    color: #fff;
+}
+
+/* Tabela de transações */
+.table-wrap {
+    border: 1px solid var(--blue-primary);
+    background: var(--cream);
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    margin-top: 24px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse; /* Corrigido para alinhar linhas */
+    background: var(--cream);
+}
+
+.table thead th {
+    text-align: left;
+    padding: 18px 24px;
+    border-bottom: 2px solid var(--blue-primary);
+    color: var(--blue-secondary);
+    font-weight: 700;
+    font-size: 30px;
+    background: transparent;
+}
+
+.th-center {
+    text-align: center;
+}
+
+.table tbody td {
+    padding: 20px 24px;
+    color: var(--blue-primary);
+    font-size: 30px;
+    border-bottom: 1px solid var(--blue-primary);
+    background: var(--cream);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.td-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* Chips (botões Editar/Excluir) */
+.chip {
+    min-width: 120px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--blue-secondary);
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.chip-primary {
+    background: var(--blue-secondary);
+    color: #fff;
+    border: 2px solid var(--blue-secondary);
+}
+
+.chip-primary:hover {
+    background: var(--blue-primary);
+    border-color: var(--blue-primary);
+}
+
+.chip-outline {
+    background: #fff;
+    color: var(--blue-secondary);
+    border: 2px solid var(--blue-secondary);
+}
+
+.chip-outline:hover {
+    background: var(--blue-secondary);
+    color: #fff;
+}
+
+/* Navegação inferior */
+.bottom-nav {
+    background: var(--dark-footer);
+    padding: 48px;
+}
+
+.bottom-nav-container {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.bottom-nav-button {
+    flex: 1;
+    height: 48px;
+    background: white;
+    color: #0e1a47;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.bottom-nav-button:hover {
+    background: #f8f8f8;
+}
