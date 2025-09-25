@@ -22,7 +22,7 @@ body {
 }
 
 main {
-    padding-top: 100px; /* Espaço para o cabeçalho fixo */
+    padding-top: 100px; 
 }
 p {
     font-size: 1.4rem;
@@ -450,7 +450,7 @@ margin: 0.5rem;
 
 .BotaoLogin:hover, .BotaoCadastrarCadastrar:hover {
   background-color: var(--cor-bege-claro);
-  color: var(--cor-primaria-azul);
+  
 }
 
 .BotaoCadastrar:hover, .BotaoVoltar:hover {
@@ -597,11 +597,13 @@ margin: 0.5rem;
 .nav-button.active {
     background: var(--cor-primaria-azul);
     color: white;
+    text-decoration: none;
 }
 .nav-button.inactive {
     background: transparent;
     color: var(--cor-cinza-aco);
     border: 1px solid #d8d8d8;
+    text-decoration: none;
 }
 .nav-button.inactive:hover {
     background: #f8f8f8;
@@ -683,7 +685,7 @@ margin: 0.5rem;
     font-size: 36px;
     font-weight: 700;
 }
-/* Gráfico (Dashboard Admin) */
+
 .chart-section {
     margin-bottom: 40px;
 }
@@ -755,7 +757,7 @@ margin: 0.5rem;
     transform-origin: center;
     white-space: nowrap;
 }
-/* Tabela (Tabela de Juros) */
+
 .table-container {
     background: white;
     border: 1px solid #d8d8d8;
@@ -824,7 +826,7 @@ margin: 0.5rem;
 .btn-delete:hover {
     background-color: #faf7f3;
 }
-/* Formulários (Nova/Editar Taxa) */
+
 .form-container {
     width: 100%;
     display: flex;
@@ -910,9 +912,7 @@ margin: 0.5rem;
 .btn-secondary:hover {
     background-color: var(--cor-primaria-azul);
 }
-/* =============================================== */
-/* DASHBOARD USUÁRIO                               */
-/* =============================================== */
+
 .sidebar.usuario {
     width: 192px;
 }
@@ -949,7 +949,7 @@ margin: 0.5rem;
 }
 .main-content.usuario {
     padding: 24px;
-    padding-bottom: 80px; /* Espaço para o menu inferior */
+    padding-bottom: 80px; /
 }
 .section-title {
     font-size: 24px;
@@ -1005,9 +1005,7 @@ margin: 0.5rem;
     color: var(--cor-cinza-aco);
     margin-bottom: 24px;
 }
-/* =============================================== */
-/* NAVEGAÇÃO INFERIOR (BOTTOM NAV)                 */
-/* =============================================== */
+
 .bottom-nav {
     background: var(--cor-azul-escuro);
     padding: 24px;
@@ -1041,8 +1039,7 @@ p {
     font-size: 1.4rem;
 }
 
-/* ===== HEADER E NAVEGAÇÃO ===== */
-/* Cabeçalho principal já definido acima */
+
 
 .logo img {
     height: 40px;
@@ -1080,7 +1077,7 @@ p {
     background-color: #f0f0f0;
 }
 
-/* Menu Hamburguer - ESTILOS A SEREM IMPLEMENTADOS */
+
 .menu-hamburguer {
     display: none;
     flex-direction: column;
@@ -1109,7 +1106,7 @@ p {
     padding: 2rem;
 }
 
-/* ===== SEÇÃO APRESENTAÇÃO ===== */
+
 .secao-apresentacao {
     position: relative;
     height: 90vh;
@@ -1209,10 +1206,10 @@ p {
     transform: translateY(-2px);
 }
 
-@keyframes fadeIn {
+/* @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
-}
+} */
 
 /* ===== SEÇÕES DE CONTEÚDO ===== */
 .secao-sobre-nos, .secao-guia {

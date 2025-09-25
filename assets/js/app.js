@@ -6,7 +6,7 @@ const header = document.querySelector('.cabecalho-principal');
 btnMenu.addEventListener('click', function() {
     menuMobile.classList.add('aberto');
     header.classList.add('menu-aberto');
-});
+}); 
 
 btnFechar.addEventListener('click', function() {
     menuMobile.classList.remove('aberto');
