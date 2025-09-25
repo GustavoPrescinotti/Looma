@@ -20,6 +20,10 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+main {
+    padding-top: 100px; /* Espaço para o cabeçalho fixo */
+}
 p {
     font-size: 1.4rem;
 }
@@ -1038,16 +1042,7 @@ p {
 }
 
 /* ===== HEADER E NAVEGAÇÃO ===== */
-.cabecalho-principal {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 2rem;
-    background-color: var(--cor-primaria-azul);
-    color: white;
-    position: relative;
-    z-index: 1000;
-}
+/* Cabeçalho principal já definido acima */
 
 .logo img {
     height: 40px;
