@@ -24,15 +24,19 @@ p {
     font-size: 1.4rem;
 }
 .cabecalho-principal {
-    display: fixed;
-    
+   
+    top: 0;
+    left: 0;
+    width: 100vw;
+    position: fixed;
+    display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 2rem;
     background-color: var(--cor-primaria-azul);
     color: white;
-    position: relative;
     z-index: 1000;
+   
 }
 .logo img {
     height: 80px;
@@ -43,6 +47,7 @@ p {
 .navegacao-principal {
     display: flex;
     gap: 2rem;
+
 }
 .navegacao-principal a {
     color: #fff;
@@ -177,14 +182,16 @@ p {
 .painel-guia {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 2rem;
+    max-width: 900px;       
+    margin: 0 auto;         
     text-align: left;
 }
 .cartao-guia {
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 1rem;
-    padding: 2rem;
+    padding: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -384,17 +391,33 @@ body.login-page .cartao-formulario {
   gap: 1rem;
   margin-top: 1rem;
 }
-.BotaoLogin{
+.BotaoFormulario {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Botão primário (azul) - para Cadastrar-se na segunda imagem */
+.BotaoLogin, .BotaoCadastrarCadastrar {
   font-size: 1.2rem;
   padding: 0.75rem 2rem; 
   background-color: var(--cor-primaria-azul);
   color: var(--cor-bege-claro);
-  border: none;
+  border: 1px solid var(--cor-primaria-azul);
   border-radius: 0.5rem;
   font-family: var(--fonte-destaque);
-  margin: 1.5rem;  
+margin: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  width: 100%;
 }
-.BotaoCadastrar{
+
+
+.BotaoCadastrar, .BotaoVoltar {
   font-size: 1.2rem;
   padding: 0.75rem 2rem;
   background-color: var(--cor-bege-claro);
@@ -403,11 +426,40 @@ body.login-page .cartao-formulario {
   font-family: var(--fonte-destaque);
   text-align: center;
   border: 1px solid var(--cor-primaria-azul);
-  margin: 1.5rem;
+  margin: 0.5rem;;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+/* Estilo para o link dentro do botão Voltar */
+.BotaoVoltar a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+
+.BotaoLogin:hover, .BotaoCadastrarCadastrar:hover {
+  background-color: var(--cor-bege-claro);
+  color: var(--cor-primaria-azul);
+}
+
+.BotaoCadastrar:hover, .BotaoVoltar:hover {
+  background-color: var(--cor-primaria-azul);
+  color: var(--cor-bege-claro);
+}
+
+.BotaoVoltar:hover a {
+  color: inherit;
 }
 .BotaoFormulario a{
   text-decoration: none;
-  color: var(--cor-bege-claro);
+  color: var(--cor-primaria-azul);
 }
 .BotaoFormulario .BotaoCadastrar a{
   text-decoration: none;
@@ -1423,10 +1475,4 @@ footer {
 }
 
 
-.menu-hamburguer {
-    display: none;
-}
 
-.menu-mobile {
-    display: none;
-}

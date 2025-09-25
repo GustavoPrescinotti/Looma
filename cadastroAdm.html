@@ -4,34 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Looma</title>
-    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
+    <title>Cadastro Administrador</title>
+    <link rel="stylesheet" href="assets/js/app.js">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsivo.css">
+    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
 </head>
 
 <body class="cadastro-page">
 
     <header class="cabecalho-principal">
-        <a href="index.html" class="logo">
-            <img width="115" src="assets/img/Logo.png" alt="logo da empresa">
+        <a href="index.html" >
+            
+            <img class="logo" src="assets/img/logo.png" alt="Looma">
         </a>
 
+      
         <nav class="navegacao-principal">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#">Quem Somos</a></li>
-                <li><a href="#">Guia</a></li>
-                <li><a href="#">Benefícios</a></li>
-                <li><a href="#">Contato</a></li>
-            </ul>
+
+                <a href="index.html">Home</a>
+                <a href="#quem_somos">Quem Somos</a></li>
+                <a href="#guia">Guia</a></li>
+                <a href="#beneficios">Benefícios</a></li>
+                <a href="#contato">Contato</a></li>
+            
         </nav>
 
-        <a href="Login.html" class="botao-entrar">Login</a>
+        <a href="loginEmpresario.html" class="botao-entrar">Login</a>
+        
+        <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+      
+        <nav class="menu-mobile" id="menuMobile">
+            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
+            
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#quem_somos">Quem Somos</a></li>
+                <li><a href="#guia">Guia</a></li>
+                <li><a href="#beneficios">Benefícios</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+           
+        </nav>
     </header>
+
 
     <main>
         <div class=" cartao-formulario">
-            <h2 class="Cadastroelogin">Cadastro</h2> <br>
+            <h2 class="Cadastroelogin">Cadastro Administrador</h2> <br>
             <form class="formulario-cadastro">
                 <div class="grupo-formulario">
                     <label for="name">Nome Completo:</label>
@@ -66,13 +91,14 @@
                 </div>
 
                 <div class="BotaoFormulario">
-                    <button type="submit" class="BotaoLogin"><a href="index.html" >Voltar</a></button>
-                    <button type="submit" class="BotaoCadastrar">Cadastrar-se</button>
+                    <button type="submit" class="BotaoCadastrarCadastrar">Cadastrar-se</button>
+                    <button type="submit" class="BotaoVoltar"><a href="index.html" >Voltar</a></button>
+                    
                 </div>
 
             </form>
             <p class="login-link">
-                Já tem uma conta? <a href="login.html">Faça o login</a>
+                Já tem uma conta? <a href="LoginADM.html">Faça o login</a>
             </p>
         </div>
     </main>
@@ -93,5 +119,6 @@
             <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
         </div>
     </footer>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>

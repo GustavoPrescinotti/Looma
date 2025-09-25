@@ -14,10 +14,11 @@
 
 
     .cabecalho-principal {
+        position: fixed;
     flex-direction: row;
     justify-content: flex-start; 
     align-items: center;
-    gap: 0.5rem;
+    
   }
 
     
@@ -44,12 +45,12 @@
     .menu-hamburguer {
     display: flex !important;
     flex-direction: column;
-    justify-content: flex-start; /* Alinha as barras à esquerda */
+    justify-content: flex-start; 
     gap: 6px;
     background: transparent;
     border: none;
     cursor: pointer;
-    margin-left: 10px; /* Espaço do lado esquerdo */
+    margin-left: 10px; 
     margin-right: 0;
     z-index: 101;
      order: 1;
@@ -259,6 +260,33 @@
         font-size: 0.8rem;
         padding-top: 1rem;
     }
+
+        .cabecalho-principal.menu-aberto .menu-hamburguer,
+    .cabecalho-principal.menu-aberto .botao-entrar {
+        display: none !important;
+    }
+
+   
+    body.cadastro-page .cartao-formulario,
+    body.login-page .cartao-formulario {
+        padding: 1.5rem 1rem;
+        margin: 1rem;
+    }
+    
+    .BotaoFormulario {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .BotaoLogin,
+    .BotaoCadastrar {
+        width: 100%;
+        margin: 0.5rem 0;
+        font-size: 1.1rem;
+        padding: 0.8rem 1.5rem;
+    }
+
+
 }
 
 
@@ -277,4 +305,15 @@ body {
     .menu-mobile {
         display: flex;
     }
+
+     
+    
+    body.cadastro-page main,
+    body.login-page main {
+        padding-top: 100px;
+        min-height: calc(100vh - 180px);
+    }
+
+
+
 }
