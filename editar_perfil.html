@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
+    <link rel="stylesheet" href="assets/css/editar_perfil.css">
+    <title>Editar Perfil</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
+                </div>
+                <span class="logo-text">Looma</span>
+            </div>
+            <div class="user-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="avatar">
+                <span class="user-name">Olá, Paulo Cavalin</span>
+            </div>
+            <div class="navigation">
+                <button class="nav-button active">Painel</button>
+                <button class="nav-button active">+ Nova Simulação</button>
+                <button class="nav-button inactive">Transações</button>
+                <button class="nav-button inactive">Perfil</button>
+                <button class="nav-button inactive">Tabela de Taxas</button>
+               
+            </div>
+            <div class="sign-out">
+                <button class="nav-button inactive">Sair da Conta</button>
+            </div>
+            <div class="bottom-profile">
+                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
+                <div class="profile-info">
+                    <div class="profile-name">Paulo Cavalin</div>
+                    <div class="profile-email">paulo@email.com</div>
+                </div>
+            </div>
+        </div>
+<main class="main">
+            <section class="card card-editar-perfil">
+                <h2 class="card-title">Editar Usuário</h2>
+                <form class="form">
+                    <div class="field">
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" name="nome" class="input" required>
+                    </div>
+                    <div class="field">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" class="input" required>
+                    </div>
+                    <div class="field">
+                        <label for="cpf">CPF:</label>
+                        <input type="text" id="cpf" name="cpf" class="input" required>
+                    </div>
+                    <div class="field">
+                        <label for="senha">Senha:</label>
+                        <input type="password" id="senha" name="senha" class="input">
+                    </div>
+                    <div class="field">
+                        <label for="nova-senha">Nova Senha:</label>
+                        <input type="password" id="nova-senha" name="nova-senha" class="input">
+                    </div>
+                    <div class="actions-row">
+                        <button type="button" class="btn btn-outline btn-lg">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-lg">Salvar</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+    <footer>
+
+        <div class="bottom-nav">
+        <div class="bottom-nav-container">
+            <button class="bottom-nav-button">Painel</button>
+            <button class="bottom-nav-button">Transações</button>
+            <button class="bottom-nav-button">Perfil</button>
+            <button class="bottom-nav-button">Tabela de Taxas</button>
+            <button class="bottom-nav-button">+ Nova Simulação</button>
+        </div>
+    </div>
+    </footer>
+    
+</body>
+</html>
