@@ -5,20 +5,24 @@
     }
 
     main {
-    padding-top: 0px;
-}
+      padding-top: 0px;
+    }
+
+    .navegacao-principal {
+        display: none !important;
+    }
+
+
+    .cabecalho-principal {
+    flex-direction: row;
+    justify-content: flex-start; 
+    align-items: center;
+    gap: 0.5rem;
+  }
 
     
-    .cabecalho-principal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    z-index: 999;
-}
-    .logo img {
-        height: 36px;
-        width: auto;
+    .logo {
+        display: none;
     }
     .botao-entrar {
         background: #fff;
@@ -38,16 +42,24 @@
         text-align: center;
     }
     .menu-hamburguer {
-        display: flex !important;
-        flex-direction: column;
-        justify-content: center;
-        gap: 6px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        margin-right: 10px;
-        z-index: 101;
-    }
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinha as barras à esquerda */
+    gap: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px; /* Espaço do lado esquerdo */
+    margin-right: 0;
+    z-index: 101;
+     order: 1;
+    margin-left: 0;
+    margin-right: 10px;
+}
+
+ .botao-entrar {
+    order: 2;
+  }
     .menu-hamburguer span {
         display: block;
         width: 28px;
@@ -133,34 +145,35 @@
         padding: 2rem 0.5rem;
     }
     .painel-guia {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      align-items: stretch;
+      text-align: left;
     }
     .cartao-guia {
-        width: 100%;
-        min-width: 0;
-        margin: 0 auto;
-        border-radius: 18px;
-        font-size: 1rem;
-        padding: 1.3rem 1rem;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.2rem;
+      font-size: 1.08rem;
     }
     .cartao-guia.cartao-destaque {
-        background: var(--cor-primaria-azul, #2567f9);
-        color: #fff;
-        border-color: var(--cor-primaria-azul, #2567f9);
+      background: var(--cor-primaria-azul, #2567f9);
+      color: #fff;
+      border-color: var(--cor-primaria-azul, #2567f9);
     }
     .cartao-guia.cartao-destaque h3,
     .cartao-guia.cartao-destaque p {
-        color: #fff;
+      color: #fff;
     }
     .cartao-guia h3 {
-        font-size: 1.35rem;
-        margin-bottom: 0.7rem;
+      font-size: 1.35rem;
+      margin-bottom: 0.7rem;
     }
     .cartao-guia p {
-        font-size: 1.15rem;
+      font-size: 1.15rem;
     }
 
     /* Benefícios */
@@ -191,18 +204,26 @@
         padding: 2.5rem 0.5rem;
     }
     .container-contato {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 0;
+      align-items: stretch;
     }
     .informacoes-contato, .cartao-formulario {
-        padding: 1.3rem 1rem;
-        border-radius: 18px;
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto;
-        font-size: 1rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      margin: 0;
+      box-sizing: border-box;
+      padding: 1.5rem 1.2rem;
+      font-size: 1.1rem;
+    }
+
+    .cartao-formulario input,
+    .cartao-formulario textarea {
+      font-size: 1.1rem;
+      padding: 1rem 1rem;
     }
     .informacoes-contato h3, .cartao-formulario h3 {
         font-size: 1.1rem;
