@@ -1474,5 +1474,6 @@ footer {
     color: #adb5bd;
 }
 
-
-
+.menu-mobile {
+    display: none;
+}
