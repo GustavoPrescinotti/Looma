@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/img/Icon da logo.png">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/dashboard de todo.css">
     <link rel="stylesheet" href="assets/css/responsivo.css">
     <title>Dashboard Admin</title>
 </head>
-<body>
-    
-    <header class="cabecalho-principal">
+<body class="dashboard-admin">
+
+        <header class="cabecalho-principal">
         <a href="index.html">
             <img class="logo-icon" src="assets/img/Logo_redondo.png" alt="Looma">
         </a>
@@ -32,6 +32,8 @@
             </ul>
         </nav>
     </header>
+    
+
 
     <div class="container">
         
@@ -49,13 +51,14 @@
             </div>
 
             <div class="navigation">
-                <button class="nav-button active" data-section="painel">Painel</button>
-                <button class="nav-button inactive" data-section="taxa-juros">Taxa de Juros</button>
-                <button class="nav-button inactive" data-section="nova-taxa">+ Nova Taxa</button>
+                <button class="nav-button active" data-section="painel"> <a href="dashboard_admin.html">Painel</a></button>
+                <button class="nav-button inactive" data-section="taxa-juros"> <a href="tabela_juro_admin.html">Taxa de Juros</a></button>
+                <button class="nav-button inactive" data-section="nova-taxa"> <a href="nova_taxa.html">+ Nova Taxa</a></button>
+               
             </div>
 
             <div class="sign-out">
-                <button class="nav-button inactive">Sair da Conta</button>
+                <button class="nav-button inactive"> <a href="index.html">Sair da Conta</a></button>
             </div>
 
             <div class="bottom-profile">
@@ -169,9 +172,9 @@
     <footer class="footer-desktop">
         <div class="bottom-nav">
             <div class="bottom-nav-container">
-                <button class="bottom-nav-button">Painel</button>
-                <button class="bottom-nav-button">Taxa de Juros</button>
-                <button class="bottom-nav-button">+ Nova Taxa</button>
+                <button class="bottom-nav-button"> <a href="dashboard_admin.html">Painel</a></button>
+                <button class="bottom-nav-button"> <a href="tabela_juro_admin.html">Taxa de Juros</a></button>
+                <button class="bottom-nav-button"> <a href="nova_taxa.html">+ Nova Taxa</a></button>
             </div>
         </div>
     </footer>

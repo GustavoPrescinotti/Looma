@@ -12,18 +12,38 @@
         display: none !important;
     }
 
-
     .cabecalho-principal {
+        display: flex !important;
         position: fixed;
-    flex-direction: row;
-    justify-content: flex-start; 
-    align-items: center;
-    
-  }
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background: var(--cor-primaria-azul, #2567f9);
+        z-index: 1000;
+        padding: 0 15px;
+        align-items: center;
+        justify-content: space-between;
+    }
 
-    
+    .logo-icon {
+        display: flex !important;
+        align-items: center;
+    }
+
+    .logo-icon img {
+        width: 40px;
+        height: 40px;
+        display: block !important; 
+        margin-left: auto;
+        height: auto;
+    }
     .logo {
-        display: none;
+        width: 40px;
+        height: 40px;
+        display: block !important; 
+        margin-left: auto;
+        height: auto;
     }
     .botao-entrar {
         background: #fff;
@@ -33,34 +53,23 @@
         padding: 0.7rem 1.5rem;
         border: none;
         font-size: 1.2rem;
-        margin-left: auto;
-        margin-right: 0;
         cursor: pointer;
         transition: background 0.2s, color 0.2s;
         text-decoration: none;
         display: inline-block;
         min-width: 120px;
         text-align: center;
+        order: 2;
     }
     .menu-hamburguer {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: flex-start; 
-    gap: 6px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    margin-left: 10px; 
-    margin-right: 0;
-    z-index: 101;
-     order: 1;
-    margin-left: 0;
-    margin-right: 10px;
-}
-
- .botao-entrar {
-    order: 2;
-  }
+        display: flex !important;
+        flex-direction: column;
+        gap: 6px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 101;
+    }
     .menu-hamburguer span {
         display: block;
         width: 28px;
@@ -71,7 +80,6 @@
     .navegacao-principal {
         display: none;
     }
-    
     .menu-mobile {
         display: flex;
         flex-direction: column;
@@ -93,14 +101,14 @@
         background: none;
         border: none;
         color: #fff;
-        font-size: 2.5rem;      
+        font-size: 2.5rem;
         position: absolute;
         top: 18px;
         left: 18px;
         cursor: pointer;
         display: block;
-        width: 38px;            
-        height: 38px;           
+        width: 38px;
+        height: 38px;
         line-height: 38px;
         text-align: center;
         padding: 0;
@@ -134,14 +142,13 @@
         margin-left: auto;
         margin-right: auto;
     }
-
-    
+    .sidebar {
+        display: none !important;
+    }
     .cabecalho-principal.menu-aberto .menu-hamburguer,
     .cabecalho-principal.menu-aberto .botao-entrar {
         display: none !important;
     }
-
-    
     .secao-guia {
         padding: 2rem 0.5rem;
     }
@@ -176,8 +183,6 @@
     .cartao-guia p {
       font-size: 1.15rem;
     }
-
-    
     .secao-beneficios {
         padding: 2.5rem 0.5rem;
     }
@@ -199,8 +204,6 @@
         font-size: 1rem;
         text-align: center;
     }
-
-    
     .secao-contato {
         padding: 2.5rem 0.5rem;
     }
@@ -220,7 +223,6 @@
       padding: 1.5rem 1.2rem;
       font-size: 1.1rem;
     }
-
     .cartao-formulario input,
     .cartao-formulario textarea {
       font-size: 1.1rem;
@@ -243,41 +245,46 @@
         padding: 1.2rem;
         border-radius: 10px;
     }
-
-    
     .conteudo-rodape {
         flex-direction: column;
         align-items: center;
         gap: 1rem;
+        max-width: 100%;
+        margin: 0 auto;
+        display: flex;
+        margin-bottom: 1rem; 
     }
     .logo-rodape img {
-        width: 110px;
+        width: 120px; 
+    }
+    .icones-sociais {
+        display: flex;
+        gap: 0.8rem; 
     }
     .icones-sociais a img {
-        width: 28px;
+        width: 32px; 
+        transition: opacity 0.3s ease;
+    }
+    .icones-sociais a:hover img {
+        opacity: 0.8;
     }
     .direitos-autorais {
-        font-size: 0.8rem;
-        padding-top: 1rem;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 0.8rem; 
+        font-size: 0.85rem;
+        color: #adb5bd;
+        margin-top: 0.5rem;
     }
-
-        .cabecalho-principal.menu-aberto .menu-hamburguer,
-    .cabecalho-principal.menu-aberto .botao-entrar {
-        display: none !important;
-    }
-
-   
     body.cadastro-page .cartao-formulario,
     body.login-page .cartao-formulario {
         padding: 1.5rem 1rem;
         margin: 1rem;
     }
-    
     .BotaoFormulario {
         flex-direction: column;
         gap: 0.8rem;
     }
-    
     .BotaoLogin,
     .BotaoCadastrar {
         width: 100%;
@@ -285,38 +292,27 @@
         font-size: 1.1rem;
         padding: 0.8rem 1.5rem;
     }
-
- .sidebar {
-        display: none !important;
-    }
-
-    
     .container {
-        margin-top: 70px; 
-        padding: 20px 15px 80px; 
+        margin-top: 70px;
+        padding: 20px 15px 120px; 
+        min-height: calc(100vh - 150px);
     }
-
     .main-content {
         width: 100%;
         margin-left: 0;
     }
-
-    
     .main-title {
         font-size: 1.8rem; 
         margin-bottom: 25px;
         text-align: center;
         color: #333;
     }
-
-   
     .stats-grid {
         display: grid;
         grid-template-columns: 1fr;
         gap: 12px; 
         margin-bottom: 25px;
     }
-
     .stat-card {
         padding: 25px 20px; 
         border-radius: 12px;
@@ -329,18 +325,15 @@
         justify-content: center;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-
     .stat-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     }
-
     .stat-card.highlighted {
         background: linear-gradient(135deg, #2567f9, #1a56d6);
         color: white;
         border: none;
     }
-
     .stat-title {
         font-size: 1.1rem; 
         font-weight: 600;
@@ -348,95 +341,41 @@
         line-height: 1.3;
         text-align: center;
     }
-
     .stat-value {
         font-size: 2.5rem;
         font-weight: 700;
         text-align: center;
         color: #2567f9;
     }
-
     .stat-card.highlighted .stat-value {
         color: white;
     }
-
-    .logo-icon img {
-        display: block !important; 
-        margin-left: auto;
-         width: 40px;
-        height: auto;
-        
-
-    }
-
-   
-
-    
     .chart-section {
         display: none;
     }
-
-    
     .footer-desktop {
-        display: none;
+        display: none !important;
     }
-
- 
     .footer-mobile {
-        display: block;
-        background-color: var(--cor-azul-escuro);
+        display: block !important;
+        background-color: #0E1A47;;
         color: #fff;
-        padding: 1.5rem 1rem 1rem; 
-        position: fixed;
+        padding: 1.5rem 1rem 1.2rem 1rem;
+        
         bottom: 0;
         left: 0;
-        width: 100%;
+        width: 100vw;
         z-index: 100;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
-
-    .conteudo-rodape {
-        max-width: 100%;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem; 
-    }
-
-    .logo-rodape img {
-        width: 120px; 
-    }
-
-    .icones-sociais {
-        display: flex;
-        gap: 0.8rem; 
-    }
-
-    .icones-sociais a img {
-        width: 32px; 
-        transition: opacity 0.3s ease;
-    }
-
-    .icones-sociais a:hover img {
-        opacity: 0.8;
-    }
-
-    .direitos-autorais {
-        text-align: center;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 0.8rem; 
-        font-size: 0.85rem;
-        color: #adb5bd;
-        margin-top: 0.5rem;
+    .bottom-nav {
+        display: none !important;
     }
 }
-
 
 body {
     overflow-x: hidden;
 }
-
 
 .menu-hamburguer {
     display: none;
@@ -446,40 +385,92 @@ body {
 }
 
 
- 
-
-
-
 @media (min-width: 426px) {
-    .cabecalho-principal {
-        display: flex;
+    body.dashboard-admin .cabecalho-principal {
+        display: none !important;
+    }
+    body.dashboard-admin .footer-mobile {
+        display: none !important;
+    }
+    body.dashboard-admin .footer-desktop {
+        display: block !important;
+    }
+    body.dashboard-admin .sidebar {
+        display: block;
     }
 
+    
     .sidebar {
         display: block;
     }
-
     .footer-desktop {
-        display: block;
+        display: block !important;
+    }
+    .footer-mobile {
+        display: none !important;
     }
 
-    .footer-mobile {
-        display: none;
+    .header-mobile-sem-logo {
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 70px;
+        background: var(--cor-primaria-azul, #2567f9);
+        z-index: 1000;
+        padding: 0 15px;
+    }
+    .header-mobile-sem-logo .botao-entrar {
+        margin-left: auto;
+    }
+    .header-mobile-sem-logo .menu-hamburguer {
+        margin-right: 1.5rem;
+        margin-left: 0;
+    }
+    .header-mobile-sem-logo .logo,
+    .header-mobile-sem-logo .logo-icon {
+        display: none !important;
+    }
+
+    .header-mobile-dashboard {
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 70px;
+        background: var(--cor-primaria-azul, #2567f9);
+        z-index: 1000;
+        padding: 0 15px;
+    }
+    .header-mobile-dashboard .logo-icon {
+        order: 1;
+        margin-right: auto;
+        margin-left: 0;
+        display: flex !important;
+        align-items: center;
+    }
+    .header-mobile-dashboard .menu-hamburguer {
+        order: 2;
+        margin-left: auto;
     }
 }
+
+
 @media (max-width: 426px) {
     .menu-mobile {
         display: flex;
     }
-
-     
-    
     body.cadastro-page main,
     body.login-page main {
         padding-top: 100px;
         min-height: calc(100vh - 180px);
     }
-
-
-
 }

@@ -64,6 +64,50 @@ body {
     height: auto;
 }
 
+.sidebar .nav-button a {
+    text-decoration: none;
+    color: inherit; 
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .nav-button.inactive a {
+    color: #4b4b4b;
+}
+
+.sidebar .nav-button.active a {
+    color: white;
+}
+
+.footer-desktop .bottom-nav-button a {
+    text-decoration: none;
+    color: #0e1a47; 
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.sidebar .nav-button:hover a {
+    color: inherit;
+}
+
+.footer-desktop .bottom-nav-button:hover a {
+    color: #0e1a47;
+}
+
+.nav-button a:focus,
+.bottom-nav-button a:focus {
+    outline: none;
+}
+
 .logo {
     padding: 24px;
     display: flex;
@@ -1012,4 +1056,109 @@ body {
 .chip-outline:hover {
     background: var(--blue-secondary);
     color: #fff;
+}
+
+.actions .btn-edit a,
+.actions .btn-delete a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.actions .btn-edit {
+    background-color: #526cef;
+    color: white;
+    border: none;
+    padding: 4px 16px;
+    border-radius: 4px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.actions .btn-edit:hover {
+    background-color: #395ff9;
+}
+
+.actions .btn-edit a {
+    color: white !important; 
+}
+
+.actions .btn-edit:hover a {
+    color: white !important;
+}
+
+.actions .btn-delete {
+    background-color: transparent;
+    color: #526cef;
+    border: 1px solid #d8d8d8;
+    padding: 4px 16px;
+    border-radius: 4px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.actions .btn-delete:hover {
+    background-color: #faf7f3;
+    color: #526cef;
+}
+
+.actions .btn-delete a {
+    color: #526cef !important; 
+}
+
+.actions .btn-delete:hover a {
+    color: #526cef !important;
+}
+
+.actions button a {
+    text-decoration: none;
+    outline: none;
+}
+
+.actions .btn-edit,
+.actions .btn-delete {
+    min-width: 80px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .nav-button a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .nav-button.inactive a {
+    color: #4b4b4b;
+}
+
+.sidebar .nav-button.active a {
+    color: white;
+}
+
+.footer-desktop .bottom-nav-button a,
+.bottom-nav .bottom-nav-button a {
+    text-decoration: none;
+    color: #0e1a47;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
 }
