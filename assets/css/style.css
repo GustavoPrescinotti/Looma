@@ -21,9 +21,6 @@ body {
     flex-direction: column;
 }
 
-main {
-    padding-top: 100px; /* Espaço para o cabeçalho fixo */
-}
 p {
     font-size: 1.4rem;
 }
