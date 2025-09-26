@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looma - Gestão de Créditos</title>
+
+    <!-- <link rel="stylesheet" href="assets/js/app.js"> -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="static/css/responsivo.css">
+    <link rel="shortcut icon" href="static/img/Icon da logo.png">
+
+    <script src="assets/js/app.js"></script>
+</head>
+
+<body>
+    <header class="flex gap-medio justify-center align-center">
+        <div class="container flex between align-center">
+            <div>
+                <!-- LEMBRAR DE FAZER SURGIR PROS MOBILE -->
+                <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <a href="index.html">
+                    <img class="logo" src="/static/img/logo.png" alt="Looma">
+                </a>
+            </div>
+
+            <!-- MENU DOS DISPOSITIVOS MAIORES -->
+            <nav class="menu-principal flex justify-center gap-minimo bold">
+                <a href="index.html">Home</a>
+                <a href="#quem_somos">Quem Somos</a></li>
+                <a href="#guia">Guia</a></li>
+                <a href="#beneficios">Benefícios</a></li>
+                <a href="#contato">Contato</a></li>
+            </nav>
+
+            <a href="loginEmpresario.html" class="btn btn2-primary black">Login</a>
+
+            <nav class="menu-mobile" id="menuMobile">
+                <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
+
+                <ul class="flex between align-center">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#quem_somos">Quem Somos</a></li>
+                    <li><a href="#guia">Guia</a></li>
+                    <li><a href="#beneficios">Benefícios</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="banner flex align-center justify-center">
+            <div class="container flex column justify-center align-center gap-grande align-text">
+                <div>
+                    <h1>Gestão de Créditos<br><span class="destaque">Descomplicada</span></h1>
+                    <p>
+                        A plataforma que pequenas empresas confiam para administrar suas contas a receber e melhorar sua
+                        saúde financeira.
+                    </p>
+                </div>
+                <div class="botoes-apresentacao flex wrap justify-center gap-medio">
+                    <a href="LoginADM.html" class="btn btn1-primary black">Sou Administrador</a>
+                    <a href="loginEmpresario.html" class="btn btn2-primary black">Sou Empresário</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="quem-somos" class="quem-somos flex align-center justify-center">
+            <div class="container flex column justify-center align-center gap-medio">
+                <p class="titulo destaque bold">Quem somos nós?</p>
+                <p class="align-text">Na <strong class="destaque">Looma</strong>, acreditamos que toda pequena empresa merece crescer com
+                    segurança e clareza
+                    financeira. Somos mais do que uma plataforma de gestão, somos o parceiro estratégico que
+                    transforma a complexidade das contas a receber em uma vantagem competitiva para o seu negócio.
+                </p>
+            </div>
+        </section>
+
+        <section id="guia" class="secao-guia flex align-center justify-center">
+            <div class="container flex column justify-center align-center gap-medio">
+                <p class="titulo destaque bold">Guia para os Novos Usuários</p>
+                <p class="subtitulo">Um guia rápido para aproveitar ao máximo nossa plataforma</p>
+
+                <div class="cards flex gap-minimo wrap justify-center">
+                    <div class="card flex column gap-minimo">
+                        <p class="destaque bold">Crie sua conta</p>
+                        <p>Registre-se em menos de <span class="bold destaque">2 minutos</span> informando seus dados básicos e situação
+                        financeira.</p>
+                    </div>
+                    <div class="card card-destaque flex column gap-minimo">
+                        <p class="bold">Simule seu empréstimo</p>
+                        <p>Experimente diferentes valores e prazos para encontrar a proposta ideal para suas necessidades.
+                        </p>
+                    </div>
+                    <div class="card flex column gap-minimo">
+                        <p class="destaque bold">Confirme Seu Empréstimo</p>
+                        <p>Analise as condições, confirme seu empréstimo e receba os recursos de forma rápida e segura.</p>
+                    </div>
+                    <div class="card flex column gap-minimo">
+                        <p class="destaque bold">Acompanhe e Gerencie</p>
+                        <p>Acesse seu painel para acompanhar parcelas, fazer pagamentos antecipados e ver seu histórico.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="beneficios" class="secao-beneficios flex align-center justify-center">
+            <div class="container flex column justify-center align-center gap-medio">
+                <p class="titulo destaque bold">Benefícios da Nossa Consultoria em Crédito</p>
+                <div class="cards-bene flex gap-medio align-center justify-center wrap">
+                    <div class="card-bene">
+                        <p>Simulações instantâneas e liberação de recursos em até 24 horas.</p>
+                    </div>
+                    <div class="card-bene">
+                        <p>Sem tarifas ocultas ou surpresas - todas as taxas e condições são claramente informadas.</p>
+                    </div>
+                    <div class="card-bene">
+                        <p>Acompanhamento inteligente da sua saúde financeira e orientação para melhores condições de
+                            empréstimo.</p>
+                    </div>
+                    <div class="card-bene">
+                        <p>Opções personalizáveis de parcelamento que se adaptam à sua realidade financeira.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" class="secao-contato">
+            <div class="container-contato">
+                <div class="informacoes-contato">
+                    <h3>Canais de Atendimento:</h3>
+                    <div class="item-informacao">
+                        <div class="icone-informacao">📞</div>
+                        <p><strong>Telefone:</strong><br>(11) 3456-7890<br>(11) 99876-5432 (WhatsApp)</p>
+                    </div>
+                    <div class="item-informacao">
+                        <div class="icone-informacao">📧</div>
+                        <p><strong>Email:</strong><br>contato@loomagestor.com.br<br>suporte@gestorlooma.com.br</p>
+                    </div>
+                    <div class="item-informacao">
+                        <div class="icone-informacao">⏰</div>
+                        <p><strong>Horário de Atendimento:</strong><br>Segunda a Sexta: 8h às 18h<br>Sábado: 9h às 13h
+                        </p>
+                    </div>
+                    <div class="item-informacao">
+                        <div class="icone-informacao">🏢</div>
+                        <p><strong>Endereço:</strong><br>Av. Paulista, 1234 - Bela Vista<br>São Paulo - SP, 01310-100
+                        </p>
+                    </div>
+                </div>
+                <div class="cartao-formulario">
+                    <h3>Envie uma Mensagem:</h3>
+                    <form class="formulario-contato">
+                        <div class="grupo-formulario">
+                            <label for="name">Nome:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="grupo-formulario">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="grupo-formulario">
+                            <label for="phone">Telefone:</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="grupo-formulario">
+                            <label for="message">Mensagem:</label>
+                            <textarea id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary black">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="conteudo-rodape">
+            <a href="index.html" class="logo-rodape">
+                <img width="150" src="/static/img/Logo do footer.png" alt="Logo Looma">
+            </a>
+            <div class="icones-sociais">
+                <a href="#"><img src="/static/img/FACEBOOK.png" alt="Facebook"></a>
+                <a href="#"><img src="/static/img/WHATSAPP.png" alt="WhatsApp"></a>
+                <a href="#"><img src="/static/img/INSTAGRAM.png" alt="Instagram"></a>
+                <a href="#"><img src="/static/img/TWITTER.png" alt="Twitter"></a>
+            </div>
+        </div>
+        <div class="direitos-autorais">
+            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
