@@ -468,6 +468,7 @@ body {
     transition: background 0.2s, color 0.2s, border 0.2s;
     border: none;
     outline: none;
+    width: 100%;
 }
 
 .btn--primary {
@@ -525,7 +526,9 @@ body {
 
 
 .btn-lg {
-    min-width: 12.9rem;
+    min-width: 14.9rem;
+    
+    width: 100%;
     height: 65px;
     border-radius: 9px;
     font-weight: 700;
@@ -1348,4 +1351,25 @@ body {
     text-decoration: none;
     color: inherit;
 }
+
+
+.td-actions .chip-primary a {
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.td-actions .chip-primary:hover a {
+    color: white !important;
+}
+
+.td-actions .chip-outline a {
+    color: var(--blue-secondary) !important;
+    text-decoration: none !important;
+}
+
+.td-actions .chip-outline:hover a {
+    color: white !important;
+}
+
+
 

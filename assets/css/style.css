@@ -1,1464 +1,818 @@
+/* ========================================================================== */
+/* ===== RESET GERAL E VARIÁVEIS GLOBAIS ===== */
+/* ========================================================================== */
+
+/* O seletor universal (*) aplica estas regras a TODOS os elementos da página. */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-    text-decoration: none;
+    margin: 0; /* Remove a margem externa padrão de todos os elementos. */
+    padding: 0; /* Remove o preenchimento (espaçamento interno) padrão de todos os elementos. */
+    box-sizing: border-box; /* Garante que a largura e altura totais de um elemento incluam o preenchimento e a borda. */
+    font-family: Arial, sans-serif; /* Define uma fonte padrão para todos os elementos, caso a fonte principal não carregue. */
+    text-decoration: none; /* Remove o sublinhado de todos os links por padrão. */
 }
+
+/* O seletor :root refere-se ao elemento raiz do documento (normalmente <html>) e é usado para declarar variáveis CSS globais. */
 :root {
-    --cor-primaria-azul: #1F68FE;
-    --cor-azul-escuro: #0E1A47;
-    --cor-cinza-aco: #4B4B4B;
-    --cor-bege-claro: #FAF7F3;
-    --fonte-principal: 'Inter', sans-serif;
-    --fonte-destaque: 'Poppins', sans-serif;
+    /* --nome-da-variavel: valor; -> Define uma variável que pode ser reutilizada com a função var(). */
+    --cor-primaria-azul: #1F68FE; /* Define a variável '--cor-primaria-azul' com um tom de azul. */
+    --cor-azul-escuro: #0E1A47; /* Define a variável '--cor-azul-escuro' para fundos, como o do rodapé. */
+    --cor-cinza-aco: #4B4B4B; /* Define a variável '--cor-cinza-aco' para textos principais. */
+    --cor-bege-claro: #FAF7F3; /* Define a variável '--cor-bege-claro' para fundos claros. */
+    --fonte-principal: 'Inter', sans-serif; /* Define a variável '--fonte-principal' para a família de fontes principal. */
+    --fonte-destaque: 'Poppins', sans-serif; /* Define a variável '--fonte-destaque' para títulos e textos importantes. */
 }
+
+/* Estilos aplicados ao corpo (<body>) da página. */
 body {
-    font-family: var(--fonte-principal);
-    background-color: #f8f8f8;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    font-family: var(--fonte-principal); /* Aplica a fonte principal definida na variável. */
+    background-color: #f8f8f8; /* Define uma cor de fundo cinza clara para toda a página. */
+    min-height: 100vh; /* Garante que o corpo tenha no mínimo 100% da altura da janela de visualização (viewport). */
+    display: flex; /* Ativa o modelo de layout Flexbox para o corpo. */
+    flex-direction: column; /* Organiza os elementos filhos diretos do body (como header, main, footer) em uma coluna vertical. */
 }
 
+/* Estilo padrão para todos os parágrafos (<p>). */
 p {
-    font-size: 1.4rem;
+    font-size: 1.4rem; /* Define o tamanho da fonte para 1.4 vezes o tamanho da fonte raiz. */
 }
-.cabecalho-principal {
-   
-    top: 0;
-    left: 0;
-    width: 100vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 2rem;
-    background-color: var(--cor-primaria-azul);
-    color: white;
-    z-index: 1000;
-   
-}
-.logo img {
-    height: 80px;
-    width: auto;
-    vertical-align: middle;
-    
-}
-.navegacao-principal {
-    display: flex;
-    gap: 2rem;
 
+/* ========================================================================== */
+/* ===== CABEÇALHO PRINCIPAL ===== */
+/* ========================================================================== */
+
+.cabecalho-principal {
+    top: 0; /* Posiciona o cabeçalho no topo da página (usado com position). */
+    left: 0; /* Posiciona o cabeçalho no lado esquerdo da página. */
+    width: 100vw; /* Define a largura como 100% da largura da janela de visualização. */
+    display: flex; /* Usa flexbox para alinhar os itens internos (logo, navegação). */
+    justify-content: space-between; /* Distribui os itens com espaço máximo entre eles (logo na esquerda, resto na direita). */
+    align-items: center; /* Alinha os itens verticalmente ao centro. */
+    padding: 0.8rem 2rem; /* Adiciona preenchimento interno: 0.8rem em cima/baixo, 2rem nos lados. */
+    background-color: var(--cor-primaria-azul); /* Aplica a cor de fundo azul definida na variável. */
+    color: white; /* Define a cor padrão do texto dentro do cabeçalho para branco. */
+    z-index: 1000; /* Garante que o cabeçalho fique sobreposto a outros elementos da página. */
 }
+
+/* Estilo para a imagem dentro do elemento com a classe 'logo'. */
+.logo img {
+    height: 80px; /* Define a altura da imagem do logo. */
+    width: auto; /* A largura se ajusta automaticamente para manter a proporção da imagem. */
+    vertical-align: middle; /* Ajuda a alinhar a imagem corretamente se houver texto ao lado. */
+}
+
+/* Container da navegação principal. */
+.navegacao-principal {
+    display: flex; /* Alinha os links de navegação em uma linha horizontal. */
+    gap: 2rem; /* Cria um espaço de 2rem entre cada item da navegação. */
+}
+
+/* Estilo para os links <a> dentro da navegação. */
 .navegacao-principal a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
+    color: #fff; /* Define a cor do texto do link para branco. */
+    text-decoration: none; /* Remove o sublinhado do link. */
+    font-weight: 500; /* Define a espessura da fonte (semi-negrito). */
+    transition: color 0.2s; /* Adiciona uma transição suave de 0.2 segundos para a propriedade 'color'. */
 }
+
+/* Efeito ao passar o mouse (:hover) sobre os links de navegação. */
 .navegacao-principal a:hover {
-    color: #e0e0e0;
+    color: #e0e0e0; /* Muda a cor do texto para um cinza claro ao passar o mouse. */
 }
+
+/* Estilo do botão "Entrar" no cabeçalho. */
 .botao-entrar {
-    background-color: white;
-    color: var(--cor-cinza-aco);
-    padding: 0.75rem 1.75rem;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    background-color: white; /* Define a cor de fundo como branca. */
+    color: var(--cor-cinza-aco); /* Define a cor do texto usando a variável. */
+    padding: 0.75rem 1.75rem; /* Adiciona preenchimento interno. */
+    border-radius: 5px; /* Arredonda os cantos do botão. */
+    font-weight: bold; /* Deixa o texto do botão em negrito. */
+    transition: background-color 0.3s ease; /* Adiciona uma transição suave para a cor de fundo. */
 }
+
+/* Efeito ao passar o mouse sobre o botão "Entrar". */
 .botao-entrar:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f0f0; /* Muda a cor de fundo para um cinza muito claro. */
 }
+
+/* ========================================================================== */
+/* ===== SEÇÃO DE APRESENTAÇÃO (HERO SECTION) ===== */
+/* ========================================================================== */
+
 .secao-apresentacao {
-    position: relative;
-    height: 90vh;
-    color: var(--cor-bege-claro);
-    display: grid;
-    place-items: center;
-    overflow: hidden;
+    position: relative; /* Cria um contexto de posicionamento para elementos filhos com 'position: absolute'. */
+    height: 90vh; /* Define a altura como 90% da altura da janela de visualização. */
+    color: var(--cor-bege-claro); /* Define a cor do texto padrão para esta seção. */
+    display: grid; /* Ativa o layout Grid. */
+    place-items: center; /* Atalho para 'align-items: center' e 'justify-items: center', centralizando o conteúdo. */
+    overflow: hidden; /* Esconde qualquer conteúdo que transborde os limites da seção. */
 }
+
+/* Imagem de fundo da seção de apresentação. */
 .fundo-apresentacao {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-image: url('../img/Banner da home.png');
-    background-size: cover;
-    background-position: center;
-    filter: blur(4px);
-    transform: scale(1.05);
+    position: absolute; /* Posiciona o fundo em relação ao pai '.secao-apresentacao'. */
+    top: 0; /* Alinha no topo. */
+    left: 0; /* Alinha à esquerda. */
+    width: 100%; /* Ocupa 100% da largura do pai. */
+    height: 100%; /* Ocupa 100% da altura do pai. */
+    z-index: -1; /* Coloca o fundo atrás de outros elementos na mesma camada de empilhamento. */
+    background-image: url('../img/Banner da home.png'); /* Define o caminho da imagem de fundo. */
+    background-size: cover; /* Faz a imagem cobrir toda a área, mesmo que precise cortar parte dela. */
+    background-position: center; /* Centraliza a imagem de fundo. */
+    filter: blur(4px); /* Aplica um efeito de desfoque de 4 pixels na imagem. */
+    transform: scale(1.05); /* Aumenta a escala da imagem em 5% para evitar bordas vazias causadas pelo desfoque. */
 }
+
+/* Pseudo-elemento '::before' para criar um overlay escuro sobre a imagem de fundo. */
 .secao-apresentacao::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(14, 26, 71, 0.6); /* Overlay escuro */
-    z-index: -1;
+    content: ''; /* Propriedade obrigatória para que o pseudo-elemento seja renderizado. */
+    position: absolute; /* Posiciona o overlay em relação ao pai. */
+    top: 0; /* Alinha no topo. */
+    left: 0; /* Alinha à esquerda. */
+    width: 100%; /* Ocupa 100% da largura. */
+    height: 100%; /* Ocupa 100% da altura. */
+    background-color: rgba(14, 26, 71, 0.6); /* Adiciona uma cor azul escura com 60% de opacidade. */
+    z-index: -1; /* Coloca o overlay atrás do conteúdo, mas acima da imagem de fundo. */
 }
+
+/* Conteúdo de texto da apresentação. */
 .conteudo-apresentacao {
-    text-align: center;
-    animation: fadeIn 1s ease-in-out;
+    text-align: center; /* Centraliza o texto. */
+    animation: fadeIn 1s ease-in-out; /* Aplica a animação chamada 'fadeIn' com duração de 1 segundo. */
 }
+
+/* Título principal (H1) da apresentação. */
 .conteudo-apresentacao h1 {
-    color: var(--cor-primaria-azul);
-    font-family: var(--fonte-destaque);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
+    color: var(--cor-primaria-azul); /* Define a cor do título. */
+    font-family: var(--fonte-destaque); /* Usa a fonte de destaque. */
+    font-size: clamp(2.5rem, 5vw, 4rem); /* Define um tamanho de fonte responsivo: mínimo de 2.5rem, ideal de 5vw, máximo de 4rem. */
+    font-weight: 700; /* Define a espessura da fonte (negrito). */
+    margin-bottom: 1rem; /* Adiciona um espaço abaixo do título. */
 }
+
+/* Estilo para a tag <strong> (negrito) dentro do H1. */
 .conteudo-apresentacao h1 strong {
-    color: var(--cor-primaria-azul);
+    color: var(--cor-primaria-azul); /* Garante que o texto em negrito também seja azul. */
 }
+
+/* Parágrafo da apresentação. */
 .conteudo-apresentacao p {
-    font-family: var(--fonte-principal);
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    max-width: 600px;
-    line-height: 1.6;
-    margin-bottom: 2rem;
+    font-family: var(--fonte-principal); /* Usa a fonte principal. */
+    font-size: clamp(1rem, 2vw, 1.2rem); /* Define um tamanho de fonte responsivo. */
+    max-width: 600px; /* Define uma largura máxima para o parágrafo, para melhorar a legibilidade. */
+    line-height: 1.6; /* Define a altura da linha, para espaçamento vertical entre as linhas. */
+    margin-bottom: 2rem; /* Adiciona um espaço abaixo do parágrafo. */
 }
+
+/* Container dos botões da apresentação. */
 .botoes-apresentacao {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+    display: flex; /* Alinha os botões em uma linha. */
+    justify-content: center; /* Centraliza os botões horizontalmente. */
+    gap: 1rem; /* Adiciona um espaço de 1rem entre os botões. */
 }
+
+/* Estilo base para botões genéricos. */
 .botao {
-    padding: 0.8rem 2rem;
-    border-radius: 8px;
-    font-weight: bold;
-    font-family: var(--fonte-principal);
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
+    padding: 0.8rem 2rem; /* Define o preenchimento interno. */
+    border-radius: 8px; /* Arredonda os cantos. */
+    font-weight: bold; /* Deixa o texto em negrito. */
+    font-family: var(--fonte-principal); /* Usa a fonte principal. */
+    transition: all 0.3s ease; /* Adiciona uma transição suave para todas as propriedades que mudarem. */
+    border: 2px solid transparent; /* Cria uma borda transparente para evitar que o layout "pule" quando uma borda for adicionada no hover. */
 }
+
+/* Estilo para o botão de destaque (com fundo preenchido). */
 .botao.botao-destaque {
-    background-color: var(--cor-primaria-azul);
-    color: var(--cor-bege-claro);
+    background-color: var(--cor-primaria-azul); /* Define a cor de fundo azul. */
+    color: var(--cor-bege-claro); /* Define a cor do texto bege. */
 }
+
+/* Efeito de hover para o botão de destaque. */
 .botao.botao-destaque:hover {
-    filter: brightness(1.2);
-    transform: translateY(-2px);
+    filter: brightness(1.2); /* Aumenta o brilho do botão em 20%. */
+    transform: translateY(-2px); /* Move o botão 2 pixels para cima. */
 }
+
+/* Estilo para o botão alternativo (com contorno). */
 .botao.botao-alternativo {
-    background-color: transparent;
-    color: var(--cor-bege-claro);
-    border: 2px solid var(--cor-bege-claro);
+    background-color: transparent; /* Deixa o fundo transparente. */
+    color: var(--cor-bege-claro); /* Define a cor do texto bege. */
+    border: 2px solid var(--cor-bege-claro); /* Adiciona uma borda sólida na cor bege. */
 }
+
+/* Efeito de hover para o botão alternativo. */
 .botao.botao-alternativo:hover {
-    background-color: var(--cor-bege-claro);
-    color: var(--cor-azul-escuro);
-    transform: translateY(-2px);
+    background-color: var(--cor-bege-claro); /* Muda a cor de fundo para bege. */
+    color: var(--cor-azul-escuro); /* Muda a cor do texto para azul escuro. */
+    transform: translateY(-2px); /* Move o botão 2 pixels para cima. */
 }
+
+/* Definição da animação chamada "fadeIn". */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0; /* Estado inicial: o elemento está totalmente transparente. */
+        transform: translateY(20px); /* Estado inicial: o elemento está 20 pixels abaixo de sua posição final. */
+    }
+    to {
+        opacity: 1; /* Estado final: o elemento está totalmente visível. */
+        transform: translateY(0); /* Estado final: o elemento está em sua posição original. */
+    }
 }
-.secao-sobre-nos, .secao-guia {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-    text-align: center;
+
+/* ========================================================================== */
+/* ===== SEÇÕES DE CONTEÚDO (SOBRE NÓS, GUIA, ETC.) ===== */
+/* ========================================================================== */
+
+/* Estilo comum para as seções "Sobre Nós" e "Guia". */
+.secao-sobre-nos,
+.secao-guia {
+    max-width: 1100px; /* Define a largura máxima do conteúdo dentro da seção. */
+    margin: 0 auto; /* Centraliza a seção horizontalmente na página. */
+    padding: 4rem 2rem; /* Adiciona preenchimento vertical de 4rem e horizontal de 2rem. */
+    text-align: center; /* Centraliza todo o texto dentro da seção. */
 }
-.secao-sobre-nos h2, .secao-guia h2 {
-    color: var(--cor-primaria-azul);
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+
+/* Títulos (H2) dessas seções. */
+.secao-sobre-nos h2,
+.secao-guia h2 {
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    font-size: 2.5rem; /* Define o tamanho da fonte. */
+    margin-bottom: 1rem; /* Adiciona um espaço abaixo do título. */
 }
-.secao-sobre-nos p, .secao-guia .subtitulo {
-    color: var(--cor-cinza-aco);
-    font-size: 1.5rem;
-    line-height: 1.7;
-}
-.secao-sobre-nos p strong {
-    color: var(--cor-primaria-azul);
-    font-weight: 700;
-}
+
+/* Parágrafos e subtítulos dessas seções. */
+.secao-sobre-nos p,
 .secao-guia .subtitulo {
-    margin-bottom: 3rem;
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    font-size: 1.5rem; /* Define o tamanho da fonte. */
+    line-height: 1.7; /* Define a altura da linha para melhorar a legibilidade. */
 }
+
+/* Destaque de texto (<strong>) na seção "Sobre Nós". */
+.secao-sobre-nos p strong {
+    color: var(--cor-primaria-azul); /* Define a cor do texto em negrito. */
+    font-weight: 700; /* Define a espessura da fonte (negrito). */
+}
+
+/* Margem específica para o subtítulo da seção "Guia". */
+.secao-guia .subtitulo {
+    margin-bottom: 3rem; /* Adiciona um espaço maior abaixo do subtítulo. */
+}
+
+/* Grid para os cartões da seção "Guia". */
 .painel-guia {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    max-width: 900px;       
-    margin: 0 auto;         
-    text-align: left;
+    display: grid; /* Ativa o layout Grid. */
+    grid-template-columns: repeat(2, 1fr); /* Cria duas colunas de fração igual (largura igual). */
+    gap: 2rem; /* Define um espaço de 2rem entre os cartões. */
+    max-width: 900px; /* Define a largura máxima do grid. */
+    margin: 0 auto; /* Centraliza o grid. */
+    text-align: left; /* Alinha o texto dentro dos cartões à esquerda. */
 }
+
+/* Estilo individual dos cartões da seção "Guia". */
 .cartao-guia {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 1rem;
-    padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff; /* Define a cor de fundo como branca. */
+    border: 1px solid #e0e0e0; /* Adiciona uma borda cinza clara. */
+    border-radius: 1rem; /* Arredonda os cantos do cartão. */
+    padding: 1rem; /* Adiciona preenchimento interno. */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Adiciona uma sombra suave. */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Adiciona uma transição suave para os efeitos de hover. */
 }
+
+/* Efeito de hover nos cartões. */
 .cartao-guia:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px); /* Move o cartão 5 pixels para cima. */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Aumenta a intensidade da sombra. */
 }
+
+/* Título (H3) dentro do cartão. */
 .cartao-guia h3 {
-    color: var(--cor-primaria-azul);
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    font-size: 1.5rem; /* Define o tamanho da fonte. */
+    margin-bottom: 0.75rem; /* Adiciona espaço abaixo do título. */
 }
+
+/* Parágrafo dentro do cartão. */
 .cartao-guia p {
-    color: var(--cor-cinza-aco);
-    line-height: 1.6;
-    font-size: 1.2rem;
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    line-height: 1.6; /* Define a altura da linha. */
+    font-size: 1.2rem; /* Define o tamanho da fonte. */
 }
+
+/* Texto em negrito (<strong>) dentro do cartão. */
 .cartao-guia strong {
-    color: var(--cor-primaria-azul);
-    font-weight: 700;
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    font-weight: 700; /* Define a espessura da fonte. */
 }
+
+/* Estilo para um cartão em destaque (com fundo azul). */
 .cartao-guia.cartao-destaque {
-    background-color: var(--cor-primaria-azul);
-    color: var(--cor-bege-claro);
-    border-color: var(--cor-primaria-azul);
+    background-color: var(--cor-primaria-azul); /* Define a cor de fundo. */
+    color: var(--cor-bege-claro); /* Define a cor padrão do texto. */
+    border-color: var(--cor-primaria-azul); /* Define a cor da borda para ser igual ao fundo. */
 }
+
+/* Ajusta a cor do texto para o cartão em destaque, sobrescrevendo as regras anteriores. */
 .cartao-guia.cartao-destaque h3,
 .cartao-guia.cartao-destaque p {
-    color: var(--cor-bege-claro);
+    color: var(--cor-bege-claro); /* Define a cor do texto para bege. */
 }
+
+/* ========================================================================== */
+/* ===== SEÇÃO DE BENEFÍCIOS ===== */
+/* ========================================================================== */
+
 .secao-beneficios {
-    background-color: var(--cor-azul-escuro);
-    padding: 5rem 2rem;
-    font-family: var(--fonte-principal);
+    background-color: var(--cor-azul-escuro); /* Define a cor de fundo azul escura. */
+    padding: 5rem 2rem; /* Adiciona preenchimento. */
+    font-family: var(--fonte-principal); /* Usa a fonte principal. */
 }
+
+/* Container do conteúdo de benefícios com efeito de vidro ("glassmorphism"). */
 .conteudo-beneficios {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 3rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
+    background-color: rgba(255, 255, 255, 0.05); /* Fundo branco com 5% de opacidade. */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Borda branca com 10% de opacidade. */
+    border-radius: 20px; /* Arredonda os cantos. */
+    padding: 3rem; /* Adiciona preenchimento interno. */
+    max-width: 1200px; /* Define a largura máxima. */
+    margin: 0 auto; /* Centraliza o container. */
+    text-align: center; /* Centraliza o texto. */
 }
+
 .conteudo-beneficios h2 {
-    color: var(--cor-primaria-azul);
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
+    color: var(--cor-primaria-azul); /* Define a cor do título. */
+    font-size: 2.5rem; /* Define o tamanho da fonte. */
+    font-weight: 700; /* Define a espessura da fonte. */
+    margin-bottom: 3rem; /* Adiciona espaço abaixo do título. */
 }
+
+/* Grid para os cartões de benefícios. */
 .painel-beneficios {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    display: grid; /* Ativa o layout Grid. */
+    grid-template-columns: repeat(4, 1fr); /* Cria quatro colunas de largura igual. */
+    gap: 2rem; /* Adiciona espaço entre os cartões. */
 }
+
+/* Estilo individual dos cartões de benefício. */
 .cartao-beneficio {
-    background-color: rgba(255, 255, 255, 0.08);
-    padding: 2rem 1.5rem;
-    border-radius: 16px;
-    color: var(--cor-bege-claro);
-    line-height: 1.6;
+    background-color: rgba(255, 255, 255, 0.08); /* Fundo branco com 8% de opacidade. */
+    padding: 2rem 1.5rem; /* Adiciona preenchimento. */
+    border-radius: 16px; /* Arredonda os cantos. */
+    color: var(--cor-bege-claro); /* Define a cor do texto. */
+    line-height: 1.6; /* Define a altura da linha. */
 }
+
+/* ========================================================================== */
+/* ===== SEÇÃO DE CONTATO E FORMULÁRIO ===== */
+/* ========================================================================== */
+
 .secao-contato {
-    padding: 5rem 2rem;
-    background-color: #f8f9fa;
+    padding: 5rem 2rem; /* Adiciona preenchimento. */
+    background-color: #f8f9fa; /* Define um fundo cinza muito claro. */
 }
+
+/* Container da seção de contato. */
 .container-contato {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    max-width: 1200px; /* Define a largura máxima. */
+    margin: 0 auto; /* Centraliza o container. */
+    display: grid; /* Ativa o layout Grid. */
+    grid-template-columns: 1fr 1fr; /* Cria duas colunas de largura igual. */
+    gap: 2rem; /* Adiciona espaço entre as colunas. */
 }
-.informacoes-contato, .cartao-formulario {
-    background-color: #fff;
-    padding: 2.5rem;
-    border: 1px solid var(--cor-primaria-azul);
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+/* Estilo comum para as duas colunas (bloco de informações e formulário). */
+.informacoes-contato,
+.cartao-formulario {
+    background-color: #fff; /* Define o fundo como branco. */
+    padding: 2.5rem; /* Adiciona preenchimento. */
+    border: 1px solid var(--cor-primaria-azul); /* Adiciona uma borda azul. */
+    border-radius: 16px; /* Arredonda os cantos. */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Adiciona uma sombra suave. */
 }
-.informacoes-contato h3, .cartao-formulario h3 {
-    font-size: 1.8rem;
-    color: var(--cor-primaria-azul);
-    margin-bottom: 2rem;
+
+/* Títulos das colunas. */
+.informacoes-contato h3,
+.cartao-formulario h3 {
+    font-size: 1.8rem; /* Define o tamanho da fonte. */
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    margin-bottom: 2rem; /* Adiciona espaço abaixo. */
 }
+
+/* Item de informação (ícone + texto). */
 .item-informacao {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
+    display: flex; /* Ativa o Flexbox para alinhar o ícone e o texto. */
+    align-items: flex-start; /* Alinha os itens no topo. */
+    gap: 1.5rem; /* Adiciona espaço entre o ícone e o texto. */
+    margin-bottom: 1.5rem; /* Adiciona espaço abaixo do item. */
 }
+
+/* Ícone do item de informação. */
 .icone-informacao {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
+    width: 24px; /* Define a largura. */
+    height: 24px; /* Define a altura. */
+    flex-shrink: 0; /* Impede que o ícone seja comprimido se o texto for longo. */
 }
+
 .item-informacao p {
-    color: var(--cor-cinza-aco);
-    font-family: var(--fonte-principal);
-    font-size: 1.5rem;
-    line-height: 1.7;
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    font-family: var(--fonte-principal); /* Usa a fonte principal. */
+    font-size: 1.5rem; /* Define o tamanho da fonte. */
+    line-height: 1.7; /* Define a altura da linha. */
 }
+
 .item-informacao p strong {
-    color: var(--cor-primaria-azul);
+    color: var(--cor-primaria-azul); /* Define a cor do texto em negrito. */
 }
+
+/* Grupo de formulário (agrupa label e input/textarea). */
 .grupo-formulario {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem; /* Adiciona espaço abaixo de cada grupo. */
 }
+
+/* Rótulo (label) do campo do formulário. */
 .grupo-formulario label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--cor-primaria-azul);
-    font-weight: 600;
+    display: block; /* Faz o rótulo ocupar uma linha inteira. */
+    margin-bottom: 0.5rem; /* Adiciona espaço abaixo do rótulo. */
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    font-weight: 600; /* Define a espessura da fonte. */
 }
+
+/* Campos de entrada (input e textarea). */
 .grupo-formulario input,
 .grupo-formulario textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--cor-primaria-azul);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%; /* Faz o campo ocupar 100% da largura do seu container. */
+    padding: 0.8rem 1rem; /* Adiciona preenchimento interno. */
+    border: 1px solid var(--cor-primaria-azul); /* Adiciona uma borda azul. */
+    border-radius: 8px; /* Arredonda os cantos. */
+    font-size: 1rem; /* Define o tamanho da fonte do texto digitado. */
+    font-family: inherit; /* Faz o campo herdar a fonte do elemento pai. */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Adiciona uma transição suave para a borda e a sombra. */
 }
+
+/* Efeito de foco (:focus) nos campos de entrada. */
 .grupo-formulario input:focus,
 .grupo-formulario textarea:focus {
-    outline: none;
-    border-color: var(--cor-primaria-azul);
-    box-shadow: 0 0 0 3px rgba(57, 95, 249, 0.2);
+    outline: none; /* Remove o contorno padrão do navegador que aparece ao clicar no campo. */
+    border-color: var(--cor-primaria-azul); /* Garante que a cor da borda permaneça azul. */
+    box-shadow: 0 0 0 3px rgba(57, 95, 249, 0.2); /* Adiciona um "brilho" (sombra) ao redor do campo para indicar foco. */
 }
+
+/* Botão de enviar do formulário. */
 .botao-enviar {
-    width: 100%;
-    padding: 1rem;
-    background-color: var(--cor-primaria-azul);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: filter 0.3s ease;
+    width: 100%; /* Faz o botão ocupar 100% da largura. */
+    padding: 1rem; /* Adiciona preenchimento. */
+    background-color: var(--cor-primaria-azul); /* Define a cor de fundo. */
+    color: white; /* Define a cor do texto. */
+    border: none; /* Remove a borda. */
+    border-radius: 8px; /* Arredonda os cantos. */
+    font-size: 1.1rem; /* Define o tamanho da fonte. */
+    font-weight: bold; /* Deixa o texto em negrito. */
+    cursor: pointer; /* Muda o cursor do mouse para uma mão ao passar sobre o botão. */
+    transition: filter 0.3s ease; /* Adiciona uma transição suave para o filtro. */
 }
+
+/* Efeito de hover no botão de enviar. */
 .botao-enviar:hover {
-    filter: brightness(1.15);
+    filter: brightness(1.15); /* Aumenta o brilho do botão em 15%. */
 }
+
+/* ========================================================================== */
+/* ===== RODAPÉ ===== */
+/* ========================================================================== */
+
 footer {
-    background-color: var(--cor-azul-escuro);
-    color: #fff;
-    padding: 2.5rem 2rem 1.5rem;
+    background-color: var(--cor-azul-escuro); /* Define a cor de fundo. */
+    color: #fff; /* Define a cor do texto. */
+    padding: 2.5rem 2rem 1.5rem; /* Adiciona preenchimento (2.5rem em cima, 2rem nos lados, 1.5rem embaixo). */
 }
+
+/* Conteúdo principal do rodapé. */
 .conteudo-rodape {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    max-width: 1200px; /* Define a largura máxima. */
+    margin: 0 auto; /* Centraliza o conteúdo. */
+    display: flex; /* Ativa o Flexbox. */
+    justify-content: space-between; /* Distribui o espaço entre os itens. */
+    align-items: center; /* Alinha os itens verticalmente. */
+    margin-bottom: 2rem; /* Adiciona espaço abaixo. */
+    flex-wrap: wrap; /* Permite que os itens quebrem para a linha de baixo em telas pequenas. */
+    gap: 1.5rem; /* Adiciona espaço entre os itens. */
 }
+
+/* Container dos ícones de redes sociais. */
 .icones-sociais {
-    display: flex;
-    gap: 1rem;
+    display: flex; /* Alinha os ícones em uma linha. */
+    gap: 1rem; /* Adiciona espaço entre os ícones. */
 }
+
 .icones-sociais a img {
-    width: 38px;
-    transition: opacity 0.3s ease;
+    width: 38px; /* Define a largura das imagens dos ícones. */
+    transition: opacity 0.3s ease; /* Adiciona uma transição suave para a opacidade. */
 }
+
 .icones-sociais a:hover img {
-    opacity: 0.8;
+    opacity: 0.8; /* Reduz ligeiramente a opacidade da imagem no hover. */
 }
+
+/* Texto de direitos autorais. */
 .direitos-autorais {
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #adb5bd;
+    text-align: center; /* Centraliza o texto. */
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Adiciona uma linha divisória sutil no topo. */
+    padding-top: 1.5rem; /* Adiciona espaço acima do texto. */
+    font-size: 0.9rem; /* Define o tamanho da fonte. */
+    color: #adb5bd; /* Define uma cor cinza clara para o texto. */
 }
+
+/* ========================================================================== */
+/* ===== PÁGINAS DE CADASTRO E LOGIN ===== */
+/* ========================================================================== */
+
+/* Estilos aplicados ao elemento <main> quando o <body> tem a classe .cadastro-page ou .login-page. */
 body.cadastro-page main,
 body.login-page main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 4rem 2rem;
-    min-height: calc(100vh - 150px);
-    background-color: #f8f9fa;
+    display: flex; /* Ativa o Flexbox. */
+    justify-content: center; /* Centraliza o conteúdo horizontalmente. */
+    align-items: center; /* Centraliza o conteúdo verticalmente. */
+    padding: 4rem 2rem; /* Adiciona preenchimento. */
+    min-height: calc(100vh - 150px); /* Calcula a altura mínima para preencher a tela, descontando o tamanho aproximado do cabeçalho/rodapé. */
+    background-color: #f8f9fa; /* Define a cor de fundo. */
 }
+
+/* Define a largura máxima do cartão do formulário nessas páginas. */
 body.cadastro-page .cartao-formulario,
 body.login-page .cartao-formulario {
-    width: 100%;
-    max-width: 500px;
+    width: 100%; /* Ocupa 100% da largura disponível. */
+    max-width: 500px; /* Mas não ultrapassa 500 pixels de largura. */
 }
-.BotaoFormulario{
-  display: flex;
-  justify-content: 1rem;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+
+/* Container para os botões do formulário. */
 .BotaoFormulario {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+    display: flex; /* Ativa o Flexbox. */
+    justify-content: center; /* Centraliza os botões horizontalmente. */
+    align-items: center; /* Centraliza os botões verticalmente. */
+    gap: 1rem; /* Adiciona espaço entre os botões. */
+    margin-top: 1rem; /* Adiciona espaço acima do container. */
 }
 
-/* Botão primário (azul) - para Cadastrar-se na segunda imagem */
-.BotaoLogin, .BotaoCadastrarCadastrar {
-  font-size: 1.2rem;
-  padding: 0.75rem 2rem; 
-  border: 1px solid var(--cor-primaria-azul);
-  border-radius: 0.5rem;
-  font-family: var(--fonte-destaque);
-margin: 0.5rem;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s ease;
-  width: 100%;
+/* Estilo base para os botões das páginas de Login e Cadastro. */
+.BotaoLogin,
+.BotaoCadastrarCadastrar,
+.BotaoCadastrar,
+.BotaoVoltar {
+    font-size: 1.2rem; /* Define o tamanho da fonte. */
+    padding: 0.75rem 2rem; /* Adiciona preenchimento. */
+    border: 1px solid var(--cor-primaria-azul); /* Adiciona uma borda azul. */
+    border-radius: 0.5rem; /* Arredonda os cantos. */
+    font-family: var(--fonte-destaque); /* Usa a fonte de destaque. */
+    margin: 0.5rem; /* Adiciona uma margem externa. */
+    cursor: pointer; /* Muda o cursor para uma mão. */
+    text-decoration: none; /* Remove o sublinhado. */
+    display: inline-block; /* Permite definir largura/altura e margem. */
+    transition: all 0.3s ease; /* Adiciona uma transição suave. */
+    width: 100%; /* Faz o botão ocupar 100% da largura do seu container. */
+    text-align: center; /* Garante que o texto dentro do botão esteja centralizado. */
 }
 
-
-.BotaoCadastrar, .BotaoVoltar {
-  font-size: 1.2rem;
-  padding: 0.75rem 2rem;
-  color: var(--cor-primaria-azul);
-  border-radius: 0.5rem;
-  font-family: var(--fonte-destaque);
-  text-align: center;
-  border: 1px solid var(--cor-primaria-azul);
-  margin: 0.5rem;;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-/* Estilo para o link dentro do botão Voltar */
+/* Estilo específico para o link <a> dentro do botão "Voltar". */
 .BotaoVoltar a {
-  color: inherit;
-  text-decoration: none;
-  display: block;
-  width: 100%;
-  height: 100%;
+    color: inherit; /* Faz o link herdar a cor do elemento pai (.BotaoVoltar). */
+    text-decoration: none; /* Remove o sublinhado. */
+    display: block; /* Faz o link se comportar como um bloco, preenchendo todo o botão. */
+    width: 100%; /* Ocupa 100% da largura do botão. */
+    height: 100%; /* Ocupa 100% da altura do botão. */
 }
 
-
-.BotaoLogin:hover, .BotaoCadastrarCadastrar:hover {
-  background-color: var(--cor-bege-claro);
-  
+/* Efeito de hover para os botões principais (Login e Cadastrar-se). */
+.BotaoLogin:hover,
+.BotaoCadastrarCadastrar:hover {
+    background-color: var(--cor-bege-claro); /* Muda a cor de fundo. */
 }
 
-.BotaoCadastrar:hover, .BotaoVoltar:hover {
-  
-  color: var(--cor-bege-claro);
+/* Efeito de hover para os botões secundários (Voltar e Cadastrar). */
+.BotaoCadastrar:hover,
+.BotaoVoltar:hover {
+    color: var(--cor-bege-claro); /* Muda a cor do texto para bege. */
+    background-color: var(--cor-primaria-azul); /* Muda a cor de fundo para azul. */
 }
 
+/* Garante que a cor do link dentro do botão "Voltar" mude corretamente no hover. */
 .BotaoVoltar:hover a {
-  color: inherit;
-}
-.BotaoFormulario a{
-  text-decoration: none;
-  color: var(--cor-primaria-azul);
-}
-.BotaoFormulario .BotaoCadastrar a{
-  text-decoration: none;
-  color: var(--cor-primaria-azul);
-}
-.termos, .promo {
-  font-size: 1rem;
-  color: var(--cor-cinza-aco);
-  margin-top: 1rem;
-}
-.Cadastroelogin {
-  text-align: center;
-  font-size: 2rem;
-  color: var(--cor-primaria-azul);
-  margin-bottom: 1.5rem;
-}
-.login-link{
-  text-align: center;
-  font-size: 1rem;
-  color: var(--cor-cinza-aco);
-  margin-top: 1rem;
-}
-.portal-container {
-    max-width: 900px;
-    margin: 5rem auto;
-    padding: 2rem;
-    text-align: center;
-}
-.portal-opcoes {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-.cartao-perfil {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    width: 350px;
-    display: flex;
-    flex-direction: column;
-}
-.cartao-perfil h2 {
-    font-family: var(--fonte-principal);
-    font-size: 1.5rem;
-    color: var(--cor-primaria-azul);
-    margin-bottom: 1rem;
-}
-.cartao-perfil p {
-    font-size: 1rem;
-    color: var(--cor-cinza-aco);
-    line-height: 1.6;
-    flex-grow: 1;
-    margin-bottom: 2rem;
-}
-.botoes-perfil {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-.cartao-perfil .botao-alternativo {
-    background-color: #fff;
-    color: var(--cor-primaria-azul);
-    border: 2px solid var(--cor-primaria-azul);
-}
-.container {
-    display: flex;
-    flex: 1;
-}
-.sidebar {
-    width: 256px;
-    background: white;
-    border-right: 1px solid #e0d8d8;
-    display: flex;
-    flex-direction: column;
+    color: inherit; /* Herda a nova cor do pai (.BotaoVoltar:hover). */
 }
 
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    background: #395ff9;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 600;
-    font-size: 18px;
+/* Estilo geral para links dentro do container de botões do formulário. */
+.BotaoFormulario a {
+    text-decoration: none; /* Remove o sublinhado. */
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
 }
-.logo-text {
-    color: #4b4b4b;
-    font-weight: 600;
-    font-size: 18px;
-    margin-left: 5px;
+
+/* Título para as páginas de Cadastro e Login. */
+.Cadastroelogin {
+    text-align: center; /* Centraliza o texto. */
+    font-size: 2rem; /* Define o tamanho da fonte. */
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    margin-bottom: 1.5rem; /* Adiciona espaço abaixo. */
 }
-.user-profile {
-    padding: 0 24px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+
+/* Link para alternar entre login e cadastro. */
+.login-link {
+    text-align: center; /* Centraliza o texto. */
+    font-size: 1rem; /* Define o tamanho da fonte. */
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    margin-top: 1rem; /* Adiciona espaço acima. */
 }
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: white;
+
+/* ========================================================================== */
+/* ===== PÁGINAS DE PORTAL E DASHBOARD (ADMIN/USUÁRIO) ===== */
+/* ========================================================================== */
+
+/* Container para a página do portal de escolha de perfil. */
+.portal-container {
+    max-width: 900px; /* Define a largura máxima. */
+    margin: 5rem auto; /* Adiciona margem vertical e centraliza horizontalmente. */
+    padding: 2rem; /* Adiciona preenchimento. */
+    text-align: center; /* Centraliza o texto. */
 }
-.user-name {
-    color: #4b4b4b;
-    font-weight: 500;
+
+/* Container para as opções de perfil (os cartões). */
+.portal-opcoes {
+    display: flex; /* Ativa o Flexbox. */
+    justify-content: center; /* Centraliza os cartões. */
+    gap: 2rem; /* Adiciona espaço entre os cartões. */
+    flex-wrap: wrap; /* Permite que os cartões quebrem para a linha de baixo em telas menores. */
 }
-.navigation {
-    flex: 1;
-    padding: 0 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+
+/* Estilo para o cartão de seleção de perfil. */
+.cartao-perfil {
+    background-color: #fff; /* Define o fundo como branco. */
+    border: 1px solid #e0e0e0; /* Adiciona uma borda cinza. */
+    border-radius: 16px; /* Arredonda os cantos. */
+    padding: 2.5rem; /* Adiciona preenchimento. */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Adiciona uma sombra suave. */
+    width: 350px; /* Define uma largura fixa para o cartão. */
+    display: flex; /* Ativa o Flexbox. */
+    flex-direction: column; /* Organiza o conteúdo do cartão em uma coluna. */
 }
-.nav-button {
-    width: 100%;
-    height: 48px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
+
+.cartao-perfil h2 {
+    font-family: var(--fonte-principal); /* Usa a fonte principal. */
+    font-size: 1.5rem; /* Define o tamanho da fonte. */
+    color: var(--cor-primaria-azul); /* Define a cor do texto. */
+    margin-bottom: 1rem; /* Adiciona espaço abaixo. */
 }
+
+.cartao-perfil p {
+    font-size: 1rem; /* Define o tamanho da fonte. */
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    line-height: 1.6; /* Define a altura da linha. */
+    flex-grow: 1; /* Faz o parágrafo crescer para ocupar o espaço vertical disponível, empurrando os botões para baixo. */
+    margin-bottom: 2rem; /* Adiciona espaço abaixo. */
+}
+
+/* Container para os botões dentro do cartão de perfil. */
+.botoes-perfil {
+    display: flex; /* Ativa o Flexbox. */
+    flex-direction: column; /* Organiza os botões em uma coluna. */
+    gap: 1rem; /* Adiciona espaço entre os botões. */
+}
+
+/* Sobrescreve o estilo do botão alternativo para este contexto específico. */
+.cartao-perfil .botao-alternativo {
+    background-color: #fff; /* Fundo branco. */
+    color: var(--cor-primaria-azul); /* Texto azul. */
+    border: 2px solid var(--cor-primaria-azul); /* Borda azul. */
+}
+
+/* ---------------------------------- */
+/* ----- ESTILOS DO DASHBOARD ------- */
+/* ---------------------------------- */
+
+/* Container geral do dashboard (sidebar + conteúdo). */
+.container {
+    display: flex; /* Ativa o Flexbox. */
+    flex: 1; /* Faz o container crescer para ocupar o espaço disponível. */
+}
+
+/* Barra lateral (Sidebar) do dashboard. */
+.sidebar {
+    width: 256px; /* Define uma largura fixa. */
+    background: white; /* Define a cor de fundo. */
+    border-right: 1px solid #e0d8d8; /* Adiciona uma borda à direita. */
+    display: flex; /* Ativa o Flexbox. */
+    flex-direction: column; /* Organiza os itens da sidebar em coluna. */
+}
+
+/* Botão de navegação ativo na sidebar. */
 .nav-button.active {
-    background: var(--cor-primaria-azul);
-    color: white;
-    text-decoration: none;
+    background: var(--cor-primaria-azul); /* Define a cor de fundo. */
+    color: white; /* Define a cor do texto. */
+    text-decoration: none; /* Remove o sublinhado. */
 }
+
+/* Botão de navegação inativo na sidebar. */
 .nav-button.inactive {
-    background: transparent;
-    color: var(--cor-cinza-aco);
-    border: 1px solid #d8d8d8;
-    text-decoration: none;
+    background: transparent; /* Fundo transparente. */
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    border: 1px solid #d8d8d8; /* Adiciona uma borda. */
+    text-decoration: none; /* Remove o sublinhado. */
 }
+
+/* Efeito de hover para o botão inativo. */
 .nav-button.inactive:hover {
-    background: #f8f8f8;
+    background: #f8f8f8; /* Muda a cor de fundo. */
 }
-.sign-out {
-    padding: 24px;
-}
-.bottom-profile {
-    padding: 24px;
-    border-top: 1px solid #e0d8d8;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.bottom-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: white;
-}
-.profile-info {
-    display: flex;
-    flex-direction: column;
-}
-.profile-name {
-    color: var(--cor-cinza-aco);
-    font-weight: 500;
-    font-size: 14px;
-}
-.profile-email {
-    color: #acacac;
-    font-size: 12px;
-}
+
+/* Conteúdo principal à direita da sidebar. */
 .main-content {
-    flex: 1;
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
+    flex: 1; /* Faz esta área ocupar todo o espaço horizontal restante. */
+    padding: 32px; /* Adiciona preenchimento. */
+    display: flex; /* Ativa o Flexbox. */
+    flex-direction: column; /* Organiza o conteúdo em coluna. */
 }
-.content-wrapper {
-    flex: 1;
-}
+
+/* Título principal do conteúdo do dashboard. */
 .main-title {
-    color: var(--cor-cinza-aco);
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 32px;
+    color: var(--cor-cinza-aco); /* Define a cor do texto. */
+    font-size: 24px; /* Define o tamanho da fonte. */
+    font-weight: 600; /* Define a espessura da fonte. */
+    margin-bottom: 32px; /* Adiciona espaço abaixo. */
 }
-/* Estatísticas (Dashboard Admin) */
+
+/* Grid para os cartões de estatísticas. */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 48px;
+    display: grid; /* Ativa o layout Grid. */
+    grid-template-columns: repeat(3, 1fr); /* Cria três colunas de largura igual. */
+    gap: 24px; /* Adiciona espaço entre os cartões. */
+    margin-bottom: 48px; /* Adiciona espaço abaixo. */
 }
+
+/* Estilo padrão para um cartão de estatística. */
 .stat-card {
-    background: white;
-    border: 1px solid #d8d8d8;
-    border-radius: 12px;
-    padding: 24px;
+    background: white; /* Fundo branco. */
+    border: 1px solid #d8d8d8; /* Borda cinza. */
+    border-radius: 12px; /* Arredonda os cantos. */
+    padding: 24px; /* Adiciona preenchimento. */
 }
+
+/* Estilo para um cartão de estatística em destaque. */
 .stat-card.highlighted {
-    background: var(--cor-primaria-azul);
-    border-color: var(--cor-primaria-azul);
+    background: var(--cor-primaria-azul); /* Fundo azul. */
+    border-color: var(--cor-primaria-azul); /* Borda azul. */
 }
-.stat-title {
-    color: var(--cor-cinza-aco);
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 16px;
-    line-height: 1.4;
-}
+
+/* Muda a cor do texto para branco no cartão em destaque. */
 .stat-card.highlighted .stat-title,
 .stat-card.highlighted .stat-value {
-    color: white;
-}
-.stat-value {
-    color: var(--cor-cinza-aco);
-    font-size: 36px;
-    font-weight: 700;
+    color: white; /* Define a cor do texto como branca. */
 }
 
-.chart-section {
-    margin-bottom: 40px;
-}
-.chart-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-}
-.chart-title {
-    color: var(--cor-cinza-aco);
-    font-size: 20px;
-    font-weight: 600;
-}
-.filter-select {
-    width: 192px;
-    height: 40px;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    padding: 0 12px;
-    background: white;
-    color: var(--cor-cinza-aco);
-    font-size: 14px;
-}
-.chart-container {
-    background: white;
-    border: 1px solid #d8d8d8;
-    border-radius: 12px;
-    padding: 24px;
-}
-.chart {
-    height: 180px;
-    display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 0 16px;
-}
-.chart-bar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.bar-value {
-    color: var(--cor-primaria-azul);
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: block;
-    text-align: center;
-    min-height: 18px;
-}
-.bar {
-    background: var(--cor-primaria-azul);
-    border-radius: 4px 4px 0 0;
-    width: 100%;
-    min-height: 20px;
-    transition: background 0.3s;
-}
-.bar:hover {
-    background: var(--cor-primaria-azul);
-}
-.bar-label {
-    color: var(--cor-cinza-aco);
-    font-size: 12px;
-    margin-top: 25px;
-    text-align: center;
-    transform-origin: center;
-    white-space: nowrap;
-}
+/* ========================================================================== */
+/* ===== AJUSTES PARA TELAS MENORES (RESPONSIVIDADE) ===== */
+/* ========================================================================== */
 
-.table-container {
-    background: white;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    overflow-x: auto;
-    max-width: 100%;
-    margin-bottom: 64px;
-}
-.table {
-    display: table;
-    width: 100%;
-    border-collapse: collapse;
-}
-.table-header {
-    display: table-row;
-    background-color: #faf7f3;
-    border-bottom: 1px solid #d8d8d8;
-    font-weight: 500;
-}
-.table-row {
-    display: table-row;
-    border-bottom: 1px solid #d8d8d8;
-}
-.table-row:last-child {
-    border-bottom: none;
-}
-.table-cell {
-    display: table-cell;
-    padding: 16px;
-    color: var(--cor-primaria-azul);
-    font-weight: 500;
-    font-size: 14px;
-    vertical-align: middle;
-    text-align: center;
-}
-.table-header .table-cell {
-    color: var(--cor-cinza-aco);
-    font-weight: 600;
-    background-color: #faf7f3;
-}
-.actions {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-}
-.btn-edit, .btn-delete {
-    border: none;
-    padding: 4px 16px;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-edit {
-    background-color: var(--cor-primaria-azul);
-    color: white;
-}
-.btn-edit:hover {
-    background-color: var(--cor-primaria-azul);
-}
-.btn-delete {
-    background-color: transparent;
-    color:var(--cor-primaria-azul);
-    border: 1px solid #d8d8d8;
-}
-.btn-delete:hover {
-    background-color: #faf7f3;
-}
-
-.form-container {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 0;
-}
-.form-card {
-    width: 100%;
-    max-width: 448px;
-    background: white;
-    border: 1px solid #d8d8d8;
-    border-radius: 8px;
-    padding: 32px;
-}
-.form-card h1 {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--cor-primaria-azul);
-    text-align: center;
-    margin-bottom: 32px;
-}
-.form-group {
-    margin-bottom: 24px;
-}
-.form-group label {
-    display: block;
-    color: var(--cor-cinza-aco);
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-.form-input,
-.form-select,
-.form-static-user {
-    width: 100%;
-    height: 40px;
-    border: 1px solid var(--cor-primaria-azul);
-    border-radius: 4px;
-    padding: 0 12px;
-    font-size: 14px;
-}
-.form-input:focus,
-.form-select:focus {
-    outline: none;
-    border-color: var(--cor-primaria-azul);
-    box-shadow: 0 0 0 2px rgba(82, 108, 239, 0.1);
-}
-.form-static-user {
-    background: #f8f8f8;
-    color: var(--cor-cinza-aco);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-}
-.form-actions {
-    display: flex;
-    gap: 16px;
-    margin-top: 32px;
-}
-.btn-primary,
-.btn-secondary {
-    flex: 1;
-    height: 48px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.btn-primary {
-    background-color: white;
-    border: 1px solid var(--cor-primaria-azul);
-    color: var(--cor-primaria-azul);
-}
-.btn-primary:hover {
-    background-color: #f0f0f0;
-}
-.btn-secondary {
-    background-color: var(--cor-primaria-azul);
-    border: 1px solid var(--cor-primaria-azul);
-    color: white;
-}
-.btn-secondary:hover {
-    background-color: var(--cor-primaria-azul);
-}
-
-.sidebar.usuario {
-    width: 192px;
-}
-.sidebar.usuario .nav-menu {
-    margin-bottom: 16px;
-}
-.nova-simulacao-btn {
-    width: 100%;
-    background-color: var(--cor-primaria-azul);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-bottom: 16px;
-    transition: background-color 0.2s;
-}
-.nova-simulacao-btn:hover {
-    background-color: var(--cor-primaria-azul);
-}
-.user-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: #d8d8d8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--cor-cinza-aco);
-    font-size: 12px;
-    font-weight: 500;
-}
-.main-content.usuario {
-    padding: 24px;
-    padding-bottom: 80px; /
-}
-.section-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--cor-cinza-aco);
-    margin-bottom: 24px;
-}
-.cards-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 32px;
-}
-.cards-grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px;
-}
-.card {
-    padding: 24px;
-    border-radius: 12px;
-}
-.card.blue {
-    background-color: var(--cor-primaria-azul);
-    color: white;
-}
-.card.dark {
-    background-color: var(--cor-cinza-aco);
-    color: white;
-}
-.card.white {
-    background-color: white;
-    border: 1px solid #d8d8d8;
-    color: var(--cor-cinza-aco);
-}
-.card-title {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
-}
-.card-value {
-    font-size: 30px;
-    font-weight: bold;
-}
-.card-value.medium { font-size: 24px; }
-.card-value.small { font-size: 18px; font-weight: 600; }
-.loans-section {
-    margin-top: 32px;
-}
-.loans-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--cor-cinza-aco);
-    margin-bottom: 24px;
-}
-
-.bottom-nav {
-    background: var(--cor-azul-escuro);
-    padding: 24px;
-}
-.bottom-nav-container {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-    max-width: 1300px;
-    margin: 0 auto;
-}
-.bottom-nav-button {
-    flex: 1;
-    height: 48px;
-    background: white;
-    color: #0e1a47;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-.bottom-nav-button:hover {
-    background: #f0f0f0;
-}
-
-
-
-p {
-    font-size: 1.4rem;
-}
-
-
-
-.logo img {
-    height: 40px;
-    width: auto;
-    vertical-align: middle;
-}
-
-.navegacao-principal ul {
-    display: flex;
-    list-style: none;
-    gap: 1.5rem;
-}
-
-.navegacao-principal a {
-    color: white;
-    font-weight: 600;
-    font-size: 1.1rem;
-    transition: opacity 0.3s ease;
-}
-
-.navegacao-principal a:hover {
-    opacity: 0.8;
-}
-
-.botao-entrar {
-    background-color: white;
-    color: var(--cor-cinza-aco);
-    padding: 0.75rem 1.75rem;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-.botao-entrar:hover {
-    background-color: #f0f0f0;
-}
-
-
+/* Menu Hambúrguer (ícone para abrir o menu em telas pequenas). */
 .menu-hamburguer {
-    display: none;
-    flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer;
+    display: none; /* Escondido por padrão em telas maiores. Será exibido em telas menores via Media Query. */
+    flex-direction: column; /* Organiza as barras do ícone em coluna. */
+    background: none; /* Sem cor de fundo. */
+    border: none; /* Sem borda. */
+    cursor: pointer; /* Cursor de mão. */
 }
 
+/* Barras do ícone de hambúrguer. */
 .menu-hamburguer span {
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 3px 0;
-    transition: 0.3s;
+    width: 25px; /* Largura da barra. */
+    height: 3px; /* Altura da barra. */
+    background: white; /* Cor da barra. */
+    margin: 3px 0; /* Espaçamento vertical entre as barras. */
+    transition: 0.3s; /* Transição suave para animações (ex: transformar em 'X'). */
 }
 
+/* O menu que abre ao clicar no hambúrguer. */
 .menu-mobile {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--cor-azul-escuro);
-    z-index: 2000;
-    padding: 2rem;
+    display: none; /* Escondido por padrão. */
+    position: fixed; /* Fica fixo na tela, cobrindo todo o conteúdo. */
+    top: 0; /* Alinha no topo. */
+    left: 0; /* Alinha à esquerda. */
+    width: 100%; /* Largura total da tela. */
+    height: 100%; /* Altura total da tela. */
+    background: var(--cor-azul-escuro); /* Cor de fundo. */
+    z-index: 2000; /* Z-index alto para ficar sobre todos os outros elementos. */
+    padding: 2rem; /* Adiciona preenchimento. */
 }
 
+/* NOTA: Para a responsividade funcionar, você precisará adicionar Media Queries. 
+      Uma Media Query aplica estilos apenas quando certas condições são atendidas (como a largura da tela).
+      Exemplo de como ativar o menu hambúrguer em telas com até 768px de largura:
 
-.secao-apresentacao {
-    position: relative;
-    height: 90vh;
-    color: var(--cor-bege-claro);
-    display: grid;
-    place-items: center;
-    overflow: hidden;
+@media (max-width: 768px) {
+    .navegacao-principal {
+        display: none; // Esconde o menu de navegação normal.
+    }
+    .menu-hamburguer {
+        display: flex; // Mostra o ícone do hambúrguer.
+    }
+    .painel-guia, .painel-beneficios, .container-contato {
+        grid-template-columns: 1fr; // Faz os grids terem apenas uma coluna para empilhar os itens.
+    }
 }
+*/
 
-.fundo-apresentacao {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-image: url('../img/Banner da home.png');
-    background-size: cover;
-    background-position: center;
-    filter: blur(4px);
-    transform: scale(1.05);
-}
-
-.secao-apresentacao::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(14, 26, 71, 0.6);
-    z-index: -1;
-}
-
-.conteudo-apresentacao {
-    text-align: center;
-    animation: fadeIn 1s ease-in-out;
-}
-
-.conteudo-apresentacao h1 {
-    color: white;
-    font-family: var(--fonte-destaque);
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-
-.conteudo-apresentacao h1 strong {
-    color: var(--cor-primaria-azul);
-}
-
-.conteudo-apresentacao p {
-    font-family: var(--fonte-principal);
-    font-size: clamp(1rem, 2vw, 1.2rem);
-    max-width: 600px;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-    color: white;
-}
-
-.botoes-apresentacao {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.botao {
-    padding: 0.8rem 2rem;
-    border-radius: 8px;
-    font-weight: bold;
-    font-family: var(--fonte-principal);
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    font-size: 1rem;
-}
-
-.botao.botao-destaque {
-    background-color: var(--cor-primaria-azul);
-    color: var(--cor-bege-claro);
-}
-
-.botao.botao-destaque:hover {
-    filter: brightness(1.2);
-    transform: translateY(-2px);
-}
-
-.botao.botao-alternativo {
-    background-color: transparent;
-    color: var(--cor-bege-claro);
-    border: 2px solid var(--cor-bege-claro);
-}
-
-.botao.botao-alternativo:hover {
-    background-color: var(--cor-bege-claro);
-    color: var(--cor-azul-escuro);
-    transform: translateY(-2px);
-}
-
-/* @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-} */
-
-/* ===== SEÇÕES DE CONTEÚDO ===== */
-.secao-sobre-nos, .secao-guia {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-    text-align: center;
-}
-
-.secao-sobre-nos h2, .secao-guia h2 {
-    color: var(--cor-primaria-azul);
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-}
-
-.secao-sobre-nos p, .secao-guia .subtitulo {
-    color: var(--cor-cinza-aco);
-    font-size: 1.5rem;
-    line-height: 1.7;
-}
-
-.secao-sobre-nos p strong {
-    color: var(--cor-primaria-azul);
-    font-weight: 700;
-}
-
-.secao-guia .subtitulo {
-    margin-bottom: 3rem;
-}
-
-.painel-guia {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    text-align: left;
-}
-
-.cartao-guia {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.cartao-guia:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.cartao-guia h3 {
-    color: var(--cor-primaria-azul);
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.cartao-guia p {
-    color: var(--cor-cinza-aco);
-    line-height: 1.6;
-    font-size: 1.2rem;
-}
-
-.cartao-guia strong {
-    color: var(--cor-primaria-azul);
-    font-weight: 700;
-}
-
-.cartao-guia.cartao-destaque {
-    background-color: var(--cor-primaria-azul);
-    color: var(--cor-bege-claro);
-    border-color: var(--cor-primaria-azul);
-}
-
-.cartao-guia.cartao-destaque h3,
-.cartao-guia.cartao-destaque p {
-    color: var(--cor-bege-claro);
-}
-
-/* ===== SEÇÃO BENEFÍCIOS ===== */
-.secao-beneficios {
-    background-color: var(--cor-azul-escuro);
-    padding: 5rem 2rem;
-    font-family: var(--fonte-principal);
-}
-
-.conteudo-beneficios {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    padding: 3rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.conteudo-beneficios h2 {
-    color: white;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
-}
-
-.painel-beneficios {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-}
-
-.cartao-beneficio {
-    background-color: rgba(255, 255, 255, 0.08);
-    padding: 2rem 1.5rem;
-    border-radius: 16px;
-    color: var(--cor-bege-claro);
-    line-height: 1.6;
-}
-
-/* ===== SEÇÃO CONTATO ===== */
-.secao-contato {
-    padding: 5rem 2rem;
-    background-color: #f8f9fa;
-}
-
-.container-contato {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
-}
-
-.informacoes-contato, .cartao-formulario {
-    background-color: #fff;
-    padding: 2.5rem;
-    border: 1px solid var(--cor-primaria-azul);
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.informacoes-contato h3, .cartao-formulario h3 {
-    font-size: 1.8rem;
-    color: var(--cor-primaria-azul);
-    margin-bottom: 2rem;
-}
-
-.item-informacao {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.icone-informacao {
-    width: 24px;
-    height: 24px;
-    flex-shrink: 0;
-    font-size: 1.2rem;
-}
-
-.item-informacao p {
-    color: var(--cor-cinza-aco);
-    font-family: var(--fonte-principal);
-    font-size: 1.2rem;
-    line-height: 1.7;
-}
-
-.item-informacao p strong {
-    color: var(--cor-primaria-azul);
-}
-
-.grupo-formulario {
-    margin-bottom: 1.5rem;
-}
-
-.grupo-formulario label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--cor-primaria-azul);
-    font-weight: 600;
-}
-
-.grupo-formulario input,
-.grupo-formulario textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.grupo-formulario input:focus,
-.grupo-formulario textarea:focus {
-    outline: none;
-    border-color: var(--cor-primaria-azul);
-    box-shadow: 0 0 0 3px rgba(31, 104, 254, 0.2);
-}
-
-.botao-enviar {
-    width: 100%;
-    padding: 1rem;
-    background-color: var(--cor-primaria-azul);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: filter 0.3s ease;
-}
-
-.botao-enviar:hover {
-    filter: brightness(1.15);
-}
-
-/* ===== FOOTER ===== */
-footer {
-    background-color: var(--cor-azul-escuro);
-    color: #fff;
-    padding: 2.5rem 2rem 1.5rem;
-}
-
-.conteudo-rodape {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-}
-
-.icones-sociais {
-    display: flex;
-    gap: 1rem;
-}
-
-.icones-sociais a img {
-    width: 38px;
-    transition: opacity 0.3s ease;
-}
-
-.icones-sociais a:hover img {
-    opacity: 0.8;
-}
-
-.direitos-autorais {
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 1.5rem;
-    font-size: 0.9rem;
-    color: #adb5bd;
-}
-
-.menu-mobile {
-    display: none;
-}

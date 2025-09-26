@@ -39,11 +39,7 @@
         height: auto;
     }
     .logo {
-        width: 40px;
-        height: 40px;
-        display: block !important; 
-        margin-left: auto;
-        height: auto;
+      display: none;
     }
     .botao-entrar {
         background: #fff;
@@ -69,6 +65,8 @@
         border: none;
         cursor: pointer;
         z-index: 101;
+        margin-right: auto; 
+        order: 1; 
     }
     .menu-hamburguer span {
         display: block;
