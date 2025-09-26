@@ -317,6 +317,21 @@ body {
     transition: all 0.2s;
 }
 
+    .btn-secondary a {
+        color: white !important;
+        text-decoration: none !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        font-size: inherit !important;
+        font-weight: inherit !important;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+    }
+
 .btn-primary {
     background-color: white;
     border: 1px solid #526cef;
@@ -508,20 +523,20 @@ body {
     background: var(--text-2);
 }
 
-/* Base para botões grandes */
+
 .btn-lg {
     min-width: 12.9rem;
     height: 65px;
     border-radius: 9px;
     font-weight: 700;
-    font-size: 1.25rem; /* Convertido para rem */
+    font-size: 1.25rem;
     text-align: center;
     padding: 0 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* Botão primário grande (fundo azul, texto branco) */
+
 .btn-primary.btn-lg {
     background-color: var(--primary);
     color: white;
@@ -1162,3 +1177,175 @@ body {
     justify-content: center;
     font-weight: 500;
 }
+
+.panel {
+    padding: 20px;
+    background: transparent;
+    min-height: calc(100vh - 115px - 178px);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    background: #fff;
+    margin: 10px;
+    margin-left: 20px;
+    width: calc(100% - 276px); /* Largura total menos sidebar */
+}
+
+.panel-title {
+    font-size: 24px; /* Reduzido de 32px */
+    font-weight: 700;
+    margin: 0 0 15px; /* Reduzido o margin */
+}
+
+.balance {
+    margin: 15px 0 20px; /* Reduzido o margin */
+    border: 2px solid var(--blue-primary);
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 12px rgba(82, 108, 239, 0.10);
+    padding: 20px 30px; /* Reduzido o padding */
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 1.2rem; /* Reduzido de 1.5rem */
+    font-weight: 600;
+    color: var(--blue-secondary);
+    justify-content: center;
+}
+
+.balance .label {
+    color: var(--gray-text);
+    font-weight: 500;
+    font-size: 1.1rem; /* Reduzido de 1.2rem */
+}
+
+.balance .value {
+    color: var(--blue-secondary);
+    font-weight: 700;
+    font-size: 1.3rem; /* Reduzido de 1.5rem */
+}
+
+.actions-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.cta {
+    font-size: 16px; 
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    padding: 12px 24px; 
+    cursor: pointer;
+    border: solid 1px ;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.table-wrap {
+    border: 1px solid var(--blue-primary);
+    background: var(--cream);
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    margin-top: 20px; 
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--cream);
+    min-width: 600px; 
+}
+
+.table thead th {
+    text-align: left;
+    padding: 12px 16px; 
+    border-bottom: 2px solid var(--blue-primary);
+    color: var(--blue-secondary);
+    font-weight: 700;
+    font-size: 16px; 
+    background: transparent;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 12px 16px; 
+    color: var(--blue-primary);
+    font-size: 14px;
+    border-bottom: 1px solid var(--blue-primary);
+    background: var(--cream);
+    vertical-align: middle;
+}
+
+.th-center {
+    text-align: center;
+}
+
+.td-actions {
+    display: flex;
+    gap: 8px; 
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.chip {
+    min-width: 80px; 
+    height: 35px; 
+    border-radius: var(--radius-sm);
+    border: 2px solid var(--blue-secondary);
+    font-size: 14px; 
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    padding: 0 12px;
+}
+
+.chip-primary {
+    background: var(--blue-secondary);
+    color: #fff;
+    border: 2px solid var(--blue-secondary);
+}
+
+.chip-primary:hover {
+    background: var(--blue-primary);
+    border-color: var(--blue-primary);
+}
+
+.chip-outline {
+    background: #fff;
+    color: var(--blue-secondary);
+    border: 2px solid var(--blue-secondary);
+}
+
+.chip-outline:hover {
+    background: var(--blue-secondary);
+    color: #fff;
+}
+
+.btn a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+
+    
+}
+
+.btn:hover a {
+    color: inherit;
+}
+
+
+
+.actions-row button a{
+    text-decoration: none;
+    color: inherit;
+}
+
+.chip-primary{
+    text-decoration: none;
+    color: inherit;
+}
+

@@ -3,11 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/js/app.js">
     <link rel="shortcut icon" href="assets/img/Icon da logo.png">
+    <link rel="stylesheet" href="assets/css/responsivo.css">
     <link rel="stylesheet" href="assets/css/dashboard de todo.css">
     <title>Editar Taxa</title>
 </head>
-<body>
+<body class="dashboard-admin">
+    <header class="cabecalho-principal">
+        <a href="index.html">
+            <img class="logo-icon" src="assets/img/Logo_redondo.png" alt="Looma">
+        </a>
+
+        <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="menu-mobile" id="menuMobile">
+            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
+            
+            <ul>
+                <li><a href="dashboard_admin.html" class="nav-link active" data-section="painel">Painel</a></li>
+                <li><a href="tabela_juro_admin.html" class="nav-link" data-section="taxa-juros">Taxa de Juros</a></li>
+                <li><a href="nova_taxa.html" class="nav-link" data-section="nova-taxa">+ Nova Taxa</a></li>
+                <li><a href="login.html" class="nav-link">Sair da Conta</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="container">
         <div class="sidebar">
             <div class="logo">
@@ -16,18 +41,22 @@
                 </div>
                 <span class="logo-text">Looma</span>
             </div>
+
             <div class="user-profile">
                 <img src="assets/img/user.png" alt="Avatar" class="avatar">
                 <span class="user-name">Olá, Caique Fachini</span>
             </div>
+
             <div class="navigation">
-                <button class="nav-button active"><a href="dashboard_admin.html">Painel</a></button>
-                <button class="nav-button inactive"><a href="tabela_juro_admin.html">Taxa de Juros</a></button>
-                <button class="nav-button inactive"><a href="nova_taxa.html">+ Nova Taxa</a></button>
+                <button class="nav-button active" data-section="painel"> <a href="dashboard_admin.html">Painel</a></button>
+                <button class="nav-button inactive" data-section="taxa-juros"> <a href="tabela_juro_admin.html">Taxa de Juros</a></button>
+                <button class="nav-button inactive" data-section="nova-taxa"> <a href="nova_taxa.html">+ Nova Taxa</a></button>
             </div>
+
             <div class="sign-out">
-                <button class="nav-button inactive">Sair da Conta</button>
+                <button class="nav-button inactive"> <a href="index.html">Sair da Conta</a></button>
             </div>
+
             <div class="bottom-profile">
                 <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
                 <div class="profile-info">
@@ -35,7 +64,8 @@
                     <div class="profile-email">caique@email.com</div>
                 </div>
             </div>
-        </div>
+        </div> 
+
         <div class="main-content">
             <div class="form-container">
                 <div class="form-card">
@@ -59,19 +89,41 @@
                         </div>
                         <div class="form-actions">
                             <button type="button" class="btn-primary">Cancelar</button>
-                            <button type="submit" class="btn-secondary"><a href="tabela_juro_admin.html">Salvar</a></button>
+                           <button type="submit" class="btn-secondary"><a href="tabela_juro_admin.html">Salvar</a></button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <footer class="bottom-nav">
-        <div class="bottom-nav-container">
-            <button class="bottom-nav-button"><a href="dashboard_admin.html">Painel</a></button>
-            <button class="bottom-nav-button"><a href="tabela_juro_admin.html">Taxa de Juros</a></button>
-            <button class="bottom-nav-button"><a href="nova_taxa.html">+ Nova Taxa</a></button>
+
+    <footer class="footer-desktop">
+        <div class="bottom-nav">
+            <div class="bottom-nav-container">
+                <button class="bottom-nav-button"> <a href="dashboard_admin.html">Painel</a></button>
+                <button class="bottom-nav-button"> <a href="tabela_juro_admin.html">Taxa de Juros</a></button>
+                <button class="bottom-nav-button"> <a href="nova_taxa.html">+ Nova Taxa</a></button>
+            </div>
         </div>
     </footer>
+
+    <footer class="footer-mobile">
+        <div class="conteudo-rodape">
+            <a href="index.html" class="logo-rodape">
+                <img width="150" src="assets/img/Logo do footer.png" alt="Logo Looma">
+            </a>
+            <div class="icones-sociais">
+                <a href="#"><img src="assets/img/FACEBOOK.png" alt="Facebook"></a>
+                <a href="#"><img src="assets/img/WHATSAPP.png" alt="WhatsApp"></a>
+                <a href="#"><img src="assets/img/INSTAGRAM.png" alt="Instagram"></a>
+                <a href="#"><img src="assets/img/TWITTER.png" alt="Twitter"></a>
+            </div>
+        </div>
+        <div class="direitos-autorais">
+            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
