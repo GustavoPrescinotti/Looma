@@ -15,8 +15,8 @@
 </head>
 
 <body>
-    <header class="flex gap-medio justify-center align-center">
-        <div class="container flex between align-center">
+    <header class="flex align-center justify-center">
+        <div class="container flex between justify-center align-center">
             <div>
                 <!-- LEMBRAR DE FAZER SURGIR PROS MOBILE -->
                 <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
@@ -39,7 +39,7 @@
                 <a href="#contato">Contato</a></li>
             </nav>
 
-            <a href="loginEmpresario.html" class="btn btn2-primary black">Login</a>
+            <a href="loginEmpresario.html" class="btn btn3-primary black">Login</a>
 
             <nav class="menu-mobile" id="menuMobile">
                 <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
@@ -68,14 +68,14 @@
                 </div>
                 <div class="botoes-apresentacao flex wrap justify-center gap-medio">
                     <a href="LoginADM.html" class="btn btn1-primary black">Sou Administrador</a>
-                    <a href="loginEmpresario.html" class="btn btn2-primary black">Sou Empresário</a>
+                    <a href="loginEmpresario.html" class="btn btn3-primary black">Sou Empresário</a>
                 </div>
             </div>
         </section>
 
         <section id="quem-somos" class="quem-somos flex align-center justify-center">
             <div class="container flex column justify-center align-center gap-medio">
-                <p class="titulo destaque bold">Quem somos nós?</p>
+                <p class="titulo destaque bold align-text">Quem somos nós?</p>
                 <p class="align-text">Na <strong class="destaque">Looma</strong>, acreditamos que toda pequena empresa merece crescer com
                     segurança e clareza
                     financeira. Somos mais do que uma plataforma de gestão, somos o parceiro estratégico que
@@ -86,7 +86,7 @@
 
         <section id="guia" class="secao-guia flex align-center justify-center">
             <div class="container flex column justify-center align-center gap-medio">
-                <p class="titulo destaque bold">Guia para os Novos Usuários</p>
+                <p class="titulo destaque bold align-text">Guia para os Novos Usuários</p>
                 <p class="subtitulo">Um guia rápido para aproveitar ao máximo nossa plataforma</p>
 
                 <div class="cards flex gap-minimo wrap justify-center">
@@ -133,49 +133,59 @@
             </div>
         </section>
 
-        <section id="contato" class="secao-contato">
-            <div class="container-contato">
-                <div class="informacoes-contato">
-                    <h3>Canais de Atendimento:</h3>
+        <section id="contato" class="secao-contato flex align-center justify-center">
+            <div class="container flex justify-center gap-medio">
+                <!-- INFORMAÇÕES DE CONTATO -->
+                <div class="contatos card flex column gap-medio">
+                    <p class="subtitulo bold destaque">Canais de Atendimento</p>
                     <div class="item-informacao">
-                        <div class="icone-informacao">📞</div>
-                        <p><strong>Telefone:</strong><br>(11) 3456-7890<br>(11) 99876-5432 (WhatsApp)</p>
+                        <p class="bold">Telefone</p>
+                        <ul>
+                            <li>(11) 3456-7890</li>
+                            <li>(11) 99876-5432 <span class="bold">(WhatsApp)</span></li>
+                        </ul>
                     </div>
                     <div class="item-informacao">
-                        <div class="icone-informacao">📧</div>
-                        <p><strong>Email:</strong><br>contato@loomagestor.com.br<br>suporte@gestorlooma.com.br</p>
+                        <p class="bold">Email</p>
+                        <ul>
+                            <li>contato@loomagestor.com.br</li>
+                            <li>suporte@gestorlooma.com.br</li>
+                        </ul>
                     </div>
                     <div class="item-informacao">
-                        <div class="icone-informacao">⏰</div>
-                        <p><strong>Horário de Atendimento:</strong><br>Segunda a Sexta: 8h às 18h<br>Sábado: 9h às 13h
-                        </p>
+                        <p class="bold">Horário de Atendimento</p>
+                        <!-- MUDANDO PRA LISTA PRA FICAR MAIS SEMÂTICO -->
+                        <ul>
+                            <li>Segunda a Sexta: 8h às 18h</li>
+                            <li>Sábado: 9h às 13h</li>
+                        </ul>
                     </div>
                     <div class="item-informacao">
-                        <div class="icone-informacao">🏢</div>
-                        <p><strong>Endereço:</strong><br>Av. Paulista, 1234 - Bela Vista<br>São Paulo - SP, 01310-100
-                        </p>
+                        <p><strong>Endereço</strong><br>Av. Paulista, 1234 - Bela Vista<br>São Paulo - SP, 01310-100
+                    </p>
                     </div>
                 </div>
-                <div class="cartao-formulario">
-                    <h3>Envie uma Mensagem:</h3>
-                    <form class="formulario-contato">
+                <!-- FORMULÁRIO DE MENSAGEM -->
+                <div class="contatos card flex column gap-medio">
+                    <p class="subtitulo bold destaque">Envie uma Mensagem</p>
+                    <form class="formulario-contato flex column gap-minimo" action="#" method="post">
                         <div class="grupo-formulario">
-                            <label for="name">Nome:</label>
+                            <label for="name" class="bold">Nome</label>
                             <input type="text" id="name" name="name" required>
                         </div>
                         <div class="grupo-formulario">
-                            <label for="email">Email:</label>
+                            <label for="email" class="bold">Email</label>
                             <input type="email" id="email" name="email" required>
                         </div>
                         <div class="grupo-formulario">
-                            <label for="phone">Telefone:</label>
+                            <label for="phone" class="bold">Telefone</label>
                             <input type="tel" id="phone" name="phone">
                         </div>
                         <div class="grupo-formulario">
-                            <label for="message">Mensagem:</label>
+                            <label for="message" class="bold">Mensagem</label>
                             <textarea id="message" name="message" rows="4" required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary black">Enviar Mensagem</button>
+                        <button type="submit" class="btn btn1-primary black">Enviar</button>
                     </form>
                 </div>
             </div>
@@ -183,20 +193,30 @@
     </main>
 
     <footer>
-        <div class="conteudo-rodape">
-            <a href="index.html" class="logo-rodape">
-                <img width="150" src="/static/img/Logo do footer.png" alt="Logo Looma">
-            </a>
-            <div class="icones-sociais">
-                <a href="#"><img src="/static/img/FACEBOOK.png" alt="Facebook"></a>
-                <a href="#"><img src="/static/img/WHATSAPP.png" alt="WhatsApp"></a>
-                <a href="#"><img src="/static/img/INSTAGRAM.png" alt="Instagram"></a>
-                <a href="#"><img src="/static/img/TWITTER.png" alt="Twitter"></a>
+        <section id="footer" class="secao-beneficios flex align-center justify-center">
+            <div class="container flex column justify-center align-center gap-medio">
+                <!-- PARTE DE CIMA DO RODAPÉ -->
+                <div class="footer-top flex align-center between">
+                    <!-- AQUI FICA A LOGO DO LADO ESQUERDO -->
+                    <a href="#" class="logo-rodape">
+                        <img width="150" src="/static/img/logo.png" alt="Logo Looma">
+                    </a>
+
+                    <!-- REDES SOCIAIS OU LINKS EXTERNOS -->
+                    <div class="icones-sociais flex gap-minimo">
+                        <a href="#"><img src="/static/img/FACEBOOK.png" alt="Facebook"></a>
+                        <a href="#"><img src="/static/img/WHATSAPP.png" alt="WhatsApp"></a>
+                        <a href="#"><img src="/static/img/INSTAGRAM.png" alt="Instagram"></a>
+                        <a href="#"><img src="/static/img/TWITTER.png" alt="Twitter"></a>
+                    </div>
+                </div>
+                
+                <!-- PARTE DE BAIXO -->
+                <div class="direitos-autorais copy">
+                    <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
+                </div>
             </div>
-        </div>
-        <div class="direitos-autorais">
-            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
-        </div>
+        </section>
     </footer>
 </body>
 

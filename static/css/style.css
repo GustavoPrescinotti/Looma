@@ -14,9 +14,12 @@
     --header-heigth: 5rem;
 
     /* VARIÁVEIS DE COR */
-    --cor-primaria: #080808; /*#1F68FE*/
+    --cor-primaria: #1F68FE; /*#1F68FE*/
     --cor-hover: #6397ff;
     --cor-branco: #ffffff;
+    --cor-terciaria: #0f0f0f;
+    --cor-form: #bebebe;
+    --cor-alt: #0E1A47;
 
     --cor-fundo: #ffffff;
     --cor-fundo-escuro: #404040;
@@ -32,15 +35,22 @@
     --cor-botao2-primary: var(--cor-fundo);
     --cor-botao2-outline: var(--cor-primaria);
     --cor-botao2-hover: var(--cor-primaria);
+
+    /* PARA OS BOTÕES DO TIPO 3 - CINZA */
+    --cor-botao3-primary: var(--cor-terciaria);
+    --cor-botao3-outline: var(--cor-terciaria);
+    --cor-botao3-hover: var(--cor-invisivel);
 }
 
 /* TAGS DA ESTRUTURA */
 html {
+    overflow-x: hidden;
     gap: 16px;
     font-size: 16px;
 }
 
 body {
+    overflow-x: hidden;
     background-color: var(--cor-fundo);
 }
 
@@ -49,6 +59,7 @@ header {
     height: var(--header-heigth);
     background-color: var(--cor-primaria);
     position: fixed;
+    z-index: 1;
 }
 
 header a {
@@ -66,6 +77,10 @@ main {
 
 section {
     padding: 1.25rem;
+}
+
+textarea {
+    resize: none;
 }
 
 /* TAGS DE ORGANIZAÇÃO E RESPONSIVIDADE */
@@ -91,7 +106,11 @@ section {
 }
 
 .between {
-    justify-content: space-between;
+    justify-content: space-between !important;
+}
+
+.align-between {
+    align-items: space-between !important;
 }
 
 .align-text {
@@ -103,7 +122,7 @@ section {
 }
 
 .gap-minimo {
-    gap: 1rem;
+    gap: .8rem;
 }
 
 .gap-medio {
@@ -115,6 +134,10 @@ section {
 }
 
 /* ALTERAÇÕES DE TEXTO */
+.invert {
+    filter: invert(100%);
+}
+
 .bold {
     font-weight: 700;
 }
@@ -125,6 +148,10 @@ section {
 
 .destaque {
     color: var(--cor-primaria);
+}
+
+.destaque-2 {
+    color: var(--cor-terciaria);
 }
 
 .titulo {
@@ -160,22 +187,46 @@ section {
     color: var(--cor-botao2-hover)
 }
 
+.btn3-primary {
+    background-color: var(--cor-botao3-primary);
+    outline-color: var(--cor-botao3-primary);
+    color: var(--cor-branco)
+}
+
 /* AÇÕES DO BOTÃO */
 .btn1-primary:hover {
     background-color: var(--cor-botao1-hover);
-    color: var(--cor-botao1-primary);
+    /* box-shadow: 0 0 2em var(--cor-botao1-primary); */
 }
 
 .btn2-primary:hover {
     background-color: var(--cor-botao2-hover);
     color: var(--cor-botao2-primary);
+    /* box-shadow: 0 0 2em var(--cor-botao2-hover); */
+}
+
+.btn3-primary:hover {
+    background-color: var(--cor-botao3-hover);
+    color: var(--cor-branco);
+    /* box-shadow: 0 0 2em var(--cor-botao3-primary); */
 }
 
 /* ESTRUTURA */
 .banner {
-    height: 15rem;
+    height: 25em;
+    position: relative;
     padding: 3rem;
+    overflow: hidden;
+    background-image: url('../img/banner.png');
+    background-position: center;
+    background-size: 200vw;
+    background-repeat: no-repeat;
 }
+
+.banner p, .banner h1 {
+    color: var(--cor-fundo);
+}
+
 
 /* CARDS (DO GUIA) */
 .cards {
@@ -195,6 +246,12 @@ section {
 }
 
 /* CARDS (DOS BENEFÍCIOS) */
+.secao-beneficios {
+    background-color: var(--cor-alt);
+    color: var(--cor-fundo);
+    padding: 3rem 1.25rem;
+}
+
 .cards-bene {
     width: 80%;
 }
@@ -205,6 +262,47 @@ section {
     padding: 1.25rem;
     outline: 1px solid var(--cor-primaria);
     border-radius: 1rem;
+}
+
+/* SEÇÃO DE CONTATO */
+
+.grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.grupo-formulario input,
+.grupo-formulario textarea {
+    padding: .5rem;
+    border: 1px solid var(--cor-form);
+    border-radius: .5rem;
+    font-size: .9rem;
+}
+
+/* SEÇÃO DE RODAPÉ */
+footer {
+    background-color: var(--cor-primaria);
+}
+
+.footer-top {
+    width: 100em;
+}
+
+.icones-sociais img {
+    width: 2rem;
+    transition: all .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.icones-sociais img:hover {
+    filter: invert(57%);
+}
+
+.copy {
+    color: var(--cor-fundo);
+    text-align: center;
+    padding: 1rem;
+    font-size: .9rem;
 }
 
 /* RESPONSIVIDADE E OS COMPORTAMENTOS */
