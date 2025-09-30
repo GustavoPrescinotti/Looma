@@ -554,21 +554,62 @@ body.login-page .cartao-formulario {
 
 /* Estilo base para os botões das páginas de Login e Cadastro. */
 .BotaoLogin,
-.BotaoCadastrarCadastrar,
 .BotaoCadastrar,
 .BotaoVoltar {
-    font-size: 1.2rem; /* Define o tamanho da fonte. */
-    padding: 0.75rem 2rem; /* Adiciona preenchimento. */
-    border: 1px solid var(--cor-primaria-azul); /* Adiciona uma borda azul. */
-    border-radius: 0.5rem; /* Arredonda os cantos. */
-    font-family: var(--fonte-destaque); /* Usa a fonte de destaque. */
-    margin: 0.5rem; /* Adiciona uma margem externa. */
-    cursor: pointer; /* Muda o cursor para uma mão. */
-    text-decoration: none; /* Remove o sublinhado. */
-    display: inline-block; /* Permite definir largura/altura e margem. */
-    transition: all 0.3s ease; /* Adiciona uma transição suave. */
-    width: 100%; /* Faz o botão ocupar 100% da largura do seu container. */
-    text-align: center; /* Garante que o texto dentro do botão esteja centralizado. */
+    font-size: 1.2rem;
+    padding: 0.75rem 2rem;
+    border: 1px solid var(--cor-primaria-azul);
+    border-radius: 0.5rem;
+    font-family: var(--fonte-destaque);
+    margin: 0.5rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    color: var(--cor-primaria-azul);
+}
+
+.BotaoLogin {
+    background-color: var(--cor-bege-claro);
+    color: var(--cor-bege-claro);
+    border: 1px solid var(--cor-primaria-azul);
+}
+
+.BotaoCadastrar,
+.BotaoVoltar {
+    background-color: white;
+    color: var(--cor-primaria-azul);
+    border: 1px solid var(--cor-primaria-azul);
+}
+
+.BotaoLogin:hover {
+    background-color: var(--cor-bege-claro);
+    color: var(--cor-primaria-azul);
+    transform: translateY(-2px);
+}
+
+.BotaoCadastrar:hover,
+.BotaoVoltar:hover {
+    background-color: var(--cor-primaria-azul);
+    color: var(--cor-bege-claro);
+    transform: translateY(-2px);
+}
+
+.BotaoCadastrar a,
+.BotaoVoltar a {
+    color: inherit;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.BotaoCadastrar:hover a,
+.BotaoVoltar:hover a {
+    color: inherit;
 }
 
 /* Estilo específico para o link <a> dentro do botão "Voltar". */
