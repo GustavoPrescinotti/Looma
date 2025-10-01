@@ -839,21 +839,3 @@ body.login-page .cartao-formulario {
     z-index: 2000; /* Z-index alto para ficar sobre todos os outros elementos. */
     padding: 2rem; /* Adiciona preenchimento. */
 }
-
-/* NOTA: Para a responsividade funcionar, você precisará adicionar Media Queries. 
-      Uma Media Query aplica estilos apenas quando certas condições são atendidas (como a largura da tela).
-      Exemplo de como ativar o menu hambúrguer em telas com até 768px de largura:
-
-@media (max-width: 768px) {
-    .navegacao-principal {
-        display: none; // Esconde o menu de navegação normal.
-    }
-    .menu-hamburguer {
-        display: flex; // Mostra o ícone do hambúrguer.
-    }
-    .painel-guia, .painel-beneficios, .container-contato {
-        grid-template-columns: 1fr; // Faz os grids terem apenas uma coluna para empilhar os itens.
-    }
-}
-*/
-

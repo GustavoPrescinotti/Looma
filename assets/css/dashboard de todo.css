@@ -22,7 +22,6 @@
     --blue-primary: #526CEF;
     --blue-secondary: #395FF9;
     --blue-border: #4163F6;
-    --cream: #FAF7F3;
     --gray-text: #4B4B4B;
     --gray-200: #D8D8D8;
     --gray-400: #B1B1B1;
@@ -31,12 +30,14 @@
     --radius-lg: 21px;
     --radius-md: 11px;
     --radius-sm: 9px;
+    --fonte-destaque: 'Poppins', sans-serif;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    text-decoration: none;
 }
 
 body {
@@ -65,8 +66,7 @@ body {
 }
 
 .sidebar .nav-button a {
-    text-decoration: none;
-    color: inherit; 
+    color: inherit;
     display: block;
     width: 100%;
     height: 100%;
@@ -84,8 +84,7 @@ body {
 }
 
 .footer-desktop .bottom-nav-button a {
-    text-decoration: none;
-    color: #0e1a47; 
+    color: #0e1a47;
     display: block;
     width: 100%;
     height: 100%;
@@ -317,20 +316,20 @@ body {
     transition: all 0.2s;
 }
 
-    .btn-secondary a {
-        color: white !important;
-        text-decoration: none !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 100% !important;
-        height: 100% !important;
-        font-size: inherit !important;
-        font-weight: inherit !important;
-        background: transparent !important;
-        border: none !important;
-        outline: none !important;
-    }
+.btn-secondary a {
+    color: white !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
 
 .btn-primary {
     background-color: white;
@@ -394,7 +393,6 @@ body {
 
 .card {
     width: min(100%, 540px);
-    background: hsl(var(--looma-cream));
     border: 1px solid hsl(var(--looma-blue));
     border-radius: var(--radius);
     padding: 24px 24px 28px;
@@ -527,7 +525,7 @@ body {
 
 .btn-lg {
     min-width: 14.9rem;
-    
+
     width: 100%;
     height: 65px;
     border-radius: 9px;
@@ -549,17 +547,21 @@ body {
 
 
 /* Botão de contorno grande (fundo branco, texto e borda azul) */
-.btn-outline.btn-lg, .btn-outline-strong {
-     background: #fff;
+.btn-outline.btn-lg,
+.btn-outline-strong {
+    background: #fff;
     color: hsl(var(--looma-blue));
-    border: 2px solid hsl(var(--looma-blue)); /* AJUSTE: Borda mais espessa para destaque */
+    border: 2px solid hsl(var(--looma-blue));
+    /* AJUSTE: Borda mais espessa para destaque */
 }
 
-.btn-outline.btn-lg:hover, .btn-outline-strong:hover {
+.btn-outline.btn-lg:hover,
+.btn-outline-strong:hover {
     background: var(--looma-blue-primary);
     color: var(--looma-white);
     transform: translateY(-2px);
 }
+
 .resultado-cards {
     display: flex;
     flex-direction: column;
@@ -601,7 +603,8 @@ body {
 
 .content-wrapper {
     width: 80%;
-    max-width: 62.2rem; /* Largura máxima para o conteúdo */
+    max-width: 62.2rem;
+    /* Largura máxima para o conteúdo */
 }
 
 .main-title {
@@ -769,13 +772,13 @@ body {
 }
 
 .main-content .card--blue {
-    background: #395ff9;
+    background: var(--blue-secondary);
     color: #fff;
     border: none;
 }
 
 .main-content .card--dark {
-    background: #4b4b4b;
+    background: var(--gray-text);
     color: #fff;
     border: none;
 }
@@ -812,7 +815,7 @@ body {
 
 .main-content .card__value--light {
     color: #fff;
-}   
+}
 
 .table-container {
     background: white;
@@ -831,14 +834,14 @@ body {
 
 .table-header {
     display: table-row;
-    background-color: #faf7f3;
-    border-bottom: 1px solid #d8d8d8;
+    background-color: var(--form-bg);
+    border-bottom: 1px solid var(--gray-200);
     font-weight: 500;
 }
 
 .table-row {
     display: table-row;
-    border-bottom: 1px solid #d8d8d8;
+    border-bottom: 1px solid var(--gray-200);
 }
 
 .table-row:last-child {
@@ -848,7 +851,7 @@ body {
 .table-cell {
     display: table-cell;
     padding: 1.5rem;
-    color: #526cef;
+    color: var(--blue-primary);
     font-weight: 500;
     font-size: 1.3rem;
     vertical-align: middle;
@@ -856,9 +859,9 @@ body {
 }
 
 .table-header .table-cell {
-    color: #4b4b4b;
+    color: var(--gray-text);
     font-weight: 600;
-    background-color: #faf7f3;
+    background-color: var(--form-bg);
 }
 
 .actions {
@@ -868,7 +871,7 @@ body {
 }
 
 .btn-edit {
-    background-color: #526cef;
+    background-color: var(--blue-primary);
     color: white;
     border: none;
     padding: 4px 16px;
@@ -879,13 +882,13 @@ body {
 }
 
 .btn-edit:hover {
-    background-color: #395ff9;
+    background-color: var(--blue-secondary);
 }
 
 .btn-delete {
     background-color: transparent;
-    color: #526cef;
-    border: 1px solid #d8d8d8;
+    color: var(--blue-primary);
+    border: 1px solid var(--gray-200);
     padding: 4px 16px;
     border-radius: 4px;
     font-size: 1.4rem;
@@ -913,15 +916,15 @@ body {
     margin: 0 0 20px;
 }
 
-.panel > .card {
+.panel>.card {
     padding: 24px;
 }
 
-.panel > .card + .card {
+.panel>.card+.card {
     margin-top: 16px;
 }
 
-.panel > * {
+.panel>* {
     max-width: 1644px;
     margin-inline: auto;
 }
@@ -999,7 +1002,6 @@ body {
 
 .table-wrap {
     border: 1px solid var(--blue-primary);
-    background: var(--cream);
     overflow: hidden;
     border-radius: var(--radius-sm);
     margin-top: 24px;
@@ -1008,7 +1010,7 @@ body {
 .table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--cream);
+    ;
 }
 
 .table thead th {
@@ -1030,7 +1032,7 @@ body {
     color: var(--blue-primary);
     font-size: 30px;
     border-bottom: 1px solid var(--blue-primary);
-    background: var(--cream);
+    font-family: var(--font-mono);
 }
 
 .table tbody tr:last-child td {
@@ -1078,7 +1080,6 @@ body {
 
 .actions .btn-edit a,
 .actions .btn-delete a {
-    text-decoration: none;
     color: inherit;
     display: block;
     width: 100%;
@@ -1089,7 +1090,7 @@ body {
 }
 
 .actions .btn-edit {
-    background-color: #526cef;
+    background-color: var(--blue-secondary);
     color: white;
     border: none;
     padding: 4px 16px;
@@ -1100,11 +1101,11 @@ body {
 }
 
 .actions .btn-edit:hover {
-    background-color: #395ff9;
+    background-color: var(--blue-primary);
 }
 
 .actions .btn-edit a {
-    color: white !important; 
+    color: white !important;
 }
 
 .actions .btn-edit:hover a {
@@ -1113,8 +1114,8 @@ body {
 
 .actions .btn-delete {
     background-color: transparent;
-    color: #526cef;
-    border: 1px solid #d8d8d8;
+    color: var(--blue-secondary);
+    border: 1px solidC var(--gray-200);
     padding: 4px 16px;
     border-radius: 4px;
     font-size: 1.4rem;
@@ -1123,20 +1124,19 @@ body {
 }
 
 .actions .btn-delete:hover {
-    background-color: #faf7f3;
-    color: #526cef;
+    background-color: var(--form-bg);
+    color: var(--blue-secondary);
 }
 
 .actions .btn-delete a {
-    color: #526cef !important; 
+    color: var(--blue-primary) !important;
 }
 
 .actions .btn-delete:hover a {
-    color: #526cef !important;
+    color: var(--blue-primary) !important;
 }
 
 .actions button a {
-    text-decoration: none;
     outline: none;
 }
 
@@ -1150,7 +1150,6 @@ body {
 }
 
 .sidebar .nav-button a {
-    text-decoration: none;
     color: inherit;
     display: block;
     width: 100%;
@@ -1170,7 +1169,6 @@ body {
 
 .footer-desktop .bottom-nav-button a,
 .bottom-nav .bottom-nav-button a {
-    text-decoration: none;
     color: #0e1a47;
     display: block;
     width: 100%;
@@ -1190,27 +1188,33 @@ body {
     background: #fff;
     margin: 10px;
     margin-left: 20px;
-    width: calc(100% - 276px); /* Largura total menos sidebar */
+    width: calc(100% - 276px);
+    /* Largura total menos sidebar */
 }
 
 .panel-title {
-    font-size: 24px; /* Reduzido de 32px */
+    font-size: 24px;
+    /* Reduzido de 32px */
     font-weight: 700;
-    margin: 0 0 15px; /* Reduzido o margin */
+    margin: 0 0 15px;
+    /* Reduzido o margin */
 }
 
 .balance {
-    margin: 15px 0 20px; /* Reduzido o margin */
+    margin: 15px 0 20px;
+    /* Reduzido o margin */
     border: 2px solid var(--blue-primary);
     background: #fff;
     border-radius: var(--radius-lg);
     box-shadow: 0 2px 12px rgba(82, 108, 239, 0.10);
-    padding: 20px 30px; /* Reduzido o padding */
+    padding: 20px 30px;
+    /* Reduzido o padding */
     width: 100%;
     display: flex;
     gap: 10px;
     align-items: center;
-    font-size: 1.2rem; /* Reduzido de 1.5rem */
+    font-size: 1.2rem;
+    /* Reduzido de 1.5rem */
     font-weight: 600;
     color: var(--blue-secondary);
     justify-content: center;
@@ -1219,13 +1223,15 @@ body {
 .balance .label {
     color: var(--gray-text);
     font-weight: 500;
-    font-size: 1.1rem; /* Reduzido de 1.2rem */
+    font-size: 1.1rem;
+    /* Reduzido de 1.2rem */
 }
 
 .balance .value {
     color: var(--blue-secondary);
     font-weight: 700;
-    font-size: 1.3rem; /* Reduzido de 1.5rem */
+    font-size: 1.3rem;
+    /* Reduzido de 1.5rem */
 }
 
 .actions-row {
@@ -1237,21 +1243,21 @@ body {
 }
 
 .cta {
-    font-size: 16px; 
+    font-size: 16px;
     font-weight: 600;
     border-radius: var(--radius-md);
-    padding: 12px 24px; 
+    padding: 12px 24px;
     cursor: pointer;
-    border: solid 1px ;
+    border: solid 1px;
     transition: background 0.2s, color 0.2s, border 0.2s;
 }
 
 .table-wrap {
     border: 1px solid var(--blue-primary);
-    background: var(--cream);
+    ;
     overflow: hidden;
     border-radius: var(--radius-sm);
-    margin-top: 20px; 
+    margin-top: 20px;
     overflow-x: auto;
     max-width: 100%;
 }
@@ -1259,27 +1265,26 @@ body {
 .table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--cream);
-    min-width: 600px; 
+    min-width: 600px;
 }
 
 .table thead th {
     text-align: left;
-    padding: 12px 16px; 
+    padding: 12px 16px;
     border-bottom: 2px solid var(--blue-primary);
     color: var(--blue-secondary);
     font-weight: 700;
-    font-size: 16px; 
+    font-size: 25px;
     background: transparent;
     white-space: nowrap;
 }
 
 .table tbody td {
-    padding: 12px 16px; 
+    padding: 12px 16px;
     color: var(--blue-primary);
-    font-size: 14px;
+    font-size: 1.3rem;
     border-bottom: 1px solid var(--blue-primary);
-    background: var(--cream);
+    font-family: var(--fonte-destaque);
     vertical-align: middle;
 }
 
@@ -1289,17 +1294,17 @@ body {
 
 .td-actions {
     display: flex;
-    gap: 8px; 
+    gap: 8px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .chip {
-    min-width: 80px; 
-    height: 35px; 
+    min-width: 80px;
+    height: 35px;
     border-radius: var(--radius-sm);
     border: 2px solid var(--blue-secondary);
-    font-size: 14px; 
+    font-size: 17px;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
@@ -1307,6 +1312,7 @@ body {
 }
 
 .chip-primary {
+    height: 40px;
     background: var(--blue-secondary);
     color: #fff;
     border: 2px solid var(--blue-secondary);
@@ -1329,11 +1335,11 @@ body {
 }
 
 .btn a {
-    text-decoration: none;
+
     color: inherit;
     display: block;
 
-    
+
 }
 
 .btn:hover a {
@@ -1342,13 +1348,12 @@ body {
 
 
 
-.actions-row button a{
-    text-decoration: none;
+.actions-row button a {
+
     color: inherit;
 }
 
-.chip-primary{
-    text-decoration: none;
+.chip-primary {
     color: inherit;
 }
 
@@ -1370,6 +1375,3 @@ body {
 .td-actions .chip-outline:hover a {
     color: white !important;
 }
-
-
-
