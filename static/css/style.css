@@ -292,8 +292,9 @@ p {
 .botao.botao-destaque:hover {
     filter: brightness(1.2);
     /* Aumenta o brilho do botão em 20%. */
-    transform: translateY(-2px);
+    /* transform: translateY(-2px); */
     /* Move o botão 2 pixels para cima. */
+    box-shadow: 0 0 15px 5px var(--cor-primaria-azul);
 }
 
 /* Estilo para o botão alternativo (com contorno). */
