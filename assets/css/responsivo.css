@@ -1,3 +1,74 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+/* Responsividade para telas até 769px */
+@media (max-width: 769px) {
+    
+    /* Ajustes gerais */
+    .secao-beneficios, .secao-contato {
+        padding: 2rem 1rem;
+    }
+    
+    /* SEÇÃO DE BENEFÍCIOS - Layout de 2x2 */
+    .painel-beneficios {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .cartao-beneficio {
+        min-height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+    
+    /* SEÇÃO DE CONTATO - Formulário do mesmo tamanho */
+    .container-contato {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .informacoes-contato, 
+    .cartao-formulario {
+        width: 100%;
+    }
+
+    .informacoes-contato p{
+        font-size: 1rem;
+    }
+    
+    .cartao-formulario {
+        margin-top: 0;
+    }
+    
+    /* Ajustes adicionais para melhor visualização */
+    .conteudo-beneficios h2,
+    .secao-contato h3 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .item-informacao {
+        margin-bottom: 1.5rem;
+    }
+
+    .item-informacao p {
+    color: var(--cor-cinza-aco);
+    font-family: var(--fonte-principal);
+    line-height: 1.7;
+    }
+}
+
+
+
+
+=======
+>>>>>>> d2ff129b273c7c6be9bd9c63fd055e155a0af0dd
+=======
+>>>>>>> d2ff129b273c7c6be9bd9c63fd055e155a0af0dd
+
 @media (max-width: 426px) {
     html, body {
         max-width: 100vw;
@@ -294,10 +365,16 @@
         margin-top: 70px;
         padding: 20px 15px 120px; 
         min-height: calc(100vh - 150px);
+        width: 100% !important;
+        max-width: 100vw !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
     }
     .main-content {
-        width: 100%;
-        margin-left: 0;
+        width: 100% !important;
+        margin-left: 0 !important;
+        max-width: 100% !important;
     }
     .main-title {
         font-size: 1.8rem; 
@@ -351,43 +428,94 @@
     .chart-section {
         display: none;
     }
+    
+    /* ===== CORREÇÃO DO FOOTER MOBILE - LINKS NA HORIZONTAL ===== */
     .footer-desktop {
         display: none !important;
     }
+
     .footer-mobile {
         display: block !important;
-        background-color: #0E1A47;;
+        background-color: #0E1A47;
         color: #fff;
         padding: 1.5rem 1rem 1.2rem 1rem;
-        
         bottom: 0;
         left: 0;
         width: 100vw;
         z-index: 100;
         box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
     }
+
     .bottom-nav {
-        display: none !important;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem 0;
+    }
+
+    .bottom-nav-container {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.5rem;
+        padding: 0 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .bottom-nav-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.6rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-width: auto;
+        flex: 1;
+        max-width: 120px;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .bottom-nav-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
     }
 
     .table-container {
         display: none;
     }
     
-    
+    /* ESCONDE COMPLETAMENTE A TABELA NO MOBILE */
+    .table-wrap {
+        display: none !important;
+    }
+
+    /* MOSTRA APENAS OS CARDS NO MOBILE */
     .cards-container {
-        display: flex;
+        display: flex !important;
         flex-direction: column;
         gap: 1rem;
         margin-top: 1rem;
+        width: 100%;
     }
     
+    /* CARDS DE TRANSAÇÕES (EXISTENTES) */
     .card {
-        background: #f8f8f8;
+        background: #fff;
         border: 2px solid #395ff9;
         border-radius: 12px;
         padding: 1.2rem;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
     }
     
     .card-row {
@@ -421,6 +549,7 @@
         gap: 0.8rem;
         justify-content: center;
         margin-top: 0.5rem;
+        width: 100%;
     }
     
     .btn-edit, .btn-delete {
@@ -461,7 +590,433 @@
         display: block;
     }
 
-     .form-container {
+    /* CARDS DE JUROS - MESMA ESTILIZAÇÃO DOS CARDS DE TRANSAÇÕES */
+    .card-juros {
+        background: #fff;
+        border: 2px solid #395ff9;
+        border-radius: 12px;
+        padding: 1.2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+    }
+    
+    .card-juros .card-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .card-juros .card-row:last-child {
+        border-bottom: none;
+        padding-top: 1rem;
+        margin-top: 0.5rem;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    .card-juros .card-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    
+    .card-juros .card-value {
+        color: #555;
+        text-align: right;
+        font-size: 0.9rem;
+    }
+    
+    .card-juros .card-actions {
+        display: flex;
+        gap: 0.8rem;
+        justify-content: center;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+    
+    .card-juros .btn-edit, 
+    .card-juros .btn-delete {
+        padding: 0.6rem 1.2rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        min-width: 80px;
+    }
+    
+    .card-juros .btn-edit {
+        background: #395ff9;
+        color: white;
+    }
+    
+    .card-juros .btn-edit:hover {
+        background: #2a4fd8;
+    }
+    
+    .card-juros .btn-delete {
+        background: #ff4757;
+        color: white;
+    }
+    
+    .card-juros .btn-delete:hover {
+        background: #ff3742;
+    }
+
+    /* ORGANIZAÇÃO ESPECÍFICA PARA OS DADOS DE JUROS */
+    .card-juros .card-row:nth-child(1) .card-value { /* Ano */
+        color: #2567f9;
+        font-weight: 600;
+    }
+    
+    .card-juros .card-row:nth-child(2) .card-value { /* Taxa Mensal */
+        color: #28a745;
+        font-weight: 600;
+    }
+    
+    .card-juros .card-row:nth-child(3) .card-value { /* Data Criação */
+        color: #6c757d;
+    }
+    
+    .card-juros .card-row:nth-child(4) .card-value { /* Quem Modificou */
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    /* ===== CORREÇÕES APLICADAS PARA A PÁGINA DE SIMULAÇÃO ===== */
+    .main {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .card {
+        background: #fff;
+        border: 2px solid #395ff9;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 400px; /* Limita a largura máxima para alinhar com os cards */
+        box-sizing: border-box;
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+        color: #333;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .label {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    .label--center {
+        text-align: center;
+    }
+
+    .input {
+        padding: 0.8rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #f8f9fa;
+        transition: border-color 0.2s ease;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .input:focus {
+        outline: none;
+        border-color: #395ff9;
+        background: #fff;
+    }
+
+    /* ===== CORREÇÃO DOS BOTÕES - USANDO APENAS LINKS ===== */
+    .actions-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 140px;
+        transition: all 0.2s ease;
+        flex: 1;
+        max-width: 200px;
+        text-align: center;
+        height: auto;
+        line-height: normal;
+        box-sizing: border-box;
+    }
+
+    .btn--primary {
+        background: #395ff9;
+        color: white;
+        border: 2px solid #395ff9;
+    }
+
+    .btn--primary:hover {
+        background: #2a4fd8;
+        border-color: #2a4fd8;
+        transform: translateY(-1px);
+    }
+
+    .btn--outline {
+        background: transparent;
+        color: #395ff9;
+        border: 2px solid #395ff9;
+    }
+
+    .btn--outline:hover {
+        background: #395ff9;
+        color: white;
+    }
+
+    /* REMOVER ESTILOS DE BOTÃO DENTRO DE LINKS */
+    .btn a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    /* ===== CORREÇÃO DOS CARDS DE RESULTADO - ALINHAMENTO CORRETO ===== */
+    .resultado-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        width: 100%;
+        max-width: 400px; /* Mesma largura máxima do formulário */
+        margin: 0 auto; /* Centraliza os cards */
+    }
+
+    .resultado-card {
+        background: linear-gradient(135deg, #395ff9, #2a4fd8); /* AZUL PARA TODOS OS CARDS */
+        color: white;
+        border-radius: 12px;
+        padding: 1.2rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(57, 95, 249, 0.3);
+        transition: all 0.3s ease;
+        border: 2px solid #395ff9;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .resultado-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(57, 95, 249, 0.4);
+    }
+
+    .resultado-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        display: block;
+        opacity: 0.9;
+    }
+
+    .resultado-valor {
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: block;
+    }
+
+    /* REMOVE AS CORES DIFERENCIADAS - TODOS OS CARDS FICAM AZUIS */
+    .resultado-card:nth-child(1),
+    .resultado-card:nth-child(2),
+    .resultado-card:nth-child(3),
+    .resultado-card:nth-child(4),
+    .resultado-card:nth-child(5) {
+        background: linear-gradient(135deg, #395ff9, #2a4fd8);
+        color: white;
+    }
+
+    /* AJUSTES PARA TELAS MUITO PEQUENAS */
+    @media (max-width: 375px) {
+        .card {
+            padding: 1.2rem;
+            max-width: 350px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+        }
+
+        .resultado-card {
+            padding: 1rem;
+            min-height: 70px;
+        }
+
+        .resultado-cards {
+            max-width: 350px;
+        }
+
+        .resultado-label {
+            font-size: 0.8rem;
+        }
+
+        .resultado-valor {
+            font-size: 1rem;
+        }
+
+        .btn {
+            min-width: 120px;
+            padding: 0.7rem 1.2rem;
+            font-size: 0.9rem;
+        }
+
+        /* Ajuste para footer em telas muito pequenas */
+        .bottom-nav-container {
+            gap: 0.3rem;
+        }
+        
+        .bottom-nav-button {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.75rem;
+            min-width: 70px;
+        }
+    }
+
+    /* CORREÇÃO DO PAINEL PARA NÃO LIMITAR A LARGURA */
+    .panel {
+        width: 100% !important;
+        max-width: 100vw !important;
+        padding: 1rem !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        min-height: auto !important;
+    }
+
+    .panel-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        color: #333;
+    }
+
+    /* ESTILOS PARA O PAINEL DE TRANSAÇÕES */
+    .balance {
+        background: #fff;
+        border: 2px solid #395ff9;
+        border-radius: 12px;
+        padding: 1.2rem;
+        margin: 1rem 0;
+        text-align: center;
+    }
+    
+    .balance .label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .balance .value {
+        font-weight: 700;
+        color: #395ff9;
+        font-size: 1.5rem;
+    }
+    
+    .actions-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
+    }
+    
+    .cta {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        min-width: 140px;
+        transition: all 0.2s ease;
+    }
+    
+    .cta-primary {
+        background: #395ff9;
+        color: white;
+    }
+    
+    .cta-primary:hover {
+        background: #2a4fd8;
+    }
+    
+    .cta-outline {
+        background: transparent;
+        color: #395ff9;
+        border: 2px solid #395ff9;
+    }
+    
+    .cta-outline:hover {
+        background: #395ff9;
+        color: white;
+    }
+    
+    .cta a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+    .form-container {
         padding: 1rem;
         width: 100%;
         box-sizing: border-box;
@@ -541,7 +1096,6 @@
         position: relative;
     }
     
-  
     .btn-secondary a {
         color: white !important;
         text-decoration: none !important;
@@ -557,7 +1111,6 @@
         outline: none !important;
     }
     
-
     .btn-secondary a:hover, 
     .btn-secondary a:focus, 
     .btn-secondary a:active,
@@ -569,7 +1122,6 @@
         outline: none !important;
     }
     
-
     .btn-secondary {
         text-decoration: none !important;
     }
@@ -583,7 +1135,6 @@
         background: #5a6268;
     }
     
-
     .form-actions {
         align-items: center;
     }
@@ -594,8 +1145,8 @@
         max-width: 200px;
     }
 
-        .main-content .cards {
-        grid-template-columns: 1fr !important; /* Força uma coluna */
+    .main-content .cards {
+        grid-template-columns: 1fr !important;
         gap: 15px;
         width: 100%;
         padding: 0 10px;
@@ -603,7 +1154,7 @@
     
     .main-content .cards--summary,
     .main-content .cards--loans {
-        grid-template-columns: 1fr !important; /* Uma coluna para ambos os tipos de cards */
+        grid-template-columns: 1fr !important;
     }
     
     .main-content .card {
@@ -631,17 +1182,14 @@
         font-size: 1.3rem;
     }
     
-   
     .cards--summary {
         order: 1;
     }
-    
     
     .cards--loans {
         order: 2;
     }
     
- 
     .main-content section {
         width: 100%;
         margin-bottom: 20px;
@@ -653,91 +1201,7 @@
         margin-bottom: 15px;
         padding: 0 10px;
     }
-
-
-    .table-wrap {
-        display: none;
-    }
-    
-      .table thead {
-    display: none;
-  }
-
-  .table-wrap {
-    border: none;
-    background: transparent;
-    overflow: visible;
-  }
-
-  .table {
-    display: block;
-    width: 100%;
-    background: transparent;
-  }
-
-  .table tbody {
-    display: block;
-    width: 100%;
-  }
-
-  .table tbody tr {
-    display: block;
-    background: #fff;
-    border: 2px solid #395ff9;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-
-  .table tbody td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 14px;
-    color: #333;
-    text-align: right;
-  }
-
-  .table tbody td:last-child {
-    border-bottom: none;
-    padding-top: 10px;
-    margin-top: 5px;
-  }
-
-  .table tbody td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #333;
-    margin-right: 10px;
-  }
-
-  .table tbody .td-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
-  }
-
-  .table tbody .td-actions::before {
-    content: none;
-  }
-
-  .table tbody .chip {
-    min-width: 70px;
-    height: 30px;
-    font-size: 12px;
-  }
-  
-
-    
 }
-
-
 
 body {
     overflow-x: hidden;
@@ -750,8 +1214,7 @@ body {
     display: none;
 }
 
-
-@media (min-width: 426px) {
+@media (min-width: 427px) {
     body.dashboard-admin .cabecalho-principal {
         display: none !important;
     }
@@ -765,10 +1228,17 @@ body {
         display: block;
     }
 
-    .cards-container {
-        display: none;
+    /* MOSTRA APENAS A TABELA NO DESKTOP */
+    .table-wrap {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important;
     }
 
+    /* ESCONDE OS CARDS NO DESKTOP */
+    .cards-container {
+        display: none !important;
+    }
     
     .sidebar {
         display: block;
@@ -832,11 +1302,370 @@ body {
         margin-left: auto;
     }
 
-    
+    /* ESTILOS DA TABELA DE TRANSAÇÕES NO DESKTOP */
+    .table {
+        width: 100% !important;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        table-layout: auto;
+    }
 
-   
+    .table thead {
+        background: #395ff9;
+        color: white;
+    }
+
+    .table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        white-space: nowrap;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table .td-actions {
+        display: flex;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    .table .chip {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .chip-primary {
+        background: #395ff9;
+        color: white;
+    }
+
+    .chip-outline {
+        background: transparent;
+        color: #395ff9;
+        border: 1px solid #395ff9;
+    }
+
+    /* ESTILOS DA TABELA DE JUROS NO DESKTOP */
+    .table-juros {
+        width: 100% !important;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        table-layout: auto;
+    }
+
+    .table-juros thead {
+        background: #395ff9;
+        color: white;
+    }
+
+    .table-juros th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table-juros td {
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid #e0e0e0;
+        white-space: nowrap;
+    }
+
+    .table-juros tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-juros .td-actions {
+        display: flex;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+
+    /* ===== CORREÇÕES PARA A PÁGINA DE SIMULAÇÃO NO DESKTOP ===== */
+    .main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        align-items: start;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .card {
+        background: #fff;
+        border: 2px solid #395ff9;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .resultado-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .resultado-card {
+        background: linear-gradient(135deg, #395ff9, #2a4fd8); /* AZUL PARA TODOS OS CARDS NO DESKTOP TAMBÉM */
+        color: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(57, 95, 249, 0.3);
+        transition: all 0.3s ease;
+        border: 2px solid #395ff9;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* ===== CORREÇÃO DOS BOTÕES NO DESKTOP - USANDO APENAS LINKS ===== */
+    .actions-row {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 160px;
+        transition: all 0.2s ease;
+        text-align: center;
+        height: auto;
+        line-height: normal;
+        box-sizing: border-box;
+    }
+
+    .btn--primary {
+        background: #395ff9;
+        color: white;
+        border: 2px solid #395ff9;
+    }
+
+    .btn--primary:hover {
+        background: #2a4fd8;
+        border-color: #2a4fd8;
+    }
+
+    .btn--outline {
+        background: transparent;
+        color: #395ff9;
+        border: 2px solid #395ff9;
+    }
+
+    .btn--outline:hover {
+        background: #395ff9;
+        color: white;
+    }
+
+    /* REMOVER ESTILOS DE BOTÃO DENTRO DE LINKS */
+    .btn a {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    /* REMOVE CORES DIFERENCIADAS NO DESKTOP */
+    .resultado-card:nth-child(1),
+    .resultado-card:nth-child(2),
+    .resultado-card:nth-child(3),
+    .resultado-card:nth-child(4),
+    .resultado-card:nth-child(5) {
+        background: linear-gradient(135deg, #395ff9, #2a4fd8);
+        color: white;
+    }
+
+    /* CORREÇÃO DO PAINEL NO DESKTOP */
+    .panel {
+        width: 100% !important;
+        padding: 2rem !important;
+        box-sizing: border-box !important;
+        margin-left: 0 !important;
+        min-height: auto !important;
+    }
+
+    /* ESTILOS PARA O PAINEL NO DESKTOP */
+    .balance {
+        background: #fff;
+        border: 2px solid #395ff9;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+        text-align: center;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .balance .label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+    
+    .balance .value {
+        font-weight: 700;
+        color: #395ff9;
+        font-size: 1.8rem;
+    }
+    
+    .actions-row {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+    
+    .cta {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        min-width: 160px;
+        transition: all 0.2s ease;
+    }
+    
+    .cta-primary {
+        background: #395ff9;
+        color: white;
+    }
+    
+    .cta-primary:hover {
+        background: #2a4fd8;
+    }
+    
+    .cta-outline {
+        background: transparent;
+        color: #395ff9;
+        border: 2px solid #395ff9;
+    }
+    
+    .cta-outline:hover {
+        background: #395ff9;
+        color: white;
+    }
+    
+    .cta a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+    }
+
+    /* ===== CORREÇÃO DO FOOTER DESKTOP - LINKS NA HORIZONTAL ===== */
+    .footer-desktop {
+        display: block !important;
+        background-color: #0E1A47;
+       
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .bottom-nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem 0;
+    }
+
+    .bottom-nav-container {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 1rem;
+        padding: 0 2rem;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .bottom-nav-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.8rem 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .bottom-nav-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .table-container {
+    display: block !important;
+    width: 100%;
+    margin-top: 1rem;
 }
 
+.cards-container-juros {
+    display: none !important;
+}
+
+}
 
 @media (max-width: 426px) {
     .menu-mobile {
@@ -846,5 +1675,91 @@ body {
     body.login-page main {
         padding-top: 100px;
         min-height: calc(100vh - 180px);
+    }
+
+    .table-container {
+        display: none !important;
+    }
+    
+    .cards-container-juros {
+        display: flex !important;
+        flex-direction: column;
+        gap: 0.8rem;
+        margin-top: 1rem;
+        width: 100%;
+        padding: 0 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .card-juros-usuario {
+        background: #fff;
+        border: 2px solid #395ff9;
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        margin-bottom: 0;
+    }
+
+    .card-juros-usuario .card-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .card-juros-usuario .card-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .card-juros-usuario .card-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.8rem;
+        flex: 1;
+    }
+
+    .card-juros-usuario .card-value {
+        color: #555;
+        text-align: right;
+        font-size: 0.8rem;
+        flex: 1;
+    }
+
+    /* CORES ESPECÍFICAS PARA OS DADOS */
+    .card-juros-usuario .card-row:nth-child(1) .card-value { /* Ano */
+        color: #555;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .card-juros-usuario .card-row:nth-child(2) .card-value { /* Taxa Mensal */
+        color: #6c757d;
+       
+        font-size: 0.9rem;
+    }
+
+    .card-juros-usuario .card-row:nth-child(3) .card-value { /* Data Criação */
+        color: #6c757d;
+        font-style: italic;
+        font-size: 0.8rem;
+    }
+
+    .card-juros-usuario .card-row:nth-child(4) .card-value { /* Quem Modificou */
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    /* Ajuste para o título principal */
+    .main-title {
+        font-size: 1.2rem;
+        padding: 0 0.5rem;
+    }
+
+    /* Ajuste no container principal */
+    .content-wrapper {
+        padding: 0.5rem;
     }
 }
