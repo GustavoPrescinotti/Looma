@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+
+{% block conteudo %}
+<main>
+    <div class="cartao-formulario">
+        <h2 class="Cadastroelogin">Login</h2> <br>
+        <form action="{{url_for('login')}}" method="post">
+            <div class="grupo-formulario">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+            </div>
+            <div class="grupo-formulario">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+            </div>
+
+            <div class="grupo-termos">
+                <div class="checkbox">
+                    <input type="checkbox" id="termos">
+                    <label for="termos" class="termos"> Ao acessar e utilizar o website, você concorda em ficar
+                        vinculado a estes Termos de Uso e a nossa Política de Privacidade, que está incorporada aqui
+                        por referência.</label>
+                </div> <br>
+
+                <div class="checkbox">
+                    <input type="checkbox" id="promo">
+                    <label for="promo" class="promo">Para acessar alguns recursos da Plataforma, poderá ser
+                        necessário criar uma conta. Você é responsável por manter a confidencialidade das
+                        informações de sua conta, incluindo sua senha, e por toda e qualquer atividade que ocorra
+                        sob sua conta.</label>
+                </div> <br>
+
+            </div>
+
+            <div class="BotaoFormulario">
+                <button type="submit" class="BotaoLogin">Logar</button>
+                <button type="submit" class="BotaoCadastrar"><a href="cadastroAdm.html">Cadastrar-se</a></button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

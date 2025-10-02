@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looma - Gestão de Créditos</title>
+    <!-- <link rel="stylesheet" href="assets/js/app.js"> -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <!-- <link rel="stylesheet" href="assets/css/responsivo.css"> -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/responsivo.css')}}">
+    <link rel="shortcut icon" href="{{url_for('static', filename='img/icon-looma.png')}}">
+    <script src="{{url_for('static', filename='js/app.js')}}"></script>
+</head>
+
+<body>
+    <header class="cabecalho-principal">
+        <a href="index.html">
+            <img class="logo" src="{{url_for('static', filename='img/logo.png')}}" alt="Looma">
+        </a>
+
+        <nav class="navegacao-principal">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="/#quem_somos">Quem Somos</a></li>
+            <a href="/#guia">Guia</a></li>
+            <a href="/#beneficios">Benefícios</a></li>
+            <a href="/#contato">Contato</a></li>
+        </nav>
+
+        <a href="{{url_for('login')}}" class="botao-entrar">Entrar Agora</a>
+
+        <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="menu-mobile" id="menuMobile">
+            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
+            <ul>
+                <li><a href="{{url_for('index')}}">Home</a></li>
+                <li><a href="/#quem_somos">Quem Somos</a></li>
+                <li><a href="/#guia">Guia</a></li>
+                <li><a href="/#beneficios">Benefícios</a></li>
+                <li><a href="/#contato">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    {% block conteudo %}
+    {% endblock %}
+
+    <footer>
+        <div class="conteudo-rodape">
+            <a href="index.html" class="logo-rodape">
+                <img width="150" src="{{url_for('static', filename='img/logo.png')}}" alt="Logo Looma">
+            </a>
+            <div class="icones-sociais">
+                <a href="#"><img src="{{url_for('static', filename='img/FACEBOOK.png')}}" alt="Facebook"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/WHATSAPP.png')}}" alt="WhatsApp"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/INSTAGRAM.png')}}" alt="Instagram"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/TWITTER.png')}}" alt="Twitter"></a>
+            </div>
+        </div>
+        <div class="direitos-autorais">
+            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+</body>
+</html>
