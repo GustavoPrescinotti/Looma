@@ -18,8 +18,9 @@ def index():
 
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
-    if 'id_usuario' in session:
+    if 'usuario' in session:
         return redirect(url_for('dashboard'))
+    
     if request.method == 'GET':
         return render_template('login.html')
 
@@ -29,16 +30,14 @@ def login():
         email = request.form['email']
         senha = request.form['password']
 
-        hash_senha = generate_password_hash(senha).decode('utf-8')
-
-        cursor.execute("SELECT id_usuario, nome, email, senha FROM usuario WHERE email = ?", (email,))
+        cursor.execute("SELECT id_usuario, nome, email, senha, tipo FROM usuario WHERE email = ?", (email,))
         usuario = cursor.fetchone()
 
         if not usuario:
             return redirect(url_for('login'))
         
         if check_password_hash(usuario[3], senha):
-            session['id_usuario'] = usuario[0]
+            session['usuario'] = usuario
             return redirect(url_for('dashboard'))
 
     except Exception as e:
@@ -50,7 +49,7 @@ def login():
 
 @app.route('/auth/cadastro', methods=['GET', 'POST'])
 def cadastro():
-    if 'id_usuario' in session:
+    if 'usuario' in session:
         return redirect(url_for('dashboard'))
     
     if request.method == 'GET':
@@ -88,15 +87,19 @@ def cadastro():
 @app.route('/app')
 def dashboard():
     # O usuário não pode utilizar o sistema sem estar logado
-    if 'id_usuario' not in session:
+    if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    return render_template('dashboard_usuario.html')
+    print(session['usuario'])
+    if session['usuario'][4] == 'User':
+        return render_template('dashboard_usuario.html')
+
+    return render_template('dashboard_admin.html')
 
 @app.route('/logout')
 def logout():
-    if 'id_usuario' in session:
-        session.pop("id_usuario", None)
+    if 'usuario' in session:
+        session.pop("usuario", None)
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
