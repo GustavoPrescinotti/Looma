@@ -1,0 +1,115 @@
+{% extends 'template2.html' %}
+
+{% block conteudo %}
+<main>
+    <section class="secao-apresentacao">
+        <div class="fundo-apresentacao"></div>
+        <div class="conteudo-apresentacao">
+            <h1>Gestão de Créditos<br><strong>Descomplicada</strong></h1>
+            <p>A plataforma que pequenas empresas confiam para administrar<br>suas contas a receber e melhorar sua
+                saúde financeira.</p>
+            <div class="botoes-apresentacao">
+                <a href="{{url_for('login')}}" class="botao botao-destaque">Entrar agora</a>
+                <a href="{{url_for('cadastro')}}" class="botao botao-alternativo">Quero começar</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="quem_somos" class="secao-sobre-nos">
+        <h2>Quem somos nós?</h2>
+        <p>Na <strong>Looma</strong>, acreditamos que toda pequena empresa merece<br>crescer com segurança e clareza
+            financeira. Somos mais do<br>que uma plataforma de gestão, somos o parceiro estratégico<br>que
+            transforma a complexidade das contas a receber em uma<br>vantagem competitiva para o seu negócio.</p>
+    </section>
+
+    <section id="guia" class="secao-guia">
+        <h2>Guia para os Novos Usuários</h2>
+        <p class="subtitulo">Um guia rápido para aproveitar ao máximo nossa plataforma</p>
+        
+        <div class="painel-guia">
+            <div class="cartao-guia">
+                <h3>Crie sua conta</h3>
+                <p>Registre-se em menos de <strong>2 minutos</strong> informando seus dados básicos e situação financeira.</p>
+            </div>
+            <div class="cartao-guia cartao-destaque">
+                <h3>Simule seu empréstimo</h3>
+                <p>Experimente diferentes valores e prazos para encontrar a proposta ideal para suas necessidades.</p>
+            </div>
+            <div class="cartao-guia">
+                <h3>Confirme Seu Empréstimo</h3>
+                <p>Analise as condições, confirme seu empréstimo e receba os recursos de forma rápida e segura.</p>
+            </div>
+            <div class="cartao-guia">
+                <h3>Acompanhe e Gerencie</h3>
+                <p>Acesse seu painel para acompanhar parcelas, fazer pagamentos antecipados e ver seu histórico.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="beneficios" class="secao-beneficios">
+        <div class="conteudo-beneficios">
+            <h2>Benefícios da Nossa Consultoria em Crédito</h2>
+            <div class="painel-beneficios">
+                <div class="cartao-beneficio">
+                    <p>Simulações instantâneas e liberação de recursos em até 24 horas.</p>
+                </div>
+                <div class="cartao-beneficio">
+                    <p>Sem tarifas ocultas ou surpresas - todas as taxas e condições são claramente informadas.</p>
+                </div>
+                <div class="cartao-beneficio">
+                    <p>Acompanhamento inteligente da sua saúde financeira e orientação para melhores condições de empréstimo.</p>
+                </div>
+                <div class="cartao-beneficio">
+                    <p>Opções personalizáveis de parcelamento que se adaptam à sua realidade financeira.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contato" class="secao-contato">
+        <div class="container-contato">
+            <div class="informacoes-contato">
+                <h3>Canais de Atendimento:</h3>
+                <div class="item-informacao">
+                    <div class="icone-informacao">📞</div>
+                    <p><strong>Telefone:</strong><br>(11) 3456-7890<br>(11) 99876-5432 (WhatsApp)</p>
+                </div>
+                <div class="item-informacao">
+                    <div class="icone-informacao">📧</div>
+                    <p><strong>Email:</strong><br>contato@loomagestor.com.br<br>suporte@gestorlooma.com.br</p>
+                </div>
+                <div class="item-informacao">
+                    <div class="icone-informacao">⏰</div>
+                    <p><strong>Horário de Atendimento:</strong><br>Segunda a Sexta: 8h às 18h<br>Sábado: 9h às 13h</p>
+                </div>
+                <div class="item-informacao">
+                    <div class="icone-informacao">🏢</div>
+                    <p><strong>Endereço:</strong><br>Av. Paulista, 1234 - Bela Vista<br>São Paulo - SP, 01310-100</p>
+                </div>
+            </div>
+            <div class="cartao-formulario">
+                <h3>Envie uma Mensagem:</h3>
+                <form class="formulario-contato">
+                    <div class="grupo-formulario">
+                        <label for="name">Nome:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="grupo-formulario">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="grupo-formulario">
+                        <label for="phone">Telefone:</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="grupo-formulario">
+                        <label for="message">Mensagem:</label>
+                        <textarea id="message" name="message" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="botao-enviar">Enviar Mensagem</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+    {% endblock %}

@@ -14,7 +14,7 @@ con = fdb.connect(host=host, database=database, user=user, password=password)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index2.html')
 
 @app.route('/auth/login', methods=['GET', 'POST'])
 def login():
@@ -91,9 +91,9 @@ def dashboard():
         return redirect(url_for('login'))
 
     if session['usuario'][4] == 'Admin':
-        return render_template('dashboard_admin.html')
+        return render_template('dashboard_admin2.html')
 
-    return render_template('dashboard_usuario.html')
+    return render_template('dashboard_usuario2.html')
 
 @app.route('/logout')
 def logout():
