@@ -1,6 +1,6 @@
 {% extends 'templateDashboard.html' %}
 
-{% block conteudo%}
+{% block conteudo %}
 <div class="container">
     <div class="sidebar">
         <div class="logo">
@@ -17,20 +17,23 @@
 
         <div class="navigation">
             <button class="nav-button active" data-section="painel">
-                <a href="{{url_for('dashboard')}}">Painel</a>
+                <a href="">Painel</a>
             </button>
+            <button class="nav-button active" data-section="painel">
+                <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a></button>
             <button class="nav-button inactive" data-section="taxa-juros">
-                <a href="{{url_for('taxas')}}">Taxa de Juros</a>
+                <a href="{{url_for('transacoes')}}">Transações</a>
             </button>
             <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('nova_taxa')}}">Nova Taxa</a>
+                <a href="{{url_for('perfil')}}">Perfil</a>
+            </button>
+            <button class="nav-button inactive" data-section="nova-taxa">
+                <a href="{{url_for('taxas')}}">Tabela de Taxas</a>
             </button>
         </div>
 
         <div class="sign-out">
-            <button class="nav-button inactive">
-                <a href="{{url_for('logout')}}">Sair da Conta</a>
-            </button>
+            <button class="nav-button inactive"><a href="{{url_for('logout')}}">Sair da Conta</a></button>
         </div>
 
         <div class="bottom-profile">
@@ -54,57 +57,36 @@
                         <div class="table-cell">Taxa Mensal</div>
                         <div class="table-cell">Data Criação</div>
                         <div class="table-cell">Quem Modificou?</div>
-                        <div class="table-cell">Ações</div>
                     </div>
                     <div class="table-row">
                         <div class="table-cell">2025</div>
                         <div class="table-cell">1,75%</div>
                         <div class="table-cell">20/02/2025</div>
                         <div class="table-cell">Antônio</div>
-                        <div class="table-cell actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
                     </div>
                     <div class="table-row">
                         <div class="table-cell">2024</div>
                         <div class="table-cell">2,25%</div>
                         <div class="table-cell">19/10/2024</div>
                         <div class="table-cell">Igor</div>
-                        <div class="table-cell actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
                     </div>
                     <div class="table-row">
                         <div class="table-cell">2023</div>
                         <div class="table-cell">1,05%</div>
                         <div class="table-cell">02/11/2023</div>
                         <div class="table-cell">Laís</div>
-                        <div class="table-cell actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
                     </div>
                     <div class="table-row">
                         <div class="table-cell">2022</div>
                         <div class="table-cell">3,75%</div>
                         <div class="table-cell">05/01/2022</div>
                         <div class="table-cell">Kauã</div>
-                        <div class="table-cell actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
                     </div>
                     <div class="table-row">
                         <div class="table-cell">2020</div>
                         <div class="table-cell">1%</div>
                         <div class="table-cell">01/04/2020</div>
                         <div class="table-cell">Henrique</div>
-                        <div class="table-cell actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -114,11 +96,11 @@
                 <div class="card">
                     <div class="card-row">
                         <span class="card-label">Ano:</span>
-                        <span class="card-value" data-type="ano">2025</span>
+                        <span class="card-value">2025</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Taxa Mensal:</span>
-                        <span class="card-value" data-type="taxa">1,75%</span>
+                        <span class="card-value">1,75%</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Data Criação:</span>
@@ -128,22 +110,16 @@
                         <span class="card-label">Quem Modificou:</span>
                         <span class="card-value">Antônio</span>
                     </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="card">
                     <div class="card-row">
                         <span class="card-label">Ano:</span>
-                        <span class="card-value" data-type="ano">2024</span>
+                        <span class="card-value">2024</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Taxa Mensal:</span>
-                        <span class="card-value" data-type="taxa">2,25%</span>
+                        <span class="card-value">2,25%</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Data Criação:</span>
@@ -153,22 +129,16 @@
                         <span class="card-label">Quem Modificou:</span>
                         <span class="card-value">Igor</span>
                     </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="card">
                     <div class="card-row">
                         <span class="card-label">Ano:</span>
-                        <span class="card-value" data-type="ano">2023</span>
+                        <span class="card-value">2023</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Taxa Mensal:</span>
-                        <span class="card-value" data-type="taxa">1,05%</span>
+                        <span class="card-value">1,05%</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Data Criação:</span>
@@ -178,22 +148,16 @@
                         <span class="card-label">Quem Modificou:</span>
                         <span class="card-value">Laís</span>
                     </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="card">
                     <div class="card-row">
                         <span class="card-label">Ano:</span>
-                        <span class="card-value" data-type="ano">2022</span>
+                        <span class="card-value">2022</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Taxa Mensal:</span>
-                        <span class="card-value" data-type="taxa">3,75%</span>
+                        <span class="card-value">3,75%</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Data Criação:</span>
@@ -203,22 +167,16 @@
                         <span class="card-label">Quem Modificou:</span>
                         <span class="card-value">Kauã</span>
                     </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
                 </div>
 
                 <div class="card">
                     <div class="card-row">
                         <span class="card-label">Ano:</span>
-                        <span class="card-value" data-type="ano">2020</span>
+                        <span class="card-value">2020</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Taxa Mensal:</span>
-                        <span class="card-value" data-type="taxa">1%</span>
+                        <span class="card-value">1%</span>
                     </div>
                     <div class="card-row">
                         <span class="card-label">Data Criação:</span>
@@ -227,12 +185,6 @@
                     <div class="card-row">
                         <span class="card-label">Quem Modificou:</span>
                         <span class="card-value">Henrique</span>
-                    </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_taxa.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
                     </div>
                 </div>
             </div>

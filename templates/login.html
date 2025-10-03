@@ -1,7 +1,7 @@
 {% extends 'template.html' %}
 
 {% block conteudo %}
-<main>
+<main class="login-page">
     <div class="cartao-formulario">
         <h2 class="Cadastroelogin">Login</h2> <br>
         <form action="{{url_for('login')}}" method="post">
@@ -33,8 +33,8 @@
             </div>
 
             <div class="BotaoFormulario">
-                <button type="submit" class="BotaoLogin">Logar</button>
-                <button type="submit" class="BotaoCadastrar"><a href="cadastroAdm.html">Cadastrar-se</a></button>
+                <button type="submit" class="btn btn-primary">Logar</button>
+                <a href="{{url_for('cadastro')}}" class="btn btn-fourth">Cadastrar-se</a>
             </div>
         </form>
     </div>

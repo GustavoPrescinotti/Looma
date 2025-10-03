@@ -1,10 +1,10 @@
 {% extends 'template.html' %}
 
 {% block conteudo %}
-<main>
+<main class="cadastro-page">
     <div class="cartao-formulario">
-        <h2 class="Cadastroelogin">Cadastro</h2> <br>
-        <form class="formulario-cadastro" action="" method="post">
+        <h2 class="Cadastroelogin">Cadastro</h2>
+        <form class="formulario-cadastro" action="/auth/cadastro" method="post">
             <div class="grupo-formulario">
                 <label for="name">Nome Completo:</label>
                 <input type="text" id="name" name="name" placeholder="Informe seu Nome Completo" required>
@@ -35,13 +35,13 @@
             </div>
 
             <div class="BotaoFormulario">
-                <button type="submit" class="BotaoCadastrar">Cadastrar-se</button>
-                <button type="button" class="BotaoVoltar"><a href="index.html">Voltar</a></button>
+                <button type="submit" class="btn btn-primary">Cadastrar-se</button>
+                <a class="btn btn-fourth" href="{{url_for('index')}}">Voltar</a>
             </div>
 
         </form>
         <p class="login-link">
-            Já tem uma conta? <a href="Login.html">Faça o login</a>
+            Já tem uma conta? <a href="{{url_for('login')}}" class="bold destaque">Faça o login</a>
         </p>
     </div>
 </main>

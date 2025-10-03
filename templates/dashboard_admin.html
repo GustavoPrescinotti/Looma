@@ -1,207 +1,140 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+{% extends 'templateDashboard.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/dashboard de todo.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/responsivo.css')}}">
-    <title>Dashboard Admin</title>
-</head>
-
-<body class="dashboard-admin">
-
-    <header class="cabecalho-principal">
-        <a href="index.html">
-            <img class="logo-icon" src="assets/img/Logo_redondo.png" alt="Looma">
-        </a>
-
-        <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <nav class="menu-mobile" id="menuMobile">
-            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
-
-            <ul>
-                <li><a href="dashboard_admin.html" class="nav-link active" data-section="painel">Painel</a></li>
-                <li><a href="tabela_juro_admin.html" class="nav-link" data-section="taxa-juros">Taxa de Juros</a></li>
-                <li><a href="nova_taxa.html" class="nav-link" data-section="nova-taxa">+ Nova Taxa</a></li>
-                <li><a href="{{url_for('logout')}}" class="nav-link">Sair da Conta</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="container">
-
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">
-                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
-                </div>
-                <span class="logo-text">Looma</span>
+{% block conteudo %}
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
             </div>
-
-            <div class="user-profile">
-                <img src="assets/img/user.png" alt="Avatar" class="avatar">
-                <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
-            </div>
-
-            <div class="navigation">
-                <button class="nav-button active" data-section="painel"> <a
-                        href="dashboard_admin.html">Painel</a></button>
-                <button class="nav-button inactive" data-section="taxa-juros"> <a href="tabela_juro_admin.html">Taxa de
-                        Juros</a>
-                </button>
-                <button class="nav-button inactive" data-section="nova-taxa"> <a href="nova_taxa.html">+ Nova
-                        Taxa</a></button>
-
-            </div>
-
-            <div class="sign-out">
-                <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
-            </div>
-
-            <div class="bottom-profile">
-                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
-                <div class="profile-info">
-                    <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
-                    <div class="profile-email">{{session['usuario'][2]}}</div>
-                </div>
-            </div>
+            <span class="logo-text">Looma</span>
         </div>
 
+        <div class="user-profile">
+            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="avatar">
+            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
+        </div>
 
-        <div class="main-content">
-            <div class="content-wrapper">
-                <h1 class="main-title">Visão Geral:</h1>
+        <div class="navigation">
+            <button class="nav-button active" data-section="painel">
+                <a href="">Painel</a>
+            </button>
+            <button class="nav-button inactive" data-section="taxa-juros">
+                <a href="{{url_for('taxas')}}">Taxa de Juros</a>
+            </button>
+            <button class="nav-button inactive" data-section="nova-taxa">
+                <a href="{{url_for('nova_taxa')}}">Nova Taxa</a>
+            </button>
+        </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-title">Total de Usuários<br>Cadastrados</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                    <div class="stat-card highlighted">
-                        <div class="stat-title">Total de Simulações<br>Realizadas</div>
-                        <div class="stat-value">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-title">Total de Empréstimos<br>Confirmados</div>
-                        <div class="stat-value">0</div>
-                    </div>
+        <div class="sign-out">
+            <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
+        </div>
+
+        <div class="bottom-profile">
+            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="bottom-avatar">
+            <div class="profile-info">
+                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
+                <div class="profile-email">{{session['usuario'][2]}}</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+        <div class="content-wrapper">
+            <h1 class="main-title">Visão Geral:</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total de Usuários<br>Cadastrados</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card highlighted">
+                    <div class="stat-title">Total de Simulações<br>Realizadas</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Total de Empréstimos<br>Confirmados</div>
+                    <div class="stat-value">0</div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h2 class="chart-title">Empréstimos por mês:</h2>
+                    <select class="filter-select">
+                        <option>2025</option>
+                    </select>
                 </div>
 
-                <div class="chart-section">
-                    <div class="chart-header">
-                        <h2 class="chart-title">Empréstimos por mês:</h2>
-                        <select class="filter-select">
-                            <option>2025</option>
-                        </select>
-                    </div>
+                <div class="chart-container">
+                    <div class="chart">
 
-                    <div class="chart-container">
-                        <div class="chart">
-
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Janeiro</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Fevereiro</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Março</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Abril</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Maio</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Junho</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Julho</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Agosto</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Setembro</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Outubro</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Novembro</span>
-                            </div>
-                            <div class="chart-bar">
-                                <span class="bar-value">0</span>
-                                <div class="bar" style="height: 0px;"></div>
-                                <span class="bar-label">Dezembro</span>
-                            </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Janeiro</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Fevereiro</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Março</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Abril</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Maio</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Junho</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Julho</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Agosto</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Setembro</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Outubro</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Novembro</span>
+                        </div>
+                        <div class="chart-bar">
+                            <span class="bar-value">0</span>
+                            <div class="bar" style="height: 0px;"></div>
+                            <span class="bar-label">Dezembro</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <footer class="footer-desktop">
-        <div class="bottom-nav">
-            <div class="bottom-nav-container">
-                <button class="bottom-nav-button"> <a href="dashboard_admin.html">Painel</a></button>
-                <button class="bottom-nav-button"> <a href="tabela_juro_admin.html">Taxa de Juros</a></button>
-                <button class="bottom-nav-button"> <a href="nova_taxa.html">+ Nova Taxa</a></button>
-            </div>
-        </div>
-    </footer>
-
-
-    <footer class="footer-mobile">
-        <div class="conteudo-rodape">
-            <a href="index.html" class="logo-rodape">
-                <img width="150" src="assets/img/Logo do footer.png" alt="Logo Looma">
-            </a>
-            <div class="icones-sociais">
-                <a href="#"><img src="assets/img/FACEBOOK.png" alt="Facebook"></a>
-                <a href="#"><img src="assets/img/WHATSAPP.png" alt="WhatsApp"></a>
-                <a href="#"><img src="assets/img/INSTAGRAM.png" alt="Instagram"></a>
-                <a href="#"><img src="assets/img/TWITTER.png" alt="Twitter"></a>
-            </div>
-        </div>
-        <div class="direitos-autorais">
-            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <script src="assets/js/app.js"></script>
-</body>
-
-</html>
+</div>
+{% endblock %}

@@ -127,6 +127,11 @@ body {
     font-size: 18px;
 }
 
+.logo-icon img {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .logo-text {
     color: #4b4b4b;
     font-weight: 600;
@@ -189,6 +194,8 @@ body {
 
 .sign-out {
     padding: 24px;
+    border-top: 1px solid #e0d8d8;
+    margin-top: 24px;
 }
 
 .bottom-profile {
@@ -455,7 +462,7 @@ body {
     margin-top: 18px;
 }
 
-.btn {
+/* .btn {
     font-size: 22px;
     font-weight: 700;
     border-radius: var(--radius);
@@ -467,7 +474,7 @@ body {
     border: none;
     outline: none;
     width: 100%;
-}
+} */
 
 .btn--primary {
     background: hsl(var(--looma-blue));

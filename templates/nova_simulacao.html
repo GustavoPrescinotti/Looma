@@ -1,148 +1,85 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <link rel="stylesheet" href="assets/js/app.js">
-    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
-    <link rel="stylesheet" href="assets/css/responsivo.css">
-    <link rel="stylesheet" href="assets/css/dashboard de todo.css">
-    <title>Nova Simulação</title>
-</head>
-<body class="dashboard-admin">
-    <header class="cabecalho-principal">
-        <a href="index.html">
-            <img class="logo-icon" src="assets/img/Logo_redondo.png" alt="Looma">
-        </a>
+{% extends 'templateDashboard.html' %}
 
-        <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+{% block conteudo %}
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="{{url_for('static', filename='img/icon-looma.png')}}" alt="Logo do Sistema">
+            </div>
+            <span class="logo-text">Looma</span>
+        </div>
 
-        <nav class="menu-mobile" id="menuMobile">
-            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
-            
-            <ul>
-                <li><a href="dashboard_usuario.html" class="nav-link active" data-section="painel">Painel</a></li>
-                <li><a href="nova_simulacao.html" class="nav-link active" data-section="painel">+ Nova Simulação</a></li>
-                <li><a href="transacoes.html" class="nav-link" data-section="taxa-juros">Transações</a></li>
-                <li><a href="editar_perfil.html" class="nav-link" data-section="nova-taxa">Perfil</a></li>
-                <li><a href="tabel_juro_usuario.html" class="nav-link" data-section="nova-taxa">Tabela de Taxas</a></li>
-                <li><a href="index.html" class="nav-link">Sair da Conta</a></li>
-            </ul>
-        </nav>
-    </header>
+        <div class="user-profile">
+            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="avatar">
+            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
+        </div>
 
-    <div class="container">
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">
-                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
+        <div class="navigation">
+            <button class="nav-button active" data-section="painel">
+                <a href="{{url_for('dashboard')}}">Painel</a>
+            </button>
+            <button class="nav-button active" data-section="painel">
+                <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a></button>
+            <button class="nav-button inactive" data-section="taxa-juros">
+                <a href="{{url_for('transacoes')}}">Transações</a>
+            </button>
+            <button class="nav-button inactive" data-section="nova-taxa">
+                <a href="{{url_for('perfil')}}">Perfil</a>
+            </button>
+            <button class="nav-button inactive" data-section="nova-taxa">
+                <a href="{{url_for('taxas')}}">Tabela de Taxas</a>
+            </button>
+        </div>
+
+        <div class="sign-out">
+            <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
+        </div>
+
+        <div class="bottom-profile">
+            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="bottom-avatar">
+            <div class="profile-info">
+                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
+                <div class="profile-email">{{session['usuario'][2]}}</div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main">
+        <section class="card">
+            <h2 class="card-title">Simulação de Empréstimo</h2>
+
+            <form class="form" action="#" method="get">
+                <div class="field">
+                    <label class="label" for="valor">Valor Desejado:</label>
+                    <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado" />
                 </div>
-                <span class="logo-text">Looma</span>
-            </div>
 
-            <div class="user-profile">
-                <img src="assets/img/user.png" alt="Avatar" class="avatar">
-                <span class="user-name">Olá, Paulo Cavalin</span>
-            </div>
-
-            <div class="navigation">
-                <button class="nav-button active" data-section="painel"> <a href="dashboard_usuario.html">Painel</a></button>
-                <button class="nav-button active" data-section="painel"> <a href="nova_simulacao.html">+ Nova Simulação</a></button>
-                <button class="nav-button inactive" data-section="taxa-juros"> <a href="transacoes.html">Transações</a></button>
-                <button class="nav-button inactive" data-section="nova-taxa"> <a href="editar_perfil.html">Perfil</a></button>
-                <button class="nav-button inactive" data-section="nova-taxa"> <a href="tabel_juro_usuario.html">Tabela de Taxas</a></button>
-            </div>
-
-            <div class="sign-out">
-                <button class="nav-button inactive"> <a href="index.html">Sair da Conta</a></button>
-            </div>
-
-            <div class="bottom-profile">
-                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
-                <div class="profile-info">
-                    <div class="profile-name">Paulo Cavalin</div>
-                    <div class="profile-email">paulo@email.com</div>
+                <div class="field">
+                    <label class="label label--center" for="ano">Ano do Empréstimo</label>
+                    <input id="ano" name="ano" type="text" class="input" placeholder="Digite o ano" />
                 </div>
-            </div>
-        </div> 
 
-        <main class="main">
-      <section class="card">
-        <h2 class="card-title">Simulação de Empréstimo</h2>
+                <div class="field">
+                    <label class="label" for="adm">Administrador da Taxa Anual:</label>
+                    <input id="adm" name="adm" type="text" class="input" placeholder="Digite o administrador" />
+                </div>
 
-        <form class="form" action="#" method="get">
-          <div class="field">
-            <label class="label" for="valor">Valor Desejado:</label>
-            <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado" />
-          </div>
+                <div class="field">
+                    <label class="label" for="prazo">Prazo (Meses):</label>
+                    <input id="prazo" name="prazo" type="text" class="input" placeholder="Digite o prazo em meses" />
+                </div>
 
-          <div class="field">
-            <label class="label label--center" for="ano">Ano do Empréstimo</label>
-            <input id="ano" name="ano" type="text" class="input" placeholder="Digite o ano" />
-          </div>
+                <div class="actions-row">
 
-          <div class="field">
-            <label class="label" for="adm">Administrador da Taxa Anual:</label>
-            <input id="adm" name="adm" type="text" class="input" placeholder="Digite o administrador" />
-          </div>
 
-          <div class="field">
-            <label class="label" for="prazo">Prazo (Meses):</label>
-            <input id="prazo" name="prazo" type="text" class="input" placeholder="Digite o prazo em meses" />
-          </div>
+                    <button type="submit" class="btn btn--primary"><a
+                            href="resultado_simulacao.html">Simular</a></button>
+                    <button type="reset" class="btn btn--outline"><a href="dashboard_usuario.html">Cancelar</a></button>
 
-          <div class="actions-row">
-            
-           
-            <button type="submit" class="btn btn--primary"><a href="resultado_simulacao.html">Simular</a></button>
-             <button type="reset" class="btn btn--outline"><a href="dashboard_usuario.html">Cancelar</a></button>
-        
-          </div>
-        </form>
-      </section>
+                </div>
+            </form>
+        </section>
     </main>
 </div>
-    </div>
-     <footer class="footer-desktop">
-        <div class="bottom-nav">
-            <div class="bottom-nav-container">
-                <button class="bottom-nav-button"> <a href="dashboard_usuario.html">Painel</a></button>
-                <button class="bottom-nav-button"> <a href="nova_simulacao.html">+ Nova Simulação</a></button>
-                <button class="bottom-nav-button"> <a href="transacoes.html">Transações</a></button>
-                 <button class="bottom-nav-button"> <a href="editar_perfil.html">Perfil</a></button>
-                  <button class="bottom-nav-button"> <a href="tabel_juro_usuario.html">Tabela de Taxas</a></button>
-            </div>
-        </div>
-    </footer>
-
-    <footer class="footer-mobile">
-        <div class="conteudo-rodape">
-            <a href="index.html" class="logo-rodape">
-                <img width="150" src="assets/img/Logo do footer.png" alt="Logo Looma">
-            </a>
-            <div class="icones-sociais">
-                <a href="#"><img src="assets/img/FACEBOOK.png" alt="Facebook"></a>
-                <a href="#"><img src="assets/img/WHATSAPP.png" alt="WhatsApp"></a>
-                <a href="#"><img src="assets/img/INSTAGRAM.png" alt="Instagram"></a>
-                <a href="#"><img src="assets/img/TWITTER.png" alt="Twitter"></a>
-            </div>
-        </div>
-        <div class="direitos-autorais">
-            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <script src="assets/js/app.js"></script>
-
-</body>
-</html>
-
-
-
-
-
-
+{% endblock %}

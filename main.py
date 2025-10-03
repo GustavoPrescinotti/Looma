@@ -90,17 +90,50 @@ def dashboard():
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    print(session['usuario'])
-    if session['usuario'][4] == 'User':
-        return render_template('dashboard_usuario.html')
+    if session['usuario'][4] == 'Admin':
+        return render_template('dashboard_admin.html')
 
-    return render_template('dashboard_admin.html')
+    return render_template('dashboard_usuario.html')
 
 @app.route('/logout')
 def logout():
     if 'usuario' in session:
         session.pop("usuario", None)
     return redirect(url_for('login'))
+
+# APENAS ADMINS
+
+@app.route('/app/taxas/criar')
+def nova_taxa():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    
+    if session['usuario'][4] != 'Admin':
+        return redirect(url_for('dashboard'))
+
+    return render_template('nova_taxa.html')
+
+@app.route('/app/taxas')
+def taxas():
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    
+    if session['usuario'][4] == 'User':
+        return render_template('tabela_juro_usuario.html')
+
+    return render_template('tabela_juro_admin.html')
+
+@app.route('/app/simulacao/criar')
+def nova_simulacao():
+    return render_template('nova_simulacao.html')
+
+@app.route('/app/transacoes')
+def transacoes():
+    return render_template('transacoes.html')
+
+@app.route('/perfil')
+def perfil():
+    return render_template('editar_perfil.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

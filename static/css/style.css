@@ -17,7 +17,8 @@
 }
 
 html {
-    scroll-behavior: smooth; /* Faz uma transição suave até a seção da página */
+    scroll-behavior: smooth;
+    /* Faz uma transição suave até a seção da página */
 }
 
 /* O seletor :root refere-se ao elemento raiz do documento (normalmente <html>) e é usado para declarar variáveis CSS globais. */
@@ -262,6 +263,10 @@ p {
 
 .destaque {
     color: var(--cor-primaria-azul);
+}
+
+.bold {
+    font-weight: 700;
 }
 
 /* Estilo base para botões genéricos. */
@@ -662,6 +667,7 @@ p {
     /* Faz o campo herdar a fonte do elemento pai. */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     /* Adiciona uma transição suave para a borda e a sombra. */
+    resize: none;
 }
 
 /* Efeito de foco (:focus) nos campos de entrada. */
@@ -777,8 +783,8 @@ footer {
 /* ========================================================================== */
 
 /* Estilos aplicados ao elemento <main> quando o <body> tem a classe .cadastro-page ou .login-page. */
-body.cadastro-page main,
-body.login-page main {
+main.cadastro-page,
+main.login-page {
     display: flex;
     /* Ativa o Flexbox. */
     justify-content: center;

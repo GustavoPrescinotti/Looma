@@ -1,279 +1,223 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/js/app.js">
-    <link rel="shortcut icon" href="assets/img/Icon da logo.png">
-    <link rel="stylesheet" href="assets/css/responsivo.css">
-    <link rel="stylesheet" href="assets/css/dashboard de todo.css">
-    <title>Tabela de Transações</title>
-</head>
-<body class="dashboard-admin">
-    <header class="cabecalho-principal">
-        <a href="index.html">
-            <img class="logo-icon" src="assets/img/Logo_redondo.png" alt="Looma">
-        </a>
+{% extends 'templateDashboard.html' %}
 
-        <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <nav class="menu-mobile" id="menuMobile">
-            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
-            
-            <ul>
-                <li><a href="dashboard_usuario.html" class="nav-link active" data-section="painel">Painel</a></li>
-                <li><a href="nova_simulacao.html" class="nav-link active" data-section="painel">+ Nova Simulação</a></li>
-                <li><a href="transacoes.html" class="nav-link" data-section="taxa-juros">Transações</a></li>
-                <li><a href="editar_perfil.html" class="nav-link" data-section="nova-taxa">Perfil</a></li>
-                <li><a href="tabel_juro_usuario.html" class="nav-link" data-section="nova-taxa">Tabela de Taxas</a></li>
-                <li><a href="index.html" class="nav-link">Sair da Conta</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <div class="container">
-        <div class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">
-                    <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
-                </div>
-                <span class="logo-text">Looma</span>
+{% block conteudo %}
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">
+                <img src="{{url_for('static', filename='img/icon-looma.png')}}" alt="Logo do Sistema">
             </div>
+            <span class="logo-text">Looma</span>
+        </div>
 
-            <div class="user-profile">
-                <img src="assets/img/user.png" alt="Avatar" class="avatar">
-                <span class="user-name">Olá, Caique Fachini</span>
+        <div class="user-profile">
+            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="avatar">
+            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-button active" data-section="painel">
+                <a href="{{url_for('dashboard')}}">Painel</a>
+            </button>
+            <button class="nav-button active" data-section="painel">
+                <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a>
+            </button>
+            <button class="nav-button inactive" data-section="taxa-juros">
+                <a href="{{url_for('transacoes')}}">Transações</a>
+            </button>
+            <button class="nav-button inactive" data-section="nova-taxa">
+                <a href="{{url_for('perfil')}}">Perfil</a>
+            </button>
+            <button class="nav-button inactive" data-section="nova-taxa">
+                <a href="{{url_for('taxas')}}">Tabela de Taxas</a>
+            </button>
+        </div>
+
+        <div class="sign-out">
+            <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
+        </div>
+
+        <div class="bottom-profile">
+            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="bottom-avatar">
+            <div class="profile-info">
+                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
+                <div class="profile-email">{{session['usuario'][2]}}</div>
             </div>
-
-            <div class="navigation">
-                <button class="nav-button active" data-section="painel"> <a href="dashboard_usuario.html">Painel</a></button>
-                <button class="nav-button active" data-section="painel"> <a href="nova_simulacao.html">+ Nova Simulação</a></button>
-                <button class="nav-button inactive" data-section="taxa-juros"> <a href="transacoes.html">Transações</a></button>
-                <button class="nav-button inactive" data-section="nova-taxa"> <a href="editar_perfil.html">Perfil</a></button>
-                <button class="nav-button inactive" data-section="nova-taxa"> <a href="tabel_juro_usuario.html">Tabela de Taxas</a></button>
-            </div>
-
-            <div class="sign-out">
-                <button class="nav-button inactive"> <a href="index.html">Sair da Conta</a></button>
-            </div>
-
-            <div class="bottom-profile">
-                <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
-                <div class="profile-info">
-                    <div class="profile-name">Caique Fachini</div>
-                    <div class="profile-email">caique@email.com</div>
-                </div>
-            </div>
-        </div> 
-
-        <main class="panel">
-            <h1 class="panel-title">Transações Realizadas:</h1>
-
-            <div class="balance">
-                <span class="label">Saldo Atual:</span>
-                <span class="value">R$0,00</span>
-            </div>
-
-            <div class="actions-row">
-                <button class="cta cta-primary"> <a href="nova_receita.html">Nova Receita</a></button>
-                <button class="cta cta-outline"><a href="nova_despesa.html">Nova Despesa</a></button>
-            </div>
-
-            <!-- Tabela para Desktop -->
-            <div class="table-wrap">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Tipo</th>
-                            <th>Valor</th>
-                            <th>Descrição</th>
-                            <th class="th-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Data">27/09/2025</td>
-                            <td data-label="Tipo">Receita</td>
-                            <td data-label="Valor">R$ 9.000,00</td>
-                            <td data-label="Descrição">Investimento</td>
-                            <td class="td-actions" data-label="Ações">
-                                <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                                <button class="chip chip-outline">Excluir</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td data-label="Data">18/07/2025</td>
-                            <td data-label="Tipo">Receita</td>
-                            <td data-label="Valor">R$ 15.000,00</td>
-                            <td data-label="Descrição">Investimento</td>
-                            <td class="td-actions" data-label="Ações">
-                                <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                                <button class="chip chip-outline">Excluir</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td data-label="Data">09/07/2025</td>
-                            <td data-label="Tipo">Despesa</td>
-                            <td data-label="Valor">R$ 6.000,00</td>
-                            <td data-label="Descrição">Gasto com máquinas</td>
-                            <td class="td-actions" data-label="Ações">
-                                <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                                <button class="chip chip-outline">Excluir</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td data-label="Data">10/06/2025</td>
-                            <td data-label="Tipo">Despesa</td>
-                            <td data-label="Valor">R$ 1518,00</td>
-                            <td data-label="Descrição">Pagamento do Igor</td>
-                            <td class="td-actions" data-label="Ações">
-                                <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                                <button class="chip chip-outline">Excluir</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Cards para Mobile -->
-            <div class="cards-container">
-                <div class="card">
-                    <div class="card-row">
-                        <span class="card-label">Data:</span>
-                        <span class="card-value">27/09/2025</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Tipo:</span>
-                        <span class="card-value">Receita</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Valor:</span>
-                        <span class="card-value">R$ 9.000,00</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Descrição:</span>
-                        <span class="card-value">Investimento</span>
-                    </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-row">
-                        <span class="card-label">Data:</span>
-                        <span class="card-value">18/07/2025</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Tipo:</span>
-                        <span class="card-value">Receita</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Valor:</span>
-                        <span class="card-value">R$ 15.000,00</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Descrição:</span>
-                        <span class="card-value">Investimento</span>
-                    </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-row">
-                        <span class="card-label">Data:</span>
-                        <span class="card-value">09/07/2025</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Tipo:</span>
-                        <span class="card-value">Despesa</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Valor:</span>
-                        <span class="card-value">R$ 6.000,00</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Descrição:</span>
-                        <span class="card-value">Gasto com máquinas</span>
-                    </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-row">
-                        <span class="card-label">Data:</span>
-                        <span class="card-value">10/06/2025</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Tipo:</span>
-                        <span class="card-value">Despesa</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Valor:</span>
-                        <span class="card-value">R$ 1.518,00</span>
-                    </div>
-                    <div class="card-row">
-                        <span class="card-label">Descrição:</span>
-                        <span class="card-value">Pagamento do Igor</span>
-                    </div>
-                    <div class="card-row">
-                        <div class="card-actions">
-                            <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                            <button class="btn-delete">Excluir</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+        </div>
     </div>
 
-    <footer class="footer-desktop">
-        <div class="bottom-nav">
-            <div class="bottom-nav-container">
-                <button class="bottom-nav-button"> <a href="dashboard_usuario.html">Painel</a></button>
-                <button class="bottom-nav-button"> <a href="nova_simulacao.html">+ Nova Simulação</a></button>
-                <button class="bottom-nav-button"> <a href="transacoes.html">Transações</a></button>
-                <button class="bottom-nav-button"> <a href="editar_perfil.html">Perfil</a></button>
-                <button class="bottom-nav-button"> <a href="tabel_juro_usuario.html">Tabela de Taxas</a></button>
+    <main class="panel">
+        <h1 class="panel-title">Transações Realizadas:</h1>
+
+        <div class="balance">
+            <span class="label">Saldo Atual:</span>
+            <span class="value">R$0,00</span>
+        </div>
+
+        <div class="actions-row">
+            <button class="cta cta-primary"> <a href="nova_receita.html">Nova Receita</a></button>
+            <button class="cta cta-outline"><a href="nova_despesa.html">Nova Despesa</a></button>
+        </div>
+
+        <!-- Tabela para Desktop -->
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Descrição</th>
+                        <th class="th-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Data">27/09/2025</td>
+                        <td data-label="Tipo">Receita</td>
+                        <td data-label="Valor">R$ 9.000,00</td>
+                        <td data-label="Descrição">Investimento</td>
+                        <td class="td-actions" data-label="Ações">
+                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
+                            <button class="chip chip-outline">Excluir</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-label="Data">18/07/2025</td>
+                        <td data-label="Tipo">Receita</td>
+                        <td data-label="Valor">R$ 15.000,00</td>
+                        <td data-label="Descrição">Investimento</td>
+                        <td class="td-actions" data-label="Ações">
+                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
+                            <button class="chip chip-outline">Excluir</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-label="Data">09/07/2025</td>
+                        <td data-label="Tipo">Despesa</td>
+                        <td data-label="Valor">R$ 6.000,00</td>
+                        <td data-label="Descrição">Gasto com máquinas</td>
+                        <td class="td-actions" data-label="Ações">
+                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
+                            <button class="chip chip-outline">Excluir</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-label="Data">10/06/2025</td>
+                        <td data-label="Tipo">Despesa</td>
+                        <td data-label="Valor">R$ 1518,00</td>
+                        <td data-label="Descrição">Pagamento do Igor</td>
+                        <td class="td-actions" data-label="Ações">
+                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
+                            <button class="chip chip-outline">Excluir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cards para Mobile -->
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-row">
+                    <span class="card-label">Data:</span>
+                    <span class="card-value">27/09/2025</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Tipo:</span>
+                    <span class="card-value">Receita</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Valor:</span>
+                    <span class="card-value">R$ 9.000,00</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Descrição:</span>
+                    <span class="card-value">Investimento</span>
+                </div>
+                <div class="card-row">
+                    <div class="card-actions">
+                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
+                        <button class="btn-delete">Excluir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-row">
+                    <span class="card-label">Data:</span>
+                    <span class="card-value">18/07/2025</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Tipo:</span>
+                    <span class="card-value">Receita</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Valor:</span>
+                    <span class="card-value">R$ 15.000,00</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Descrição:</span>
+                    <span class="card-value">Investimento</span>
+                </div>
+                <div class="card-row">
+                    <div class="card-actions">
+                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
+                        <button class="btn-delete">Excluir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-row">
+                    <span class="card-label">Data:</span>
+                    <span class="card-value">09/07/2025</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Tipo:</span>
+                    <span class="card-value">Despesa</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Valor:</span>
+                    <span class="card-value">R$ 6.000,00</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Descrição:</span>
+                    <span class="card-value">Gasto com máquinas</span>
+                </div>
+                <div class="card-row">
+                    <div class="card-actions">
+                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
+                        <button class="btn-delete">Excluir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-row">
+                    <span class="card-label">Data:</span>
+                    <span class="card-value">10/06/2025</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Tipo:</span>
+                    <span class="card-value">Despesa</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Valor:</span>
+                    <span class="card-value">R$ 1.518,00</span>
+                </div>
+                <div class="card-row">
+                    <span class="card-label">Descrição:</span>
+                    <span class="card-value">Pagamento do Igor</span>
+                </div>
+                <div class="card-row">
+                    <div class="card-actions">
+                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
+                        <button class="btn-delete">Excluir</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
-
-    <footer class="footer-mobile">
-        <div class="conteudo-rodape">
-            <a href="index.html" class="logo-rodape">
-                <img width="150" src="assets/img/Logo do footer.png" alt="Logo Looma">
-            </a>
-            <div class="icones-sociais">
-                <a href="#"><img src="assets/img/FACEBOOK.png" alt="Facebook"></a>
-                <a href="#"><img src="assets/img/WHATSAPP.png" alt="WhatsApp"></a>
-                <a href="#"><img src="assets/img/INSTAGRAM.png" alt="Instagram"></a>
-                <a href="#"><img src="assets/img/TWITTER.png" alt="Twitter"></a>
-            </div>
-        </div>
-        <div class="direitos-autorais">
-            <p>&copy; 2025 Looma. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-
-    <script src="assets/js/app.js"></script>
-</body>
-</html>
+    </main>
+</div>
+{% endblock %}
