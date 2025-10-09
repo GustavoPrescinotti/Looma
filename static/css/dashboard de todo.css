@@ -107,6 +107,8 @@ body {
     outline: none;
 }
 
+
+
 .logo {
     padding: 24px;
     display: flex;
@@ -125,11 +127,6 @@ body {
     color: white;
     font-weight: 600;
     font-size: 18px;
-}
-
-.logo-icon img {
-    width: 100% !important;
-    height: 100% !important;
 }
 
 .logo-text {
@@ -194,8 +191,6 @@ body {
 
 .sign-out {
     padding: 24px;
-    border-top: 1px solid #e0d8d8;
-    margin-top: 24px;
 }
 
 .bottom-profile {
@@ -462,7 +457,7 @@ body {
     margin-top: 18px;
 }
 
-/* .btn {
+.btn {
     font-size: 22px;
     font-weight: 700;
     border-radius: var(--radius);
@@ -474,7 +469,7 @@ body {
     border: none;
     outline: none;
     width: 100%;
-} */
+}
 
 .btn--primary {
     background: hsl(var(--looma-blue));
@@ -1198,7 +1193,175 @@ body {
     width: calc(100% - 276px);
     /* Largura total menos sidebar */
 }
+.transacoes-table-container {
+    width: 100%;
+    overflow-x: auto; /* Garante rolagem se a tela for muito estreita */
+}
 
+.table-transacoes {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    font-size: 0.95rem;
+}
+
+.table-transacoes thead {
+    background-color: #395ff9;
+    color: white;
+}
+
+.table-transacoes th,
+.table-transacoes td {
+    padding: 1rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.table-transacoes tbody tr {
+    border-bottom: 1px solid #e9ecef;
+}
+
+.table-transacoes tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table-transacoes .td-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.chip-tabela {
+    padding: 0.4rem 0.8rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.chip-tabela.receita {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.chip-tabela.despesa {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.chip-tabela.chip-edit {
+    background: #395ff9;
+    color: white;
+    transition: background 0.2s;
+}
+.chip-tabela.chip-edit:hover {
+    background: #2a4fd8;
+}
+
+.chip-tabela.chip-delete {
+    background: #6c757d;
+    color: white;
+    transition: background 0.2s;
+}
+.chip-tabela.chip-delete:hover {
+    background: #5a6268;
+}
+
+
+/* ESTILOS DOS CARDS PARA TABLET E CELULAR (ATÉ 769px) */
+.transacoes-cards-container {
+    display: none; /* Escondido por padrão no desktop */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.transacao-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-left: 5px solid #395ff9;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.transacao-card-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+.transacao-card-linha:last-of-type {
+    border-bottom: none;
+}
+
+.transacao-card-label {
+    font-weight: 600;
+    color: #555;
+}
+
+.transacao-card-value {
+    color: #333;
+    text-align: right;
+}
+
+.transacao-card-value.receita {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.transacao-card-value.despesa {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.transacao-card-actions {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-card {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.btn-card.btn-card-edit {
+    background: #395ff9;
+    color: white;
+}
+.btn-card.btn-card-edit:hover {
+    background: #2a4fd8;
+}
+
+.btn-card.btn-card-delete {
+    background: white;
+    color: var(--blue-primary);
+    border: 1px solid var();
+}
+.btn-card.btn-card-delete:hover {
+    background: #e02d3b;
+}
 .panel-title {
     font-size: 24px;
     /* Reduzido de 32px */
@@ -1356,7 +1519,7 @@ body {
 
 
 .actions-row button a {
-
+     margin-top: 2rem;
     color: inherit;
 }
 

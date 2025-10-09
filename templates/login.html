@@ -4,7 +4,7 @@
 <main class="login-page">
     <div class="cartao-formulario">
         <h2 class="Cadastroelogin">Login</h2> <br>
-        <form action="{{url_for('login')}}" method="post">
+        <form action="" method="post">
             <div class="grupo-formulario">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" placeholder="Digite seu email" required>
@@ -13,7 +13,6 @@
                 <label for="password">Senha:</label>
                 <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
             </div>
-
             <div class="grupo-termos">
                 <div class="checkbox">
                     <input type="checkbox" id="termos">
@@ -28,13 +27,12 @@
                         necessário criar uma conta. Você é responsável por manter a confidencialidade das
                         informações de sua conta, incluindo sua senha, e por toda e qualquer atividade que ocorra
                         sob sua conta.</label>
-                </div> <br>
-
+                </div><br>
             </div>
 
             <div class="BotaoFormulario">
-                <button type="submit" class="btn btn-primary">Logar</button>
-                <a href="{{url_for('cadastro')}}" class="btn btn-fourth">Cadastrar-se</a>
+                <button type="submit" class="BotaoLogin" id="btnLogin">Logar</button>
+                <a href="{{url_for('cadastro')}}" class="BotaoCadastrar">Cadastrar-se</a>
             </div>
         </form>
     </div>

@@ -1,14 +1,15 @@
 from flask import Flask, render_template, redirect, session, url_for, request, flash
 from flask_bcrypt import generate_password_hash, check_password_hash
+from datetime import date
 import fdb
 
 app = Flask(__name__)
 app.secret_key = 'IgorELaisMeDeemNota'
 
 host = 'localhost' 
-database = r'C:\Users\Aluno\Desktop\PauloH\Looma\db\Looma.FDB'
+database = r'C:\Looma\db\Looma.FDB'
 user = 'sysdba' 
-password = 'sysdba'
+password = 'masterkey'
 
 con = fdb.connect(host=host, database=database, user=user, password=password)
 
@@ -74,7 +75,7 @@ def cadastro():
         hash_senha = generate_password_hash(senha).decode('utf-8')
 
         cursor.execute("INSERT INTO usuario(email, nome, senha, cpf, telefone, tipo) VALUES (?, ?, ?, ?, ?, ?)", 
-                       (email, nome, hash_senha, cpf, telefone, 'User'))
+                       (email, nome, hash_senha, cpf, telefone, 'user'))
         con.commit()
 
         return redirect(url_for('login'))
@@ -90,7 +91,7 @@ def dashboard():
     if 'usuario' not in session:
         return redirect(url_for('login'))
 
-    if session['usuario'][4] == 'Admin':
+    if session['usuario'][4] == 'admin':
         return render_template('dashboard_admin.html')
 
     return render_template('dashboard_usuario.html')
@@ -102,26 +103,104 @@ def logout():
     return redirect(url_for('login'))
 
 # APENAS ADMINS
-
-@app.route('/app/taxas/criar')
+@app.route('/app/taxas/criar', methods=['GET', 'POST'])
 def nova_taxa():
     if 'usuario' not in session:
         return redirect(url_for('login'))
     
-    if session['usuario'][4] != 'Admin':
+    if session['usuario'][4] != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'GET':
+        return render_template('nova_taxa.html')
+
+    cursor = con.cursor()
+
+    try:
+        ano = request.form['ano']
+        valor = request.form['taxa']
+        data = date.today()
+        id_usuario = session['usuario'][0]
+
+        cursor.execute('INSERT INTO TAXA_JURO (ANO, TAXA_MENSAL, DATA_CRIACAO, ID_USUARIO) VALUES (?, ?, ?, ?)', (ano, valor, data, id_usuario))
+
+        con.commit()
+    finally:
+        cursor.close()
+
+    return redirect(url_for('taxas'))
+
+@app.route('/app/taxas/editar/<id>', methods=['GET', 'POST'])
+def editar_taxa(id):
+    if 'usuario' not in session:
+        return redirect(url_for('login'))
+    
+    if session['usuario'][4] != 'admin':
+        return redirect(url_for('dashboard'))
+    
+    if request.method == "GET":
+        cursor = con.cursor()
+        dadosTaxa = None
+
+        try:
+            cursor.execute('SELECT ano, taxa_mensal FROM taxa_juro WHERE id_taxajuro = ?', (id,))
+            dadosTaxa = cursor.fetchone()
+        finally:
+            cursor.close()
+
+        return render_template('editar_taxa.html', dadosTaxa=dadosTaxa)
+    
+    cursor = con.cursor()
+
+    try:
+        vigencia = request.form['ano']
+        valor = request.form['taxa']
+
+        cursor.execute('UPDATE TAXA_JURO SET ano = ?, taxa_mensal = ? WHERE id_taxajuro = ?', (vigencia, valor, id))
+        con.commit()
+    finally:
+        cursor.close()
+    
+    return redirect(url_for('taxas'))
+
+@app.route('/app/taxas/excluir/<int:id>')
+def excluir_taxa(id):
+    if session['usuario'][4] == 'user':
         return redirect(url_for('dashboard'))
 
-    return render_template('nova_taxa.html')
+    cursor = con.cursor()
+
+    try:
+        cursor.execute('DELETE FROM TAXA_JURO WHERE id_taxajuro = ?', (id,))
+        con.commit()
+    finally:
+        cursor.close()
+    
+    return redirect(url_for('taxas'))
 
 @app.route('/app/taxas')
 def taxas():
     if 'usuario' not in session:
         return redirect(url_for('login'))
     
-    if session['usuario'][4] == 'User':
-        return render_template('tabela_juro_usuario.html')
+    todastaxas = []
+    cursor = con.cursor()
 
-    return render_template('tabela_juro_admin.html')
+    try:
+        cursor.execute('SELECT id_taxajuro, ano, taxa_mensal, data_criacao, id_usuario FROM TAXA_JURO')
+        taxasObtidas = cursor.fetchall()
+
+        for taxa in taxasObtidas:
+            cursor.execute('SELECT nome FROM usuario u WHERE u.id_usuario = ?', (taxa[4],))
+            username = cursor.fetchone()[0]
+
+            taxaFinal = (taxa[0], taxa[1], taxa[2], taxa[3], username)
+
+            todastaxas.append(taxaFinal)
+    finally:
+        cursor.close()
+    
+    return render_template('tabelaJuro.html', taxas=todastaxas)
 
 @app.route('/app/simulacao/criar')
 def nova_simulacao():

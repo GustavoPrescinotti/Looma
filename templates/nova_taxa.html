@@ -2,65 +2,23 @@
 
 {% block conteudo %}
 <div class="container">
-
-    <div class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
-            </div>
-            <span class="logo-text">Looma</span>
-        </div>
-
-        <div class="user-profile">
-            <img src="assets/img/user.png" alt="Avatar" class="avatar">
-            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
-        </div>
-
-        <div class="navigation">
-            <button class="nav-button active" data-section="painel">
-                <a href="{{url_for('dashboard')}}">Painel</a>
-            </button>
-            <button class="nav-button inactive" data-section="taxa-juros">
-                <a href="{{url_for('taxas')}}">Taxa de Juros</a>
-            </button>
-            <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('nova_taxa')}}">Nova Taxa</a>
-            </button>
-
-        </div>
-
-        <div class="sign-out">
-            <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
-        </div>
-
-        <div class="bottom-profile">
-            <img src="assets/img/user.png" alt="Avatar" class="bottom-avatar">
-            <div class="profile-info">
-                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
-                <div class="profile-email">{{session['usuario'][2]}}</div>
-            </div>
-        </div>
-    </div>
+    {% include 'components/sidebar.html' %}
     <div class="main-content">
         <div class="form-container">
             <div class="form-card">
                 <h1>Nova Taxa</h1>
-                <form>
+                <form action="" method="post">
                     <div class="form-group">
                         <label for="ano">Ano:</label>
-                        <input id="ano" type="text" class="form-input">
+                        <input name="ano" id="ano" type="text" class="form-input">
                     </div>
                     <div class="form-group">
-                        <label for="taxa">Nova Taxa:</label>
-                        <input id="taxa" type="text" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label for="data">Data de Criação:</label>
-                        <input id="data" type="text" class="form-input">
+                        <label for="taxa">Quantidade Taxa:</label>
+                        <input name="taxa" id="taxa" type="text" class="form-input">
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Adicionar</button>
-                        <a class="btn btn-fourth">Cancelar</a>
+                        <button type="submit" class="btn-secondary">Adicionar Taxa</button>
+                        <button type="button" class="btn-primary">Cancelar</button>
                     </div>
                 </form>
             </div>

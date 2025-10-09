@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="assets/js/app.js"> -->
     <link rel="shortcut icon" href="{{url_for('static', filename='img/icon-looma.png')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/dashboard de todo.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/responsivo.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/buttons.css')}}">
-    <title>Meu Dashboard</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/dashboard de todo.css')}}">
+    <title>Dashboard Empresário</title>
 </head>
-
 <body class="dashboard-admin">
     <header class="cabecalho-principal">
         <a href="index.html">
-            <img class="logo-icon" src="assets/img/Logo_redondo.png" alt="Looma">
+            <img class="logo-icon" src="{{url_for('static', filename='img/Logo_redondo.png')}}" alt="Looma">
         </a>
 
         <button class="menu-hamburguer" id="btnMenu" aria-label="Abrir menu">
@@ -23,15 +21,7 @@
             <span></span>
         </button>
 
-        <nav class="menu-mobile" id="menuMobile">
-            <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
-            <ul>
-                <li><a href="{{url_for('dashboard')}}" class="nav-link active" data-section="painel">Painel</a></li>
-                <li><a href="{{url_for('taxas')}}" class="nav-link" data-section="taxa-juros">Taxa de Juros</a></li>
-                <li><a href="{{url_for('nova_taxa')}}" class="nav-link" data-section="nova-taxa">Nova Taxa</a></li>
-                <li><a href="{{url_for('logout')}}" class="nav-link">Sair da Conta</a></li>
-            </ul>
-        </nav>
+        {% include 'components/mobile-nav.html' %}
     </header>
 
     {% block conteudo %}
@@ -40,13 +30,13 @@
     <footer class="footer-mobile">
         <div class="conteudo-rodape">
             <a href="index.html" class="logo-rodape">
-                <img width="150" src="assets/img/Logo do footer.png" alt="Logo Looma">
+                <img width="150" src="{{url_for('static', filename='img/Logo do footer.png')}}" alt="Logo Looma">
             </a>
             <div class="icones-sociais">
-                <a href="#"><img src="assets/img/FACEBOOK.png" alt="Facebook"></a>
-                <a href="#"><img src="assets/img/WHATSAPP.png" alt="WhatsApp"></a>
-                <a href="#"><img src="assets/img/INSTAGRAM.png" alt="Instagram"></a>
-                <a href="#"><img src="assets/img/TWITTER.png" alt="Twitter"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/FACEBOOK.png')}}" alt="Facebook"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/WHATSAPP.png')}}" alt="WhatsApp"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/INSTAGRAM.png')}}" alt="Instagram"></a>
+                <a href="#"><img src="{{url_for('static', filename='img/TWITTER.png')}}" alt="Twitter"></a>
             </div>
         </div>
         <div class="direitos-autorais">
@@ -54,7 +44,6 @@
         </div>
     </footer>
 
-    <script src="assets/js/app.js"></script>
+    <script src="{{url_for('static', filename='js/app.js')}}"></script>
 </body>
-
 </html>

@@ -5,12 +5,11 @@
     <section class="secao-apresentacao">
         <div class="fundo-apresentacao"></div>
         <div class="conteudo-apresentacao">
-            <h1>Gestão de Créditos <br /> <span class="destaque">Descomplicada</span></h1>
-            <p>A plataforma que pequenas empresas confiam para administrar<br />suas contas a receber e melhorar sua
+            <h1>Gestão de Créditos<br><strong>Descomplicada</strong></h1>
+            <p>A plataforma que pequenas empresas confiam para administrar<br>suas contas a receber e melhorar sua
                 saúde financeira.</p>
             <div class="botoes-apresentacao">
-                <a href="{{url_for('login')}}" class="btn btn-secondary">Entrar agora</a>
-                <a href="{{url_for('cadastro')}}" class="btn btn-primary">Quero começar</a>
+                <a href="{{url_for("cadastro")}}" class="botao botao-destaque">Quero me Cadastrar</a>
             </div>
         </div>
     </section>
@@ -25,12 +24,11 @@
     <section id="guia" class="secao-guia">
         <h2>Guia para os Novos Usuários</h2>
         <p class="subtitulo">Um guia rápido para aproveitar ao máximo nossa plataforma</p>
-
+        
         <div class="painel-guia">
             <div class="cartao-guia">
                 <h3>Crie sua conta</h3>
-                <p>Registre-se em menos de <strong>2 minutos</strong> informando seus dados básicos e situação
-                    financeira.</p>
+                <p>Registre-se em menos de <strong>2 minutos</strong> informando seus dados básicos e situação financeira.</p>
             </div>
             <div class="cartao-guia cartao-destaque">
                 <h3>Simule seu empréstimo</h3>
@@ -58,8 +56,7 @@
                     <p>Sem tarifas ocultas ou surpresas - todas as taxas e condições são claramente informadas.</p>
                 </div>
                 <div class="cartao-beneficio">
-                    <p>Acompanhamento inteligente da sua saúde financeira e orientação para melhores condições de
-                        empréstimo.</p>
+                    <p>Acompanhamento inteligente da sua saúde financeira e orientação para melhores condições de empréstimo.</p>
                 </div>
                 <div class="cartao-beneficio">
                     <p>Opções personalizáveis de parcelamento que se adaptam à sua realidade financeira.</p>
@@ -67,7 +64,7 @@
             </div>
         </div>
     </section>
-
+    
     <section id="contato" class="secao-contato">
         <div class="container-contato">
             <div class="informacoes-contato">
@@ -106,7 +103,7 @@
                     </div>
                     <div class="grupo-formulario">
                         <label for="message">Mensagem:</label>
-                        <textarea id="message" name="message" rows="4" required ></textarea>
+                        <textarea id="message" name="message" rows="4" required></textarea>
                     </div>
                     <button type="submit" class="botao-enviar">Enviar Mensagem</button>
                 </form>

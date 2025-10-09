@@ -1,0 +1,41 @@
+<div class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">
+            <img style="width: 100%;" src="{{url_for('static', filename='img/icon-looma.png')}}" alt="Logo do Sistema">
+        </div>
+        <span class="logo-text">Looma</span>
+    </div>
+
+    <div class="user-profile">
+        <img src="{{url_for('static', filename='img/user.png')}}" alt="Avatar" class="avatar">
+        <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
+    </div>
+
+    <div class="navigation">
+        <span>Ações</span>
+        <button class="nav-button active" data-section="painel"> <a href="{{url_for('dashboard')}}">Painel</a></button>
+
+        {% if session['usuario'][4] == 'user' %}
+        <button class="nav-button inactive" data-section="painel"> <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a></button>
+        <button class="nav-button inactive" data-section="taxa-juros"> <a href="{{url_for('transacoes')}}">Transações</a></button>
+        {% else %}
+        <button class="nav-button inactive" data-section="taxa-juros"> <a href="{{url_for('nova_taxa')}}">Nova Taxa</a></button>
+        {% endif %}
+
+        <button class="nav-button inactive" data-section="nova-taxa"> <a href="{{url_for('taxas')}}">Tabela de Taxas</a></button>
+    </div>
+
+    <div class="navigation sign-out">
+        <span>Conta</span>
+        <button class="nav-button inactive" data-section="nova-taxa"> <a href="{{url_for('perfil')}}">Perfil</a></button>
+        <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
+    </div>
+
+    <div class="bottom-profile">
+        <img src="{{url_for('static', filename='img/user.png')}}" alt="Avatar" class="bottom-avatar">
+        <div class="profile-info">
+            <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
+            <div class="profile-email">{{session['usuario'][2]}}</div>
+        </div>
+    </div>
+</div>

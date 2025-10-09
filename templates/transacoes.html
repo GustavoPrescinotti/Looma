@@ -2,52 +2,10 @@
 
 {% block conteudo %}
 <div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="{{url_for('static', filename='img/icon-looma.png')}}" alt="Logo do Sistema">
-            </div>
-            <span class="logo-text">Looma</span>
-        </div>
-
-        <div class="user-profile">
-            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="avatar">
-            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
-        </div>
-
-        <div class="navigation">
-            <button class="nav-button active" data-section="painel">
-                <a href="{{url_for('dashboard')}}">Painel</a>
-            </button>
-            <button class="nav-button active" data-section="painel">
-                <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a>
-            </button>
-            <button class="nav-button inactive" data-section="taxa-juros">
-                <a href="{{url_for('transacoes')}}">Transações</a>
-            </button>
-            <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('perfil')}}">Perfil</a>
-            </button>
-            <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('taxas')}}">Tabela de Taxas</a>
-            </button>
-        </div>
-
-        <div class="sign-out">
-            <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
-        </div>
-
-        <div class="bottom-profile">
-            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="bottom-avatar">
-            <div class="profile-info">
-                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
-                <div class="profile-email">{{session['usuario'][2]}}</div>
-            </div>
-        </div>
-    </div>
+    {% include 'components/sidebar.html' %}
 
     <main class="panel">
-        <h1 class="panel-title">Transações Realizadas:</h1>
+        <h1 class="panel-title">Transações Realizadas</h1>
 
         <div class="balance">
             <span class="label">Saldo Atual:</span>
@@ -55,169 +13,79 @@
         </div>
 
         <div class="actions-row">
-            <button class="cta cta-primary"> <a href="nova_receita.html">Nova Receita</a></button>
-            <button class="cta cta-outline"><a href="nova_despesa.html">Nova Despesa</a></button>
+            <a href="nova_receita.html" class="cta cta-primary">Nova Receita</a>
+            <a href="nova_despesa.html" class="cta cta-outline">Nova Despesa</a>
         </div>
 
-        <!-- Tabela para Desktop -->
-        <div class="table-wrap">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Tipo</th>
-                        <th>Valor</th>
-                        <th>Descrição</th>
-                        <th class="th-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td data-label="Data">27/09/2025</td>
-                        <td data-label="Tipo">Receita</td>
-                        <td data-label="Valor">R$ 9.000,00</td>
-                        <td data-label="Descrição">Investimento</td>
-                        <td class="td-actions" data-label="Ações">
-                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                            <button class="chip chip-outline">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td data-label="Data">18/07/2025</td>
-                        <td data-label="Tipo">Receita</td>
-                        <td data-label="Valor">R$ 15.000,00</td>
-                        <td data-label="Descrição">Investimento</td>
-                        <td class="td-actions" data-label="Ações">
-                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                            <button class="chip chip-outline">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td data-label="Data">09/07/2025</td>
-                        <td data-label="Tipo">Despesa</td>
-                        <td data-label="Valor">R$ 6.000,00</td>
-                        <td data-label="Descrição">Gasto com máquinas</td>
-                        <td class="td-actions" data-label="Ações">
-                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                            <button class="chip chip-outline">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td data-label="Data">10/06/2025</td>
-                        <td data-label="Tipo">Despesa</td>
-                        <td data-label="Valor">R$ 1518,00</td>
-                        <td data-label="Descrição">Pagamento do Igor</td>
-                        <td class="td-actions" data-label="Ações">
-                            <button class="chip chip-primary"> <a href="editar_transacao.html">Editar</a></button>
-                            <button class="chip chip-outline">Excluir</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Cards para Mobile -->
-        <div class="cards-container">
-            <div class="card">
-                <div class="card-row">
-                    <span class="card-label">Data:</span>
-                    <span class="card-value">27/09/2025</span>
+        <div class="transacoes-cards-container">
+            <div class="transacao-card">
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Data:</span>
+                    <span class="transacao-card-value">27/09/2025</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Tipo:</span>
-                    <span class="card-value">Receita</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Tipo:</span>
+                    <span class="transacao-card-value receita">Receita</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Valor:</span>
-                    <span class="card-value">R$ 9.000,00</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Valor:</span>
+                    <span class="transacao-card-value">R$ 9.000,00</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Descrição:</span>
-                    <span class="card-value">Investimento</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Descrição:</span>
+                    <span class="transacao-card-value">Investimento</span>
                 </div>
-                <div class="card-row">
-                    <div class="card-actions">
-                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                        <button class="btn-delete">Excluir</button>
-                    </div>
+                <div class="transacao-card-actions">
+                    <a href="editar_transacao.html" class="btn-card btn-card-edit">Editar</a>
+                    <button class="btn-card btn-card-delete">Excluir</button>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-row">
-                    <span class="card-label">Data:</span>
-                    <span class="card-value">18/07/2025</span>
+            <div class="transacao-card">
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Data:</span>
+                    <span class="transacao-card-value">18/07/2025</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Tipo:</span>
-                    <span class="card-value">Receita</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Tipo:</span>
+                    <span class="transacao-card-value receita">Receita</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Valor:</span>
-                    <span class="card-value">R$ 15.000,00</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Valor:</span>
+                    <span class="transacao-card-value">R$ 15.000,00</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Descrição:</span>
-                    <span class="card-value">Investimento</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Descrição:</span>
+                    <span class="transacao-card-value">Investimento</span>
                 </div>
-                <div class="card-row">
-                    <div class="card-actions">
-                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                        <button class="btn-delete">Excluir</button>
-                    </div>
+                <div class="transacao-card-actions">
+                    <a href="editar_transacao.html" class="btn-card btn-card-edit">Editar</a>
+                    <button class="btn-card btn-card-delete">Excluir</button>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-row">
-                    <span class="card-label">Data:</span>
-                    <span class="card-value">09/07/2025</span>
+            <div class="transacao-card">
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Data:</span>
+                    <span class="transacao-card-value">09/07/2025</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Tipo:</span>
-                    <span class="card-value">Despesa</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Tipo:</span>
+                    <span class="transacao-card-value despesa">Despesa</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Valor:</span>
-                    <span class="card-value">R$ 6.000,00</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Valor:</span>
+                    <span class="transacao-card-value">R$ 6.000,00</span>
                 </div>
-                <div class="card-row">
-                    <span class="card-label">Descrição:</span>
-                    <span class="card-value">Gasto com máquinas</span>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Descrição:</span>
+                    <span class="transacao-card-value">Gasto com máquinas</span>
                 </div>
-                <div class="card-row">
-                    <div class="card-actions">
-                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                        <button class="btn-delete">Excluir</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-row">
-                    <span class="card-label">Data:</span>
-                    <span class="card-value">10/06/2025</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-label">Tipo:</span>
-                    <span class="card-value">Despesa</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-label">Valor:</span>
-                    <span class="card-value">R$ 1.518,00</span>
-                </div>
-                <div class="card-row">
-                    <span class="card-label">Descrição:</span>
-                    <span class="card-value">Pagamento do Igor</span>
-                </div>
-                <div class="card-row">
-                    <div class="card-actions">
-                        <button class="btn-edit"><a href="editar_transacao.html">Editar</a></button>
-                        <button class="btn-delete">Excluir</button>
-                    </div>
+                <div class="transacao-card-actions">
+                    <a href="editar_transacao.html" class="btn-card btn-card-edit">Editar</a>
+                    <button class="btn-card btn-card-delete">Excluir</button>
                 </div>
             </div>
         </div>
+
     </main>
 </div>
 {% endblock %}

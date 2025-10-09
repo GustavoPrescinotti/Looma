@@ -2,48 +2,7 @@
 
 {% block conteudo %}
 <div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="{{url_for('static', filename='img/icon-looma.png')}}" alt="Logo do Sistema">
-            </div>
-            <span class="logo-text">Looma</span>
-        </div>
-
-        <div class="user-profile">
-            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="avatar">
-            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
-        </div>
-
-        <div class="navigation">
-            <button class="nav-button active" data-section="painel">
-                <a href="">Painel</a>
-            </button>
-            <button class="nav-button active" data-section="painel">
-                <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a></button>
-            <button class="nav-button inactive" data-section="taxa-juros">
-                <a href="{{url_for('transacoes')}}">Transações</a>
-            </button>
-            <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('perfil')}}">Perfil</a>
-            </button>
-            <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('taxas')}}">Tabela de Taxas</a>
-            </button>
-        </div>
-
-        <div class="sign-out">
-            <button class="nav-button inactive"><a href="{{url_for('logout')}}">Sair da Conta</a></button>
-        </div>
-
-        <div class="bottom-profile">
-            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="bottom-avatar">
-            <div class="profile-info">
-                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
-                <div class="profile-email">{{session['usuario'][2]}}</div>
-            </div>
-        </div>
-    </div>
+    {% include 'components/sidebar.html' %}
     <div class="main-content">
         <section>
             <h3 class="section-title">Seu Resumo Financeiro</h3>
@@ -74,11 +33,11 @@
                     <p class="card__value card__value--lg">R$0,00</p>
                 </article>
                 <article class="card card--white">
-                    <h4 class="card__title">Parcelas<br />Restantes</h4>
+                    <h4 class="card__title">Parcelas<br/>Restantes</h4>
                     <p class="card__value card__value--lg">0</p>
                 </article>
                 <article class="card card--white">
-                    <h4 class="card__title">Próximo<br />Vencimento</h4>
+                    <h4 class="card__title">Próximo<br/>Vencimento</h4>
                     <p class="card__value card__value--lg">Não Definido</p>
                 </article>
             </div>

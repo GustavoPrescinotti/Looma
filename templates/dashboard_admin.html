@@ -2,45 +2,8 @@
 
 {% block conteudo %}
 <div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">
-                <img src="assets/img/Logo_redondo.png" alt="Logo do Sistema">
-            </div>
-            <span class="logo-text">Looma</span>
-        </div>
-
-        <div class="user-profile">
-            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="avatar">
-            <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
-        </div>
-
-        <div class="navigation">
-            <button class="nav-button active" data-section="painel">
-                <a href="">Painel</a>
-            </button>
-            <button class="nav-button inactive" data-section="taxa-juros">
-                <a href="{{url_for('taxas')}}">Taxa de Juros</a>
-            </button>
-            <button class="nav-button inactive" data-section="nova-taxa">
-                <a href="{{url_for('nova_taxa')}}">Nova Taxa</a>
-            </button>
-        </div>
-
-        <div class="sign-out">
-            <button class="nav-button inactive"> <a href="{{url_for('logout')}}">Sair da Conta</a></button>
-        </div>
-
-        <div class="bottom-profile">
-            <img src="{{url_for('static', filename='img/profile.png')}}" alt="Avatar" class="bottom-avatar">
-            <div class="profile-info">
-                <div class="profile-name">{{session['usuario'][1].split()[:2] | join(' ')}}</div>
-                <div class="profile-email">{{session['usuario'][2]}}</div>
-            </div>
-        </div>
-    </div>
-
-
+    {% include 'components/sidebar.html' %}
+    
     <div class="main-content">
         <div class="content-wrapper">
             <h1 class="main-title">Visão Geral:</h1>
@@ -70,7 +33,7 @@
 
                 <div class="chart-container">
                     <div class="chart">
-
+                        
                         <div class="chart-bar">
                             <span class="bar-value">0</span>
                             <div class="bar" style="height: 0px;"></div>
