@@ -15,10 +15,10 @@
         </a>
         <nav class="navegacao-principal">
             <a href="{{url_for('index')}}">Home</a>
-            <a href="/#quem_somos">Quem Somos</a></li>
-            <a href="/#guia">Guia</a></li>
-            <a href="/#beneficios">Benefícios</a></li>
-            <a href="/#contato">Contato</a></li>
+            <a href="#quem_somos">Quem Somos</a></li>
+            <a href="#guia">Guia</a></li>
+            <a href="#beneficios">Benefícios</a></li>
+            <a href="#contato">Contato</a></li>
         </nav>
 
         {% if session['usuario'] %}
@@ -38,27 +38,18 @@
             <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
             
             <ul>
-                <li><a href="{{url_for("index")}}">Home</a></li>
-                <li><a href="/#quem_somos">Quem Somos</a></li>
-                <li><a href="/#guia">Guia</a></li>
-                <li><a href="/#beneficios">Benefícios</a></li>
-                <li><a href="/#contato">Contato</a></li>
+                <li><a href="{{url_for('index')}}">Home</a></li>
+                <li><a href="#quem_somos">Quem Somos</a></li>
+                <li><a href="#guia">Guia</a></li>
+                <li><a href="#beneficios">Benefícios</a></li>
+                <li><a href="#contato">Contato</a></li>
             </ul>
            
         </nav>
     </header>
 
     <div class="alert-messages">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert {{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
+
 
     {% block conteudo %}
     {% endblock %}

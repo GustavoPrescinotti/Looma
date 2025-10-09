@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="assets/js/app.js"> -->
     <link rel="shortcut icon" href="{{url_for('static', filename='img/icon-looma.png')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/responsivo.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/dashboard de todo.css')}}">
+
+
     <title>Dashboard Empresário</title>
 </head>
 <body class="dashboard-admin">
@@ -24,17 +25,7 @@
         {% include 'components/mobile-nav.html' %}
     </header>
 
-    <div class="alert-messages">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert {{ category }}">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-    </div>
+
 
     {% block conteudo %}
     {% endblock %}

@@ -11,11 +11,11 @@
             <span class="label">Saldo Atual:</span>
             <span class="value">R$0,00</span>
         </div>
+<div class="actions-row">
+    <a href="{{ url_for('nova_receita') }}" class="cta cta-primary">Nova Receita</a>
+    <a href="{{ url_for('nova_despesa') }}" class="cta cta-outline">Nova Despesa</a>
+</div>
 
-        <div class="actions-row">
-            <a href="nova_receita.html" class="cta cta-primary">Nova Receita</a>
-            <a href="nova_despesa.html" class="cta cta-outline">Nova Despesa</a>
-        </div>
 
         <div class="transacoes-cards-container">
             <div class="transacao-card">
@@ -36,7 +36,7 @@
                     <span class="transacao-card-value">Investimento</span>
                 </div>
                 <div class="transacao-card-actions">
-                    <a href="editar_transacao.html" class="btn-card btn-card-edit">Editar</a>
+                    <a href="{{url_for('dashboard')}}" class="btn-card btn-card-edit">Editar</a>
                     <button class="btn-card btn-card-delete">Excluir</button>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                     <span class="transacao-card-value">Investimento</span>
                 </div>
                 <div class="transacao-card-actions">
-                    <a href="editar_transacao.html" class="btn-card btn-card-edit">Editar</a>
+                    <a href="{{url_for('dashboard')}}" class="btn-card btn-card-edit">Editar</a>
                     <button class="btn-card btn-card-delete">Excluir</button>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                     <span class="transacao-card-value">Gasto com máquinas</span>
                 </div>
                 <div class="transacao-card-actions">
-                    <a href="editar_transacao.html" class="btn-card btn-card-edit">Editar</a>
+                    <a href="{{url_for('dashboard')}}" class="btn-card btn-card-edit">Editar</a>
                     <button class="btn-card btn-card-delete">Excluir</button>
                 </div>
             </div>

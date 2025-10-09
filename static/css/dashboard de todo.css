@@ -143,6 +143,139 @@ body {
     gap: 12px;
 }
 
+/* ========================================================================== */
+/* ===== ESTILOS PARA MENSAGENS FLASH ===== */
+/* ========================================================================== */
+
+/* Container principal das mensagens flash */
+.flash-messages-container {
+    width: 100%; /* Ocupa toda a largura disponível */
+    margin-bottom: 1.5rem; /* Espaço abaixo do container */
+    display: flex; /* Ativa o Flexbox */
+    flex-direction: column; /* Organiza as mensagens em coluna */
+    gap: 0.75rem; /* Espaço entre múltiplas mensagens */
+}
+
+/* Estilo base para cada mensagem flash */
+.flash-message {
+    display: flex; /* Ativa o Flexbox para alinhar ícone, texto e botão */
+    align-items: center; /* Alinha verticalmente ao centro */
+    padding: 1rem 1.25rem; /* Preenchimento interno */
+    border-radius: 8px; /* Arredonda os cantos */
+    font-size: 1rem; /* Tamanho da fonte */
+    font-weight: 500; /* Peso da fonte */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    animation: slideInDown 0.4s ease-out; /* Animação de entrada */
+    position: relative; /* Para posicionamento do botão de fechar */
+    border-left: 4px solid; /* Borda esquerda colorida */
+}
+
+/* Ícone da mensagem flash */
+.flash-icon {
+    font-size: 1.5rem; /* Tamanho do ícone */
+    font-weight: bold; /* Peso do ícone */
+    margin-right: 0.75rem; /* Espaço à direita do ícone */
+    flex-shrink: 0; /* Impede que o ícone encolha */
+}
+
+/* Texto da mensagem flash */
+.flash-text {
+    flex: 1; /* Ocupa o espaço disponível */
+    line-height: 1.4; /* Altura da linha para melhor legibilidade */
+}
+
+/* Botão de fechar a mensagem */
+.flash-close {
+    background: none; /* Sem fundo */
+    border: none; /* Sem borda */
+    font-size: 1.5rem; /* Tamanho do botão */
+    font-weight: bold; /* Peso da fonte */
+    cursor: pointer; /* Cursor de mão */
+    margin-left: 1rem; /* Espaço à esquerda */
+    opacity: 0.7; /* Opacidade padrão */
+    transition: opacity 0.2s ease; /* Transição suave */
+    flex-shrink: 0; /* Impede que o botão encolha */
+    padding: 0; /* Remove padding */
+    line-height: 1; /* Altura da linha */
+}
+
+/* Efeito hover no botão de fechar */
+.flash-close:hover {
+    opacity: 1; /* Opacidade total ao passar o mouse */
+}
+
+/* Estilo para mensagem de sucesso */
+.flash-success {
+    background-color: #d4edda; /* Fundo verde claro */
+    color: #155724; /* Texto verde escuro */
+    border-left-color: #28a745; /* Borda verde */
+}
+
+.flash-success .flash-icon {
+    color: #28a745; /* Ícone verde */
+}
+
+.flash-success .flash-close {
+    color: #155724; /* Botão fechar verde escuro */
+}
+
+/* Estilo para mensagem de erro */
+.flash-error {
+    background-color: #f8d7da; /* Fundo vermelho claro */
+    color: #721c24; /* Texto vermelho escuro */
+    border-left-color: #dc3545; /* Borda vermelha */
+}
+
+.flash-error .flash-icon {
+    color: #dc3545; /* Ícone vermelho */
+}
+
+.flash-error .flash-close {
+    color: #721c24; /* Botão fechar vermelho escuro */
+}
+
+/* Estilo para mensagem de informação */
+.flash-info {
+    background-color: #d1ecf1; /* Fundo azul claro */
+    color: #0c5460; /* Texto azul escuro */
+    border-left-color: #17a2b8; /* Borda azul */
+}
+
+.flash-info .flash-icon {
+    color: #17a2b8; /* Ícone azul */
+}
+
+.flash-info .flash-close {
+    color: #0c5460; /* Botão fechar azul escuro */
+}
+
+/* Estilo para mensagem de aviso/warning */
+.flash-warning {
+    background-color: #fff3cd; /* Fundo amarelo claro */
+    color: #856404; /* Texto amarelo escuro */
+    border-left-color: #ffc107; /* Borda amarela */
+}
+
+.flash-warning .flash-icon {
+    color: #ffc107; /* Ícone amarelo */
+}
+
+.flash-warning .flash-close {
+    color: #856404; /* Botão fechar amarelo escuro */
+}
+
+/* Animação de entrada das mensagens flash */
+@keyframes slideInDown {
+    from {
+        opacity: 0; /* Começa invisível */
+        transform: translateY(-20px); /* Começa 20px acima */
+    }
+    to {
+        opacity: 1; /* Termina visível */
+        transform: translateY(0); /* Termina na posição original */
+    }
+}
+
 .avatar {
     width: 40px;
     height: 40px;

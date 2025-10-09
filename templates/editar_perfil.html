@@ -6,6 +6,29 @@
     <main class="main">
         <section class="card card-editar-perfil">
             <h2 class="card-title">Editar Usuário</h2>
+            
+            <!-- Área de mensagens flash -->
+            <div class="flash-messages-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    <span class="flash-icon">
+                        {% if category == 'success' %}
+                        ✓
+                        {% elif category == 'error' %}
+                        ✕
+                        {% else %}
+                        ℹ
+                        {% endif %}
+                    </span>
+                    <span class="flash-text">{{ message }}</span>
+                    <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
             <form class="form" action="" method="post">
                 <div class="field">
                     <label for="nome">Nome:</label>
@@ -29,7 +52,7 @@
                 </div>
                 <div class="actions-row">
                     <button type="submit" class="btn btn-primary btn-lg">Salvar</button>
-                    <button type="button" class="btn btn-outline btn-lg">Cancelar</button>
+                    <button type="button" class="btn btn-outline btn-lg"><a href="{{url_for('dashboard')}}">Cancelar</a></button>
                 </div>
             </form>
         </section>
