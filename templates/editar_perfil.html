@@ -6,30 +6,30 @@
     <main class="main">
         <section class="card card-editar-perfil">
             <h2 class="card-title">Editar Usuário</h2>
-            <form class="form">
+            <form class="form" action="" method="post">
                 <div class="field">
                     <label for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" class="input" required>
+                    <input type="text" id="nome" name="nome" class="input" value="{{session['usuario'][1]}}" required>
                 </div>
                 <div class="field">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" class="input" required>
+                    <input type="email" id="email" name="email" class="input" value="{{session['usuario'][2]}}" required>
                 </div>
                 <div class="field">
                     <label for="cpf">CPF:</label>
-                    <input type="text" id="cpf" name="cpf" class="input" required>
+                    <input type="text" id="cpf" name="cpf" class="input" value="{{session['usuario'][6]}}" required>
                 </div>
                 <div class="field">
                     <label for="senha">Senha:</label>
-                    <input type="password" id="senha" name="senha" class="input">
+                    <input type="password" id="senha"  name="senha" class="input">
                 </div>
                 <div class="field">
-                    <label for="nova-senha">Nova Senha:</label>
-                    <input type="password" id="nova-senha" name="nova-senha" class="input">
+                    <label for="nova-senha">Confirmar Senha:</label>
+                    <input type="password" id="confirmar" name="confirmar" class="input">
                 </div>
                 <div class="actions-row">
-                    <button type="submit" class="btn btn-primary btn-lg"><a href="dashboard_usuario.html">Salvar</a> </button>
-                    <button type="button" class="btn btn-outline btn-lg"> <a href="dashboard_usuario.html">Cancelar</a></button>
+                    <button type="submit" class="btn btn-primary btn-lg">Salvar</button>
+                    <button type="button" class="btn btn-outline btn-lg">Cancelar</button>
                 </div>
             </form>
         </section>
