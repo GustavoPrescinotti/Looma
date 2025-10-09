@@ -38,7 +38,7 @@
             <button class="fechar-menu" id="btnFechar" aria-label="Fechar menu">&times;</button>
             
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a href="{{url_for("index")}}">Home</a></li>
                 <li><a href="#quem_somos">Quem Somos</a></li>
                 <li><a href="#guia">Guia</a></li>
                 <li><a href="#beneficios">Benefícios</a></li>
@@ -65,7 +65,7 @@
 
     <footer>
         <div class="conteudo-rodape">
-            <a href="index.html" class="logo-rodape">
+            <a href="{{url_for('index')}}" class="logo-rodape">
                 <img width="150" src="{{url_for('static', filename='img/Logo do footer.png')}}" alt="Logo Looma">
             </a>
             <div class="icones-sociais">

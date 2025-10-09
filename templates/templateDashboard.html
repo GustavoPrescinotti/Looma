@@ -11,7 +11,7 @@
 </head>
 <body class="dashboard-admin">
     <header class="cabecalho-principal">
-        <a href="index.html">
+        <a href="{{url_for('index')}}">
             <img class="logo-icon" src="{{url_for('static', filename='img/Logo_redondo.png')}}" alt="Looma">
         </a>
 
@@ -41,7 +41,7 @@
 
     <footer class="footer-mobile">
         <div class="conteudo-rodape">
-            <a href="index.html" class="logo-rodape">
+            <a href="{{url_for('index')}}" class="logo-rodape">
                 <img width="150" src="{{url_for('static', filename='img/Logo do footer.png')}}" alt="Logo Looma">
             </a>
             <div class="icones-sociais">
