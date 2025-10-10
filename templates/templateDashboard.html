@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,8 +7,7 @@
     <link rel="shortcut icon" href="{{url_for('static', filename='img/icon-looma.png')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/responsivo.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/dashboard de todo.css')}}">
-
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_users_cards.css') }}">
     <title>Dashboard Empresário</title>
 </head>
 <body class="dashboard-admin">
@@ -24,6 +24,12 @@
 
         {% include 'components/mobile-nav.html' %}
     </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+
+        {% endif %}
+    {% endwith %}
 
 
 
@@ -50,3 +56,4 @@
     <script src="{{url_for('static', filename='js/app.js')}}"></script>
 </body>
 </html>
+

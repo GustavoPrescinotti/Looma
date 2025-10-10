@@ -205,11 +205,12 @@ body {
 }
 
 /* Estilo para mensagem de sucesso */
-.flash-success {
+.flash.success {
     background-color: #d4edda; /* Fundo verde claro */
     color: #155724; /* Texto verde escuro */
     border-left-color: #28a745; /* Borda verde */
 }
+
 
 .flash-success .flash-icon {
     color: #28a745; /* Ícone verde */
@@ -547,11 +548,31 @@ body {
     display: grid;
     gap: 22px;
 }
+.field{
+    gap:10px ;
+}
 
+.label {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* NOVO: Modificador para alinhar campos na horizontal (ex: checkbox) */
 .field {
+    display: block;  /* Muda a direção para horizontal */
+    align-items: center;   /* Alinha verticalmente ao centro */
+    gap: 3rem; /* Adiciona um espaço entre o label e o input */
+}
+    .quadrato{
+        height: 30px;
+        width: 30px;
+    }
+
+
+
+.ativo{
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: center ;
 }
 
 .label {
@@ -677,6 +698,7 @@ body {
     background-color: var(--primary);
     color: white;
     border: none;
+    margin-top: 2rem;
 }
 
 
@@ -749,7 +771,7 @@ body {
 }
 
 .stats-grid {
-    display: grid;
+    display: flex;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     margin-bottom: 48px;
@@ -963,7 +985,7 @@ body {
 
 .table {
     display: table;
-    width: 100%;
+    width: 50%;
     border-collapse: collapse;
 }
 
@@ -1678,3 +1700,4 @@ body {
 .td-actions .chip-outline:hover a {
     color: white !important;
 }
+@med

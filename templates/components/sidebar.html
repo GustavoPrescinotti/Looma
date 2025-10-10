@@ -18,8 +18,9 @@
         {% if session['usuario'][4] == 'user' %}
         <button class="nav-button inactive" data-section="painel"> <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a></button>
         <button class="nav-button inactive" data-section="taxa-juros"> <a href="{{url_for('transacoes')}}">Transações</a></button>
-        {% else %}
+{% else %}
         <button class="nav-button inactive" data-section="taxa-juros"> <a href="{{url_for('nova_taxa')}}">Nova Taxa</a></button>
+        <button class="nav-button inactive" data-section="gerenciar-usuarios"> <a href="{{url_for('admin_users')}}">Gerenciar Usuários</a></button>
         {% endif %}
 
         <button class="nav-button inactive" data-section="nova-taxa"> <a href="{{url_for('taxas')}}">Tabela de Taxas</a></button>

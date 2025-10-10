@@ -9,7 +9,13 @@
             <p>A plataforma que pequenas empresas confiam para administrar<br>suas contas a receber e melhorar sua
                 saúde financeira.</p>
             <div class="botoes-apresentacao">
-                <a href="{{url_for("cadastro")}}" class="botao botao-destaque">Quero me Cadastrar</a>
+                <a href="{{url_for("cadastro")}}" class="botao botao-destaque">
+                {% if 'usuario' in session %}
+                Dashboard
+                {% else %}
+                Quero me Cadastrar
+                {% endif %}
+                </a>
             </div>
         </div>
     </section>

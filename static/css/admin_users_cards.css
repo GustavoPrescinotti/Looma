@@ -1,0 +1,573 @@
+:root {
+    --primary: #395FF9;
+    --secondary: #526CEF;
+    --light-blue: #4163F6;
+    --form-bg: #FAF7F3;
+    --text: #4B4B4B;
+    --text-2: #ACACAC;
+    --border: #D8D8D8;
+    --footer: #0E1A47;
+    --radius: 10px;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --looma-blue: 222 95% 60%;
+    --looma-blue-light: 225 78% 67%;
+    --looma-blue-border: 225 91% 60%;
+    --looma-gray: 0 0% 29%;
+    --looma-gray-light: 0 0% 69%;
+    --looma-gray-lighter: 0 0% 67%;
+    --looma-gray-border: 0 0% 85%;
+    --looma-cream: 35 36% 97%;
+    --looma-navy: 225 60% 17%;
+    --blue-primary: #526CEF;
+    --blue-secondary: #395FF9;
+    --blue-border: #4163F6;
+    --gray-text: #4B4B4B;
+    --gray-200: #D8D8D8;
+    --gray-400: #B1B1B1;
+    --gray-500: #ACACAC;
+    --dark-footer: #0E1A47;
+    --radius-lg: 21px;
+    --radius-md: 11px;
+    --radius-sm: 9px;
+    --fonte-destaque: 'Poppins', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f8f8f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.sidebar {
+    width: 256px;
+    background: white;
+    border-right: 1px solid #e0d8d8;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: auto;
+}
+
+.sidebar .nav-button a {
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar .nav-button.inactive a {
+    color: #4b4b4b;
+}
+
+.sidebar .nav-button.active a {
+    color: white;
+}
+
+.footer-desktop .bottom-nav-button a {
+    color: #0e1a47;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.sidebar .nav-button:hover a {
+    color: inherit;
+}
+
+.footer-desktop .bottom-nav-button:hover a {
+    color: #0e1a47;
+}
+
+.nav-button a:focus,
+.bottom-nav-button a:focus {
+    outline: none;
+}
+
+
+
+.logo {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #395ff9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.logo-text {
+    color: #4b4b4b;
+    font-weight: 600;
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.user-profile {
+    padding: 0 24px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ========================================================================== */
+/* ===== ESTILOS PARA MENSAGENS FLASH ===== */
+/* ========================================================================== */
+
+/* Container principal das mensagens flash */
+.flash-messages-container {
+    width: 100%; /* Ocupa toda a largura disponível */
+    margin-bottom: 1.5rem; /* Espaço abaixo do container */
+    display: flex; /* Ativa o Flexbox */
+    flex-direction: column; /* Organiza as mensagens em coluna */
+    gap: 0.75rem; /* Espaço entre múltiplas mensagens */
+}
+
+/* Estilo base para cada mensagem flash */
+.flash-message {
+    display: flex; /* Ativa o Flexbox para alinhar ícone, texto e botão */
+    align-items: center; /* Alinha verticalmente ao centro */
+    padding: 1rem 1.25rem; /* Preenchimento interno */
+    border-radius: 8px; /* Arredonda os cantos */
+    font-size: 1rem; /* Tamanho da fonte */
+    font-weight: 500; /* Peso da fonte */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    animation: slideInDown 0.4s ease-out; /* Animação de entrada */
+    position: relative; /* Para posicionamento do botão de fechar */
+    border-left: 4px solid; /* Borda esquerda colorida */
+}
+
+/* Ícone da mensagem flash */
+.flash-icon {
+    font-size: 1.5rem; /* Tamanho do ícone */
+    font-weight: bold; /* Peso do ícone */
+    margin-right: 0.75rem; /* Espaço à direita do ícone */
+    flex-shrink: 0; /* Impede que o ícone encolha */
+}
+
+/* Texto da mensagem flash */
+.flash-text {
+    flex: 1; /* Ocupa o espaço disponível */
+    line-height: 1.4; /* Altura da linha para melhor legibilidade */
+}
+
+/* Botão de fechar a mensagem */
+.flash-close {
+    background: none; /* Sem fundo */
+    border: none; /* Sem borda */
+    font-size: 1.5rem; /* Tamanho do botão */
+    font-weight: bold; /* Peso da fonte */
+    cursor: pointer; /* Cursor de mão */
+    margin-left: 1rem; /* Espaço à esquerda */
+    opacity: 0.7; /* Opacidade padrão */
+    transition: opacity 0.2s ease; /* Transição suave */
+    flex-shrink: 0; /* Impede que o botão encolha */
+    padding: 0; /* Remove padding */
+    line-height: 1; /* Altura da linha */
+}
+
+/* Efeito hover no botão de fechar */
+.flash-close:hover {
+    opacity: 1; /* Opacidade total ao passar o mouse */
+}
+
+/* Estilo para mensagem de sucesso */
+.flash-success {
+    background-color: #d4edda; /* Fundo verde claro */
+    color: #155724; /* Texto verde escuro */
+    border-left-color: #28a745; /* Borda verde */
+}
+
+.flash-success .flash-icon {
+    color: #28a745; /* Ícone verde */
+}
+
+.flash-success .flash-close {
+    color: #155724; /* Botão fechar verde escuro */
+}
+
+/* Estilo para mensagem de erro */
+.flash-error {
+    background-color: #f8d7da; /* Fundo vermelho claro */
+    color: #721c24; /* Texto vermelho escuro */
+    border-left-color: #dc3545; /* Borda vermelha */
+}
+
+.flash-error .flash-icon {
+    color: #dc3545; /* Ícone vermelho */
+}
+
+.flash-error .flash-close {
+    color: #721c24; /* Botão fechar vermelho escuro */
+}
+
+/* Estilo para mensagem de informação */
+.flash-info {
+    background-color: #d1ecf1; /* Fundo azul claro */
+    color: #0c5460; /* Texto azul escuro */
+    border-left-color: #17a2b8; /* Borda azul */
+}
+
+.flash-info .flash-icon {
+    color: #17a2b8; /* Ícone azul */
+}
+
+.flash-info .flash-close {
+    color: #0c5460; /* Botão fechar azul escuro */
+}
+
+/* Estilo para mensagem de aviso/warning */
+.flash-warning {
+    background-color: #fff3cd; /* Fundo amarelo claro */
+    color: #856404; /* Texto amarelo escuro */
+    border-left-color: #ffc107; /* Borda amarela */
+}
+
+.flash-warning .flash-icon {
+    color: #ffc107; /* Ícone amarelo */
+}
+
+.flash-warning .flash-close {
+    color: #856404; /* Botão fechar amarelo escuro */
+}
+
+/* Animação de entrada das mensagens flash */
+@keyframes slideInDown {
+    from {
+        opacity: 0; /* Começa invisível */
+        transform: translateY(-20px); /* Começa 20px acima */
+    }
+    to {
+        opacity: 1; /* Termina visível */
+        transform: translateY(0); /* Termina na posição original */
+    }
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+}
+
+.user-name {
+    color: #4b4b4b;
+    font-weight: 500;
+}
+
+.navigation {
+    flex: 1;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-button {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-button.active {
+    background: #395ff9;
+    color: white;
+}
+
+.nav-button.inactive {
+    background: transparent;
+    color: #4b4b4b;
+    border: 1px solid #d8d8d8;
+}
+
+.nav-button.inactive:hover {
+    background: #f8f8f8;
+}
+
+.sign-out {
+    padding: 24px;
+}
+
+.bottom-profile {
+    padding: 24px;
+    border-top: 1px solid #e0d8d8;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bottom-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    color: #4b4b4b;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.profile-email {
+    color: #acacac;
+    font-size: 12px;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.form-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 448px;
+    background: white;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    padding: 32px;
+}
+
+.form-card h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #526cef;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    color: #4b4b4b;
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #526cef;
+    border-radius: 4px;
+    padding: 0 12px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-static-user {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: #f8f8f8;
+    border: 1px solid #526cef;
+    border-radius: 4px;
+    color: #4b4b4b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: #395ff9;
+    box-shadow: 0 0 0 2px rgba(82, 108, 239, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    height: 3.75rem;
+    border-radius: 8px;
+    font-size: 1.181rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary a {
+    color: white !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    font-size: inherit !important;
+    font-weight: inherit !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.btn-primary {
+    background-color: white;
+    border: 1px solid #526cef;
+    color: #526cef;
+}
+
+.btn-primary:hover {
+    background-color: #395ff9;
+}
+
+.btn-secondary {
+    background-color: #526cef;
+    border: 1px solid #526cef;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #526cef;
+    color: white;
+}
+
+.bottom-nav {
+    background: #0e1a47;
+    padding: 48px;
+}
+
+.bottom-nav-container {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.user-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+    gap: 20px;
+    padding: px;
+}
+
+.user-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.user-card-linha {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+}
+
+.user-card-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.user-card-value {
+    color: #333;
+}
+
+.user-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-card {
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.85em;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-card-edit {
+    background-color: #007bff;
+    color: white;
+    border: 1px solid #007bff;
+}
+
+.btn-card-edit:hover {
+    background-color: #0056b3;
+}
+
+.btn-card-warning {
+    background-color: #ffc107;
+    color: #212529;
+    border: 1px solid #ffc107;
+}
+
+
+.btn-card-warning:hover {
+    background-color: #e0a800;
+}
+
+

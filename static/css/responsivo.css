@@ -281,9 +281,9 @@
 
     .card {
         max-width: 350px !important;
-        width: 109% !important;
+        width: 111% !important;
         margin: 0 auto 1.2rem auto !important;
-        padding: 1.2rem !important;
+        padding: 0.5rem !important;
     }
 
     .resultado-cards {

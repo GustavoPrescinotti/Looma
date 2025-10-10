@@ -577,7 +577,6 @@ footer {
 }
 
 .BotaoLogin {
-    background-color: var(--cor-bege-claro);
     color: var(--cor-primaria-azul);
     border: 1px solid var(--cor-primaria-azul);
 }

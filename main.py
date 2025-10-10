@@ -549,8 +549,9 @@ def perfil():
         # Obtém os dados do formulário
         nome = request.form['nome']
         email = request.form['email']
-        cpf = request.form['cpf']
-        senha = request.form['senha']
+        cpf = request.form["cpf"]
+        telefone = request.form["telefone"]
+        senha = request.form["senha"]
         confirmarSenha = request.form['confirmar']
 
         # Verifica se as senhas coincidem
@@ -566,14 +567,18 @@ def perfil():
                        nome = ?,
                        email = ?,
                        cpf = ?,
+                       telefone = ?,
                        senha = ?
                        WHERE id_usuario = ?
-                       ''', (nome, email, cpf, hashSenha, session['usuario'][0]))
+                       ''', (nome, email, cpf, telefone, hashSenha, session['usuario'][0]))
 
         # Busca os dados atualizados do usuário
-        cursor.execute("SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf FROM usuario WHERE id_usuario = ?",
-                       (session['usuario'][0],))
+        cursor.execute("SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, telefone, ativo FROM usuario WHERE id_usuario = ?", 
+                       (session["usuario"][0],))
         usuarioAtualizado = cursor.fetchone()
+
+        # Atualiza a sessão com os novos dados
+        session["usuario"] = usuarioAtualizado
 
         # Atualiza a sessão com os novos dados
         session['usuario'] = usuarioAtualizado
@@ -595,6 +600,135 @@ def nova_receita():
 @app.route('/nova_despesa')
 def nova_despesa():
     return render_template('nova_despesa.html')
+
+@app.route('/app/admin/users')
+def admin_users():
+    """
+    Rota para listar todos os usuários para o administrador.
+
+    Acesso restrito a administradores.
+
+    Returns:
+        Template com a lista de usuários ou redirecionamento para login/dashboard
+    """
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+
+    if session['usuario'][4] != 'admin':
+        flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        return redirect(url_for('dashboard'))
+
+    all_users = []
+    cursor = con.cursor()
+
+    try:
+        cursor.execute("SELECT id_usuario, nome, email, tipo, tentativas, ativo, cpf, telefone FROM usuario")
+        all_users = cursor.fetchall()
+    except Exception as e:
+        flash("Houve um erro ao obter os usuários. Por favor, tente novamente.", "error")
+    finally:
+        cursor.close()
+
+    return render_template('admin_users.html', users=all_users)
+
+
+
+@app.route("/app/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
+def admin_edit_user(user_id):
+    """
+    Rota para o administrador editar o perfil de um usuário específico.
+
+    Acesso restrito a administradores.
+
+    GET: Exibe o formulário de edição preenchido com os dados atuais do usuário.
+    POST: Atualiza os dados do usuário no banco de dados.
+
+    Args:
+        user_id (int): O ID do usuário a ser editado.
+
+    Returns:
+        Template de edição ou redirecionamento para a lista de usuários.
+    """
+    if "usuario" not in session or session["usuario"][4] != "admin":
+        flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        return redirect(url_for("login"))
+
+    cursor = con.cursor()
+    user_to_edit = None
+
+    if request.method == "GET":
+        try:
+            cursor.execute("SELECT id_usuario, nome, email, cpf, telefone, tipo, tentativas, ativo FROM usuario WHERE id_usuario = ?", (user_id,))
+            user_to_edit = cursor.fetchone()
+
+            if not user_to_edit:
+                flash("Usuário não encontrado.", "error")
+                return redirect(url_for("admin_users"))
+        except Exception as e:
+            flash("Erro ao buscar dados do usuário para edição.", "error")
+        finally:
+            cursor.close()
+        return render_template("admin_edit_user.html", user=user_to_edit)
+
+    elif request.method == "POST":
+        try:
+            nome = request.form["nome"]
+            email = request.form["email"]
+            cpf = request.form["cpf"]
+            telefone = request.form["telefone"]
+            tipo = request.form["tipo"]
+            ativo = True if request.form.get("ativo") == "on" else False
+            senha = request.form["senha"]
+            confirmar_senha = request.form["confirmar_senha"]
+
+            if senha:
+                if senha != confirmar_senha:
+                    flash("As senhas não coincidem.", "error")
+                    return redirect(url_for("admin_edit_user", user_id=user_id))
+                hash_senha = generate_password_hash(senha).decode("utf-8")
+                cursor.execute("UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ?, senha = ? WHERE id_usuario = ?",
+                               (nome, email, cpf, telefone, tipo, ativo, hash_senha, user_id))
+            else:
+                cursor.execute("UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ? WHERE id_usuario = ?",
+                               (nome, email, cpf, telefone, tipo, ativo, user_id))
+            con.commit()
+            flash("Usuário atualizado com sucesso!", "success")
+        except Exception as e:
+            flash(f"Erro ao atualizar usuário: {e}", "error")
+        finally:
+            cursor.close()
+        return redirect(url_for("admin_users"))
+
+
+
+@app.route("/app/admin/users/reset_attempts/<int:user_id>")
+def admin_reset_attempts(user_id):
+    """
+    Rota para o administrador resetar as tentativas de login de um usuário.
+
+    Acesso restrito a administradores.
+
+    Args:
+        user_id (int): O ID do usuário cujas tentativas serão resetadas.
+
+    Returns:
+        Redirecionamento para a lista de usuários.
+    """
+    if "usuario" not in session or session["usuario"][4] != "admin":
+        flash("Acesso negado. Apenas administradores podem realizar esta ação.", "error")
+        return redirect(url_for("login"))
+
+    cursor = con.cursor()
+    try:
+        cursor.execute("UPDATE usuario SET tentativas = 0, ativo = True WHERE id_usuario = ?", (user_id,))
+        con.commit()
+        flash("Tentativas de login resetadas e conta ativada com sucesso!", "success")
+    except Exception as e:
+        flash(f"Erro ao resetar tentativas de login: {e}", "error")
+    finally:
+        cursor.close()
+    return redirect(url_for("admin_users"))
 
 # Executa a aplicação Flask em modo de desenvolvimento
 if __name__ == '__main__':

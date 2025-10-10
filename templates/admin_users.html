@@ -1,0 +1,68 @@
+{% extends 'templateDashboard.html' %}
+
+{% block conteudo %}
+<div class="container">
+    {% include 'components/sidebar.html' %}
+    <main class="main">
+        <section class="card card-admin-users">
+            <h2 class="card-title">Gerenciar Usuários</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages-container">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">
+                                <span class="flash-text">{{ message }}</span>
+                                <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <div class="user-cards-container">
+                {% for user in users %}
+                <div class="user-card">
+                    <div class="user-card-linha">
+                        <span class="user-card-label">ID:</span>
+                        <span class="user-card-value">{{ user[0] }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">Nome:</span>
+                        <span class="user-card-value">{{ user[1] }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">Email:</span>
+                        <span class="user-card-value">{{ user[2] }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">Tipo:</span>
+                        <span class="user-card-value">{{ user[3] }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">Tentativas:</span>
+                        <span class="user-card-value">{{ user[4] }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">Ativo:</span>
+                        <span class="user-card-value">{{ 'Sim' if user[5] else 'Não' }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">CPF:</span>
+                        <span class="user-card-value">{{ user[6] }}</span>
+                    </div>
+                    <div class="user-card-linha">
+                        <span class="user-card-label">Telefone:</span>
+                        <span class="user-card-value">{{ user[7] }}</span>
+                    </div>
+                    <div class="user-card-actions">
+                        <a href="{{ url_for('admin_edit_user', user_id=user[0]) }}" class="btn-card btn-card-edit">Editar</a>
+                        <a href="{{ url_for('admin_reset_attempts', user_id=user[0]) }}" class="btn-card btn-card-warning">Resetar Tentativas</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}
+
