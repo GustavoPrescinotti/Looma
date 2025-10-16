@@ -13,7 +13,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 
 # Configurações de conexão com o banco de dados Firebird
 host = 'localhost'
-database = r'C:\Users\Aluno\Downloads\Looma_atualizado\Looma\db\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma\Looma.FDB'
 user = 'sysdba'
 password = 'sysdba'
 
@@ -66,6 +66,12 @@ def verificar_senha_forte(senha):
     return False
 
 
+
+
+
+
+
+
 @app.route('/')
 def index():
     """
@@ -113,8 +119,8 @@ def login():
 
         # Busca o usuário no banco de dados pelo email
         cursor.execute(
-            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo FROM usuario WHERE email = ?",
-            (email,))
+            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE email = ?",
+        (email,))
         usuario = cursor.fetchone()
 
         # Se o usuário não existe, exibe mensagem de erro e redireciona
@@ -135,7 +141,16 @@ def login():
 
         # Verifica se a senha está correta
         if check_password_hash(usuario[3], senha):
+            #check_password_hash :
             # Senha correta: cria a sessão do usuário
+
+            try:
+                cursor.execute("UPDATE USUARIO SET TENTATIVAS = ? WHERE id_usuario = ?", (0, usuario[0]))
+                con.commit()
+            except Exception as e:
+                flash("Não foi possível atualizar o usuário.", "error")
+
+
             session['usuario'] = usuario
             flash("Login realizado com sucesso! Bem-vindo(a)!", "success")
             return redirect(url_for('dashboard'))
@@ -152,6 +167,7 @@ def login():
                     cursor.execute("UPDATE USUARIO SET TENTATIVAS = ?, ATIVO = ? WHERE ID_USUARIO = ?",
                                    (tentativas, (True if tentativas < 3 else False), usuario[0]))
                     con.commit()
+
 
                     # Se a conta foi bloqueada, informa o usuário
                     if tentativas >= 3:
@@ -204,6 +220,7 @@ def cadastro():
         senha = request.form['password']
         cpf = request.form['cpf']
         telefone = request.form['phone']
+        confirmar_senha = request.form['confirm_password']
 
         # Valida a força da senha
         if not verificar_senha_forte(senha):
@@ -212,14 +229,20 @@ def cadastro():
                 "error")
             return redirect(url_for('cadastro'))
 
+        if senha != confirmar_senha:
+            flash("As senhas não coincidem. Por favor, tente novamente.", "error")
+            return redirect(url_for('cadastro'))
+
         # Verifica se o email já está cadastrado
         cursor.execute("SELECT id_usuario FROM usuario WHERE email = ?", (email,))
         usuario = cursor.fetchone()
-
+        #fetchone: usar fetchone() porque só deve existir um usuário com aquele e-mail.
+        #fetchall : Ele vai buscar todos os usuarios
         if usuario:
             flash("Este email já está cadastrado. Por favor, use outro email ou faça login.", "error")
             cursor.close()
             return redirect(url_for('cadastro'))
+
 
         # Criptografa a senha usando bcrypt
         hash_senha = generate_password_hash(senha).decode('utf-8')
@@ -517,6 +540,11 @@ def transacoes():
     return render_template('transacoes.html')
 
 
+@app.route('/nova_receita')
+def nova_receita():
+    return render_template('nova_receita.html')
+
+
 @app.route('/perfil', methods=['GET', 'POST'])
 def perfil():
     """
@@ -526,23 +554,20 @@ def perfil():
     POST: Atualiza os dados do usuário no banco
 
     Validações:
-    - Verifica se as senhas coincidem
-    - Criptografa a nova senha
-    - Atualiza a sessão com os novos dados
+    - Se a senha for fornecida, verifica se as senhas coincidem e se é forte.
+    - Criptografa a nova senha, se houver.
+    - Atualiza a sessão com os novos dados.
 
     Returns:
         Template de edição ou redirecionamento para dashboard
     """
-    # Verifica se o usuário está autenticado
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
 
-    # Se for GET, exibe o formulário
     if request.method == 'GET':
         return render_template('editar_perfil.html')
 
-    # Cria um cursor para executar comandos SQL
     cursor = con.cursor()
 
     try:
@@ -554,48 +579,61 @@ def perfil():
         senha = request.form["senha"]
         confirmarSenha = request.form['confirmar']
 
-        # Verifica se as senhas coincidem
-        if senha != confirmarSenha:
-            flash("As senhas não coincidem. Por favor, tente novamente.", "error")
-            return redirect(url_for('perfil'))
+        # ========================================================================
+        # ## NOVA LÓGICA IMPLEMENTADA AQUI ##
+        # ========================================================================
 
-        # Criptografa a nova senha
-        hashSenha = generate_password_hash(senha).decode('utf-8')
+        # Verifica se o usuário preencheu o campo de senha, indicando que quer alterá-la.
+        if senha:
+            # Se a senha foi preenchida, fazemos todas as validações necessárias.
+            if not verificar_senha_forte(senha):
+                flash(
+                    "A nova senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial.",
+                    "error")
+                return redirect(url_for('perfil'))
 
-        # Atualiza os dados do usuário no banco
-        cursor.execute('''UPDATE USUARIO SET 
-                       nome = ?,
-                       email = ?,
-                       cpf = ?,
-                       telefone = ?,
-                       senha = ?
-                       WHERE id_usuario = ?
-                       ''', (nome, email, cpf, telefone, hashSenha, session['usuario'][0]))
+            if senha != confirmarSenha:
+                flash("As senhas não coincidem. Por favor, tente novamente.", "error")
+                return redirect(url_for('perfil'))
 
-        # Busca os dados atualizados do usuário
-        cursor.execute("SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, telefone, ativo FROM usuario WHERE id_usuario = ?", 
-                       (session["usuario"][0],))
+            # Criptografa a NOVA senha
+            hashSenha = generate_password_hash(senha).decode('utf-8')
+
+            # Prepara a query SQL para atualizar TUDO, incluindo a senha
+            cursor.execute('''UPDATE USUARIO SET
+                           nome = ?, email = ?, cpf = ?, telefone = ?, senha = ?
+                           WHERE id_usuario = ?''',
+                           (nome, email, cpf, telefone, hashSenha, session['usuario'][0]))
+
+        else:
+            # Se a senha foi deixada em branco, atualizamos tudo, MENOS a senha.
+            cursor.execute('''UPDATE USUARIO SET
+                           nome = ?, email = ?, cpf = ?, telefone = ?
+                           WHERE id_usuario = ?''',
+                           (nome, email, cpf, telefone, session['usuario'][0]))
+
+        # Confirma a transação no banco de dados
+        con.commit()
+
+        # Após a atualização, busca os dados mais recentes para atualizar a sessão
+        cursor.execute(
+            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE id_usuario = ?",
+            (session["usuario"][0],))
         usuarioAtualizado = cursor.fetchone()
 
         # Atualiza a sessão com os novos dados
         session["usuario"] = usuarioAtualizado
 
-        # Atualiza a sessão com os novos dados
-        session['usuario'] = usuarioAtualizado
-
-        # Confirma a transação no banco
-        con.commit()
-
         flash("Informações atualizadas com sucesso!", "success")
+
+        return redirect(url_for('dashboard'))
+
     except Exception as e:
-        flash("Houve um erro ao atualizar as informações. Por favor, tente novamente.", "error")
+        flash(f"Houve um erro ao atualizar as informações: {e}", "error")
     finally:
         cursor.close()
 
     return redirect(url_for('dashboard'))
-@app.route('/nova_receita')
-def nova_receita():
-    return render_template('nova_receita.html')
 
 @app.route('/nova_despesa')
 def nova_despesa():
@@ -616,7 +654,7 @@ def admin_users():
         return redirect(url_for('login'))
 
     if session['usuario'][4] != 'admin':
-        flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        flash("Pá Acesso negado. Apenas administradores podem acessar esta página.", "error")
         return redirect(url_for('dashboard'))
 
     all_users = []
@@ -729,6 +767,8 @@ def admin_reset_attempts(user_id):
     finally:
         cursor.close()
     return redirect(url_for("admin_users"))
+
+
 
 # Executa a aplicação Flask em modo de desenvolvimento
 if __name__ == '__main__':

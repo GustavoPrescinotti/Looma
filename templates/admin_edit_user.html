@@ -35,8 +35,8 @@
                 <div class="field">
                     <label for="tipo">Tipo:</label>
                     <select id="tipo" name="tipo" class="input" required>
-                        <option value="user" {% if user[5]=='user' %}selected{% endif %}>Usuário</option>
-                        <option value="admin" {% if user[5]=='admin' %}selected{% endif %}>Administrador</option>
+                        <option value="user" {% if user[5]=='user' %} selected {% endif %}>Usuário</option>
+                        <option value="admin" {% if user[5]=='admin' %} selected {% endif %}>Administrador</option>
                     </select>
                 </div>
                 <div class="field">
