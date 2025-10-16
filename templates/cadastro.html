@@ -2,18 +2,22 @@
 
 {% block conteudo %}
 <main class="cadastro-page">
-    <div class="cartao-formulario">
+    <div class=" cartao-formulario">
         <h2 class="Cadastroelogin">Cadastro</h2>
 
+        <!-- Área de mensagens flash -->
         <div class="flash-messages-container">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
             <div class="flash-message flash-{{ category }}">
                 <span class="flash-icon">
-                    {% if category == 'success' %}✓
-                    {% elif category == 'error' %}✕
-                    {% else %}ℹ
+                    {% if category == 'success' %}
+                    ✓
+                    {% elif category == 'error' %}
+                    ✕
+                    {% else %}
+                    ℹ
                     {% endif %}
                 </span>
                 <span class="flash-text">{{ message }}</span>
@@ -24,7 +28,7 @@
             {% endwith %}
         </div>
         <br>
-        <form class="formulario-cadastro" action="{{ url_for('cadastro') }}" method="post">
+        <form class="formulario-cadastro" action="" method="post">
             <div class="grupo-formulario">
                 <label for="name">Nome Completo:</label>
                 <input type="text" id="name" name="name" placeholder="Informe seu Nome Completo" required>
@@ -36,33 +40,31 @@
 
             <div class="grupo-formulario">
                 <label for="cpf">CPF:</label>
-                <input
-                    type="text"
-                    id="cpf"
-                    name="cpf"
-                    placeholder="Digite apenas os 11 números"
-                    required
-                    maxlength="11"
-                    minlength="11"
-                    pattern="[0-9]{11}"
-                    title="O CPF deve conter exatamente 11 dígitos numéricos."
-                    oninput="this.value = this.value.replace(/\D/g, '')">  </div>
+                <input type="text"
+                id="cpf"
+                name="cpf"
+                inputmode="numeric"
+                maxlength="14"
+                placeholder="000.000.000-00"
+                oninput="handleCPFInput(event)"
+                onkeydown="handleCPFKeydown(event)"
+                required>
+            </div>
 
             <div class="grupo-formulario">
                 <label for="phone">Telefone:</label>
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="DDD + Número (só números)"
-                    required
-                    maxlength="11"
-                    minlength="10"
-                    pattern="[0-9]{10,11}"
-                    title="O telefone deve conter entre 10 e 11 dígitos (DDD + número)."
-                    oninput="this.value = this.value.replace(/\D/g, '')">  </div>
+                <input type="text"
+                name="phone"
+                id="phone"
+                placeholder="(00) 00000-0000"
+                maxlength="15"
+                inputmode="numeric"
+                oninput="handleTelefoneInput(event)"
+                onkeydown="handleTelefoneKeydown(event)"
+                required>
+            </div>
 
-          <div class="grupo-formulario">
+            <div class="grupo-formulario">
     <label for="password">Senha:</label>
     <input type="password" id="password" name="password" placeholder="Informe sua senha" required>
 </div>
@@ -75,8 +77,9 @@
         name="confirm_password" placeholder="Confirme sua senha"
         required>
 </div>
+
             <div class="BotaoFormulario">
-                <a href="{{url_for('index')}}" class="BotaoVoltar">Voltar</a>
+                <button type="button" class="BotaoVoltar"><a href="{{url_for('index')}}">Voltar</a></button>
                 <button type="submit" class="BotaoCadastrar">Cadastrar-se</button>
             </div>
 

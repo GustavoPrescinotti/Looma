@@ -4,20 +4,16 @@
 <main class="login-page">
     <div class="cartao-formulario">
         <h2 class="Cadastroelogin">Login</h2>
-        
-        <!-- Área de mensagens flash -->
+
         <div class="flash-messages-container">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}
             <div class="flash-message flash-{{ category }}">
                 <span class="flash-icon">
-                    {% if category == 'success' %}
-                    ✓
-                    {% elif category == 'error' %}
-                    ✕
-                    {% else %}
-                    ℹ
+                    {% if category == 'success' %}✓
+                    {% elif category == 'error' %}✕
+                    {% else %}ℹ
                     {% endif %}
                 </span>
                 <span class="flash-text">{{ message }}</span>
@@ -61,4 +57,5 @@
         </form>
     </div>
 </main>
+
 {% endblock %}
