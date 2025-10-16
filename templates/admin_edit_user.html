@@ -26,11 +26,25 @@
                 </div>
                 <div class="field">
                     <label for="cpf">CPF:</label>
-                    <input type="text" id="cpf" name="cpf" class="input" value="{{ user[3] }}" required>
+                    <input type="text"
+                           id="cpf"
+                           name="cpf"
+                           class="input"
+                           placeholder="000.000.000-00"
+                           value="{{session['usuario'][6]}}"
+                           maxlength="14"
+                           required>
                 </div>
-                <div class="field">
+               <div class="field">
                     <label for="telefone">Telefone:</label>
-                    <input type="text" id="telefone" name="telefone" class="input" value="{{ user[4] }}" required>
+                    <input type="text"
+                           id="telefone"
+                           name="telefone"
+                           class="input"
+                           placeholder="(00) 00000-0000"
+                           value="{{session['usuario'][8]}}"
+                           maxlength="15"
+                           required>
                 </div>
                 <div class="field">
                     <label for="tipo">Tipo:</label>
@@ -44,12 +58,12 @@
                     <input class="quadrato" type="checkbox" id="ativo" name="ativo">
                 </div>
                 <div class="field">
-                    <label for="senha">Nova Senha (opcional):</label>
-                    <input type="password" id="senha" name="senha" class="input">
+                    <label for="senha">Nova Senha:</label>
+                    <input type="password" id="senha" name="senha" class="input" placeholder="Deixe em branco para não alterar">
                 </div>
                 <div class="field">
-                    <label for="confirmar_senha">Confirmar Nova Senha:</label>
-                    <input type="password" id="confirmar_senha" name="confirmar_senha" class="input">
+                    <label for="confirmar">Confirmar Senha:</label>
+                    <input type="password" id="confirmar" name="confirmar" class="input" placeholder="Deixe em branco para não alterar">
                 </div>
                 <div class="actions-row">
                     <button type="submit" class="btn btn-primary btn-lg">Salvar</button>
