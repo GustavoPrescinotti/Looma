@@ -108,8 +108,8 @@ def login():
         cursor.execute(
             # A consulta SQL a ser executada.
             "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE email = ?",
-        # Passa o email como um parâmetro para a consulta, evitando injeção de SQL.
-        (email,))
+            # Passa o email como um parâmetro para a consulta, evitando injeção de SQL.
+            (email,))
         # Busca a primeira linha do resultado da consulta.
         usuario = cursor.fetchone()
 
@@ -138,7 +138,7 @@ def login():
 
         # Compara a senha fornecida com o hash armazenado no banco de dados.
         if check_password_hash(usuario[3], senha):
-            #check_password_hash :
+            # check_password_hash :
             # Senha correta: cria a sessão do usuário
 
             # Inicia um bloco try para a atualização das tentativas.
@@ -151,7 +151,6 @@ def login():
             except Exception as e:
                 # Exibe uma mensagem de erro caso a atualização falhe.
                 flash("Não foi possível atualizar o usuário.", "error")
-
 
             # Armazena os dados do usuário na sessão, efetivando o login.
             session['usuario'] = usuario
@@ -180,7 +179,6 @@ def login():
                                    (tentativas, (True if tentativas < 3 else False), usuario[0]))
                     # Confirma a transação no banco de dados.
                     con.commit()
-
 
                     # Se a conta foi bloqueada, informa o usuário
                     # Verifica se o número de tentativas atingiu ou ultrapassou 3.
@@ -213,7 +211,6 @@ def login():
 @app.route('/auth/cadastro', methods=['GET', 'POST'])
 # Define a função 'cadastro' para registrar novos usuários.
 def cadastro():
-
     # Verifica se já existe um usuário na sessão.
     if 'usuario' in session:
         # Se sim, redireciona para o dashboard.
@@ -264,8 +261,8 @@ def cadastro():
         cursor.execute("SELECT id_usuario FROM usuario WHERE email = ?", (email,))
         # Busca o resultado da consulta.
         usuario = cursor.fetchone()
-        #fetchone: usar fetchone() porque só deve existir um usuário com aquele e-mail.
-        #fetchall : Ele vai buscar todos os usuarios
+        # fetchone: usar fetchone() porque só deve existir um usuário com aquele e-mail.
+        # fetchall : Ele vai buscar todos os usuarios
         # Se a consulta retornou um usuário (ou seja, o email já existe).
         if usuario:
             # Exibe uma mensagem de erro.
@@ -274,7 +271,6 @@ def cadastro():
             cursor.close()
             # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
-
 
         # Gera um hash seguro da senha e o decodifica para string UTF-8.
         hash_senha = generate_password_hash(senha).decode('utf-8')
@@ -315,7 +311,7 @@ def dashboard():
         flash("Você precisa fazer login para acessar esta página.", "error")
         # Redireciona para a página de login
         return redirect(url_for('login'))
- 
+
     # Cria um cursor para executar queries no banco de dados
     cursor = con.cursor()
     try:
@@ -351,7 +347,6 @@ def logout():
 
     # Redireciona o usuário para a página de login.
     return redirect(url_for('login'))
-
 
 
 # ROTAS ADMINISTRATIVAS - Apenas para usuários com perfil 'admin'
@@ -420,7 +415,6 @@ def nova_taxa():
 @app.route('/app/taxas/editar/<id>', methods=['GET', 'POST'])
 # Define a função 'editar_taxa' que recebe o ID da taxa.
 def editar_taxa(id):
- 
     # Verifica se o usuário não está logado.
     if 'usuario' not in session:
         # Exibe mensagem de erro.
@@ -507,7 +501,6 @@ def editar_taxa(id):
 @app.route('/app/taxas/excluir/<int:id>')
 # Define a função 'excluir_taxa' que recebe o ID da taxa.
 def excluir_taxa(id):
-
     # Verifica se o usuário não está logado ou não é admin.
     if 'usuario' not in session or session['usuario'][4] != 'admin':
         # Exibe mensagem de acesso negado.
@@ -608,7 +601,7 @@ def transacoes():
         flash("Você precisa fazer login para acessar esta página.", "error")
         # Redireciona para a página de login
         return redirect(url_for('login'))
- 
+
     # Obtém o ID do usuário da sessão (primeira posição do array)
     id_usuario = session['usuario'][0]
     # Cria um cursor para executar queries no banco de dados
@@ -623,17 +616,17 @@ def transacoes():
         """, (id_usuario,))
         # Busca todos os resultados da query
         transacoes_raw = cursor.fetchall()
-       
+
         # Inicializa lista vazia para armazenar transações formatadas
         transacoes = []
         # Inicializa saldo com valor zero
         saldo = 0.0
-        
+
         # Itera sobre cada transação retornada do banco
         for t in transacoes_raw:
             # Obtém a data da transação (quinta coluna - índice 4)
             dt = t[4]
-           
+
             # Verifica se a data é uma string (precisa de parsing)
             if isinstance(dt, str):
                 # Converte string para objeto datetime (ignora hora se existir)
@@ -641,13 +634,13 @@ def transacoes():
             else:
                 # Se já for objeto datetime, usa diretamente
                 dt_obj = dt
-           
+
             # Formata a data para o padrão brasileiro (dia/mês/ano)
             data_formatada = dt_obj.strftime('%d/%m/%Y') if dt_obj else ''
- 
+
             # Adiciona transação formatada à lista, convertendo valor para float
             transacoes.append((t[0], t[1], float(t[2]), t[3], data_formatada))
- 
+
             # Atualiza o saldo baseado no tipo de transação
             if t[1].lower() == 'receita':
                 # Se for receita, adiciona ao saldo
@@ -655,7 +648,7 @@ def transacoes():
             else:
                 # Se for despesa, subtrai do saldo
                 saldo -= float(t[2])
-                
+
     # Captura qualquer exceção que ocorrer durante o processamento
     except Exception as e:
         # Exibe mensagem de erro para o usuário
@@ -667,9 +660,10 @@ def transacoes():
     finally:
         # Fecha o cursor para liberar recursos do banco de dados
         cursor.close()
- 
+
     # Renderiza o template passando as transações e saldo calculado
     return render_template('transacoes.html', transacoes=transacoes, saldo=saldo)
+
 
 # Define a rota para '/nova_receita'.
 # Define a rota '/nova_receita' que aceita métodos GET e POST
@@ -681,7 +675,7 @@ def nova_receita():
         flash("Você precisa fazer login para acessar esta página.", "error")
         # Redireciona para a página de login
         return redirect(url_for('login'))
-   
+
     # Verifica se a requisição é do tipo POST (envio de formulário)
     if request.method == 'POST':
         # Obtém o ID do usuário da sessão (primeira posição do array)
@@ -694,7 +688,7 @@ def nova_receita():
         valor_str = request.form['valor'].replace(',', '.')
         # Obtém a descrição do formulário
         descricao = request.form['descricao']
- 
+
         # Tenta converter o valor para float e validá-lo
         try:
             valor = float(valor_str)
@@ -708,14 +702,14 @@ def nova_receita():
             flash("Valor inválido.", "error")
             # Redireciona de volta para o formulário
             return redirect(url_for('nova_receita'))
- 
+
         # Tenta inserir os dados no banco de dados
         try:
             # Converte a string de data para objeto datetime
             data_obj = datetime.strptime(data_str, '%Y-%m-%d')
             # Formata a data para o padrão ISO (banco de dados)
             data_formatada = data_obj.strftime('%Y-%m-%d')
-           
+
             # Cria cursor para executar queries no banco
             cursor = con.cursor()
             # Executa query para inserir nova transação na tabela
@@ -736,7 +730,7 @@ def nova_receita():
             # Garante que o cursor seja fechado mesmo em caso de erro
             if 'cursor' in locals():
                 cursor.close()
-                
+
     # Renderiza o template do formulário (para GET ou se houve erro no POST)
     return render_template('nova_receita.html')
 
@@ -776,7 +770,6 @@ def perfil():
         # Pega a confirmação de senha enviada pelo formulário.
         confirmarSenha = request.form['confirmar']
 
-    
         # NOVA LÓGICA IMPLEMENTADA AQUI #
 
         # Verifica se o usuário preencheu o campo de senha, indicando que quer alterá-la.
@@ -859,6 +852,7 @@ def perfil():
     # Redireciona para o dashboard em caso de erro.
     return redirect(url_for('dashboard'))
 
+
 # Define a rota '/nova_despesa' que aceita métodos GET e POST
 @app.route('/nova_despesa', methods=['GET', 'POST'])
 def nova_despesa():
@@ -868,7 +862,7 @@ def nova_despesa():
         flash("Você precisa fazer login para acessar esta página.", "error")
         # Redireciona para a página de login
         return redirect(url_for('login'))
-   
+
     # Verifica se a requisição é do tipo POST (envio de formulário)
     if request.method == 'POST':
         # Obtém o ID do usuário da sessão (primeira posição do array)
@@ -881,7 +875,7 @@ def nova_despesa():
         valor_str = request.form['valor'].replace(',', '.')
         # Obtém a descrição da despesa do formulário
         descricao = request.form['descricao']
- 
+
         # Tenta converter o valor para float e validá-lo
         try:
             valor = float(valor_str)
@@ -895,14 +889,14 @@ def nova_despesa():
             flash("Valor inválido.", "error")
             # Redireciona de volta para o formulário
             return redirect(url_for('nova_despesa'))
- 
+
         # Tenta inserir os dados no banco de dados
         try:
             # Converte a string de data para objeto datetime
             data_obj = datetime.strptime(data_str, '%Y-%m-%d')
             # Formata a data para o padrão ISO (banco de dados)
             data_formatada = data_obj.strftime('%Y-%m-%d')
-           
+
             # Cria cursor para executar queries no banco
             cursor = con.cursor()
             # Executa query para inserir nova transação na tabela TRANSACOES
@@ -923,11 +917,10 @@ def nova_despesa():
             # Garante que o cursor seja fechado mesmo em caso de erro
             if 'cursor' in locals():
                 cursor.close()
-                
+
     # Renderiza o template do formulário de nova despesa
     # (para requisições GET ou se houve erro no POST)
     return render_template('nova_despesa.html')
-
 
 
 # Define a rota '/editar_transacao/<int:id_transacao>' que aceita GET e POST
@@ -940,14 +933,14 @@ def editar_transacao(id_transacao):
         flash("Você precisa fazer login para acessar esta página.", "error")
         # Redireciona para a página de login
         return redirect(url_for('login'))
-   
+
     # Obtém o ID do usuário da sessão
     id_usuario = session['usuario'][0]
     # Cria cursor para executar queries no banco
     cursor = con.cursor()
     # Inicializa variável para armazenar os dados da transação
     transacao = None
-   
+
     try:
         # Busca a transação específica do usuário no banco
         cursor.execute("""
@@ -982,7 +975,8 @@ def editar_transacao(id_transacao):
             if 'excluir' in request.form:
                 try:
                     # Executa query para excluir a transação
-                    cursor.execute("DELETE FROM TRANSACOES WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?", (id_transacao, id_usuario))
+                    cursor.execute("DELETE FROM TRANSACOES WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?",
+                                   (id_transacao, id_usuario))
                     # Confirma a exclusão no banco
                     con.commit()
                     flash("Exclusão da transação com sucesso!", "success")
@@ -991,7 +985,7 @@ def editar_transacao(id_transacao):
                 except Exception as e:
                     flash(f"Erro ao excluir transação: {e}", "error")
                     return redirect(url_for('editar_transacao', id_transacao=id_transacao))
-           
+
             # Se não é exclusão, é edição - obtém os dados do formulário
             data_str = request.form['data']
             tipo = request.form['tipo']
@@ -1023,7 +1017,7 @@ def editar_transacao(id_transacao):
             except Exception as e:
                 flash(f"Erro ao atualizar transação: {e}", "error")
                 return redirect(url_for('editar_transacao', id_transacao=id_transacao))
-                
+
     # Captura qualquer erro durante o processamento
     except Exception as e:
         flash(f"Erro ao processar a transação: {e}", "error")
@@ -1034,6 +1028,7 @@ def editar_transacao(id_transacao):
 
     # Renderiza o template de edição passando os dados da transação
     return render_template('editar_transacao.html', transacao=transacao)
+
 
 # Define a rota '/app/admin/users'.
 @app.route('/app/admin/users')
@@ -1077,7 +1072,6 @@ def admin_users():
     return render_template('admin_users.html', users=all_users)
 
 
-
 # Define a rota para editar um usuário específico, aceitando GET e POST.
 @app.route("/app/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
 # Define a função que recebe o ID do usuário a ser editado.
@@ -1099,7 +1093,9 @@ def admin_edit_user(user_id):
         # Inicia um bloco de tratamento de erros.
         try:
             # Busca os dados do usuário pelo ID.
-            cursor.execute("SELECT id_usuario, nome, email, cpf, telefone, tipo, tentativas, ativo FROM usuario WHERE id_usuario = ?", (user_id,))
+            cursor.execute(
+                "SELECT id_usuario, nome, email, cpf, telefone, tipo, tentativas, ativo FROM usuario WHERE id_usuario = ?",
+                (user_id,))
             # Armazena o resultado da busca.
             user_to_edit = cursor.fetchone()
 
@@ -1152,15 +1148,17 @@ def admin_edit_user(user_id):
                 # Gera o hash da nova senha.
                 hash_senha = generate_password_hash(senha).decode("utf-8")
                 # Executa a atualização incluindo a senha.
-                cursor.execute("UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ?, senha = ? WHERE id_usuario = ?",
-                               # Passa todos os novos dados como parâmetros.
-                               (nome, email, cpf, telefone, tipo, ativo, hash_senha, user_id))
+                cursor.execute(
+                    "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ?, senha = ? WHERE id_usuario = ?",
+                    # Passa todos os novos dados como parâmetros.
+                    (nome, email, cpf, telefone, tipo, ativo, hash_senha, user_id))
             # Se o campo de senha não foi preenchido.
             else:
                 # Executa a atualização sem a senha.
-                cursor.execute("UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ? WHERE id_usuario = ?",
-                               # Passa os dados (exceto senha) como parâmetros.
-                               (nome, email, cpf, telefone, tipo, ativo, user_id))
+                cursor.execute(
+                    "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ? WHERE id_usuario = ?",
+                    # Passa os dados (exceto senha) como parâmetros.
+                    (nome, email, cpf, telefone, tipo, ativo, user_id))
             # Confirma a transação no banco de dados.
             con.commit()
             # Mostra uma mensagem de sucesso.
@@ -1210,7 +1208,6 @@ def admin_reset_attempts(user_id):
     return redirect(url_for("admin_users"))
 
 
-
 # Executa a aplicação Flask em modo de desenvolvimento
 # Verifica se o script está sendo executado diretamente (não importado).
 if __name__ == '__main__':
@@ -1258,7 +1255,7 @@ if __name__ == '__main__':
 # `cursor.close()`: Para fechar o cursor e liberar recursos.
 
 ### **Biblioteca Datetime (Datas e Horas)**
-#`date.today()`: Para obter a data atual.
+# `date.today()`: Para obter a data atual.
 
 # **Comandos SQL (dentro de strings)**
 # `SELECT`: Para consultar dados.
@@ -1266,4 +1263,4 @@ if __name__ == '__main__':
 # `UPDATE`: Para atualizar registros existentes.
 # `DELETE FROM`: Para apagar registros.
 # `WHERE`: Para filtrar os registros em uma consulta.
-# `INNER JOIN`: Para combinar tabelas com base em uma coluna em comum.i
+# `INNER JOIN`: Para combinar tabelas com base em uma coluna em comum.i{% extends 'templateDashboard.html' %}

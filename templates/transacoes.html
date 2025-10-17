@@ -32,7 +32,7 @@
         <div class="balance">
             <span class="label">Saldo Atual:</span>
             {% if saldo <= 0 %}
-                <span class="value" style="color: red">R${{ '%.2f'|format(saldo) }}</span>
+                <span class="value" style="color: #dc3545">R${{ '%.2f'|format(saldo) }}</span>
             {% else %}
                 <span class="value">R${{ '%.2f'|format(saldo) }}</span>
             {% endif %}
