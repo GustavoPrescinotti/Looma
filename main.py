@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, session, url_for, request, f
 # Importa funções do Flask-Bcrypt para gerar e verificar hashes de senhas.
 from flask_bcrypt import generate_password_hash, check_password_hash
 # Importa a classe date do módulo datetime para trabalhar com datas.
-from datetime import date
+from datetime import datetime
 # Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
@@ -308,22 +308,33 @@ def cadastro():
 
 # Define a rota para '/app'.
 @app.route('/app')
-# Define a função 'dashboard' que exibe a página principal após o login.
 def dashboard():
-    # Verifica se não há um usuário na sessão.
+    # Verifica se o usuário não está na sessão (não está logado)
     if 'usuario' not in session:
-        # Exibe uma mensagem de erro se o usuário não estiver logado.
+        # Exibe mensagem de erro para o usuário
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login.
+        # Redireciona para a página de login
         return redirect(url_for('login'))
-
-    # Verifica se o tipo de usuário na sessão é 'admin'.
-    if session['usuario'][4] == 'admin':
-        # Se for admin, renderiza o dashboard de administrador.
-        return render_template('dashboard_admin.html')
-
-    # Caso contrário, renderiza o dashboard de usuário comum.
-    return render_template('dashboard_usuario.html')
+ 
+    # Cria um cursor para executar queries no banco de dados
+    cursor = con.cursor()
+    try:
+        # Verifica se o usuário logado é um administrador (posição 4 do array de sessão)
+        if session['usuario'][4] == 'admin':
+            # Executa query para contar usuários ativos (ativo = 1)
+            cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = 1")
+            # Busca o resultado da query
+            res = cursor.fetchone()
+            # Extrai o total de usuários ativos do resultado, ou 0 se não houver resultados
+            total_usuarios_ativos = res[0] if res else 0
+            # Renderiza o template do dashboard administrativo passando o total de usuários
+            return render_template('dashboard_admin.html', total_usuarios=total_usuarios_ativos)
+        else:
+            # Se não for admin, apenas renderiza o dashboard comum do usuário
+            return render_template('dashboard_usuario.html')
+    finally:
+        # Fecha o cursor para liberar recursos do banco de dados
+        cursor.close()
 
 
 # Define a rota para '/logout'.
@@ -588,24 +599,145 @@ def nova_simulacao():
 
 
 # Define a rota para '/app/transacoes'.
+# Define a rota '/app/transacoes' para acessar a página de transações
 @app.route('/app/transacoes')
-# Define a função 'transacoes'.
 def transacoes():
-    # Verifica se o usuário não está logado.
+    # Verifica se o usuário não está na sessão (não está logado)
     if 'usuario' not in session:
-        # Exibe uma mensagem de erro.
+        # Exibe mensagem de erro para o usuário
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login.
+        # Redireciona para a página de login
         return redirect(url_for('login'))
-
-    # Renderiza a página de transações.
-    return render_template('transacoes.html')
+ 
+    # Obtém o ID do usuário da sessão (primeira posição do array)
+    id_usuario = session['usuario'][0]
+    # Cria um cursor para executar queries no banco de dados
+    cursor = con.cursor()
+    try:
+        # Executa query para buscar todas as transações do usuário
+        cursor.execute("""
+            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO
+            FROM TRANSACOES
+            WHERE ID_USUARIO = ?
+            ORDER BY DATA_TRANSACAO DESC
+        """, (id_usuario,))
+        # Busca todos os resultados da query
+        transacoes_raw = cursor.fetchall()
+       
+        # Inicializa lista vazia para armazenar transações formatadas
+        transacoes = []
+        # Inicializa saldo com valor zero
+        saldo = 0.0
+        
+        # Itera sobre cada transação retornada do banco
+        for t in transacoes_raw:
+            # Obtém a data da transação (quinta coluna - índice 4)
+            dt = t[4]
+           
+            # Verifica se a data é uma string (precisa de parsing)
+            if isinstance(dt, str):
+                # Converte string para objeto datetime (ignora hora se existir)
+                dt_obj = datetime.strptime(dt.split()[0], '%Y-%m-%d')
+            else:
+                # Se já for objeto datetime, usa diretamente
+                dt_obj = dt
+           
+            # Formata a data para o padrão brasileiro (dia/mês/ano)
+            data_formatada = dt_obj.strftime('%d/%m/%Y') if dt_obj else ''
+ 
+            # Adiciona transação formatada à lista, convertendo valor para float
+            transacoes.append((t[0], t[1], float(t[2]), t[3], data_formatada))
+ 
+            # Atualiza o saldo baseado no tipo de transação
+            if t[1].lower() == 'receita':
+                # Se for receita, adiciona ao saldo
+                saldo += float(t[2])
+            else:
+                # Se for despesa, subtrai do saldo
+                saldo -= float(t[2])
+                
+    # Captura qualquer exceção que ocorrer durante o processamento
+    except Exception as e:
+        # Exibe mensagem de erro para o usuário
+        flash(f"Erro ao carregar transações: {e}", "error")
+        # Define transações como lista vazia em caso de erro
+        transacoes = []
+        # Define saldo como zero em caso de erro
+        saldo = 0.0
+    finally:
+        # Fecha o cursor para liberar recursos do banco de dados
+        cursor.close()
+ 
+    # Renderiza o template passando as transações e saldo calculado
+    return render_template('transacoes.html', transacoes=transacoes, saldo=saldo)
 
 # Define a rota para '/nova_receita'.
-@app.route('/nova_receita')
-# Define a função 'nova_receita'.
+# Define a rota '/nova_receita' que aceita métodos GET e POST
+@app.route('/nova_receita', methods=['GET', 'POST'])
 def nova_receita():
-    # Renderiza a página para adicionar uma nova receita.
+    # Verifica se o usuário não está na sessão (não está logado)
+    if 'usuario' not in session:
+        # Exibe mensagem de erro para o usuário
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login
+        return redirect(url_for('login'))
+   
+    # Verifica se a requisição é do tipo POST (envio de formulário)
+    if request.method == 'POST':
+        # Obtém o ID do usuário da sessão (primeira posição do array)
+        id_usuario = session['usuario'][0]
+        # Obtém a data do formulário
+        data_str = request.form['data']
+        # Obtém o tipo do formulário (provavelmente 'receita')
+        tipo = request.form['tipo']
+        # Obtém o valor do formulário e substitui vírgula por ponto para conversão decimal
+        valor_str = request.form['valor'].replace(',', '.')
+        # Obtém a descrição do formulário
+        descricao = request.form['descricao']
+ 
+        # Tenta converter o valor para float e validá-lo
+        try:
+            valor = float(valor_str)
+            # Verifica se o valor é positivo (não permite zero ou negativo)
+            if valor <= 0:
+                flash("Valor inválido. Não é permitido valor negativo ou zero.", "error")
+                # Redireciona de volta para o formulário em caso de erro
+                return redirect(url_for('nova_receita'))
+        except ValueError:
+            # Se a conversão para float falhar, exibe mensagem de erro
+            flash("Valor inválido.", "error")
+            # Redireciona de volta para o formulário
+            return redirect(url_for('nova_receita'))
+ 
+        # Tenta inserir os dados no banco de dados
+        try:
+            # Converte a string de data para objeto datetime
+            data_obj = datetime.strptime(data_str, '%Y-%m-%d')
+            # Formata a data para o padrão ISO (banco de dados)
+            data_formatada = data_obj.strftime('%Y-%m-%d')
+           
+            # Cria cursor para executar queries no banco
+            cursor = con.cursor()
+            # Executa query para inserir nova transação na tabela
+            cursor.execute("""
+                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO)
+                VALUES (?, ?, ?, ?, ?)
+            """, (id_usuario, tipo, valor, descricao, data_formatada))
+            # Confirma a transação no banco de dados
+            con.commit()
+            # Exibe mensagem de sucesso para o usuário
+            flash("Receita cadastrada com sucesso!", "success")
+            # Redireciona para a página de transações após sucesso
+            return redirect(url_for('transacoes'))
+        except Exception as e:
+            # Captura qualquer erro durante a inserção no banco
+            flash(f"Erro ao cadastrar receita: {e}", "error")
+        finally:
+            # Garante que o cursor seja fechado mesmo em caso de erro
+            if 'cursor' in locals():
+                cursor.close()
+                
+    # Renderiza o template do formulário (para GET ou se houve erro no POST)
     return render_template('nova_receita.html')
 
 
@@ -727,12 +859,181 @@ def perfil():
     # Redireciona para o dashboard em caso de erro.
     return redirect(url_for('dashboard'))
 
-# Define a rota para '/nova_despesa'.
-@app.route('/nova_despesa')
-# Define a função 'nova_despesa'.
+# Define a rota '/nova_despesa' que aceita métodos GET e POST
+@app.route('/nova_despesa', methods=['GET', 'POST'])
 def nova_despesa():
-    # Renderiza a página para adicionar uma nova despesa.
+    # Verifica se o usuário não está na sessão (não está logado)
+    if 'usuario' not in session:
+        # Exibe mensagem de erro informando que precisa estar logado
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login
+        return redirect(url_for('login'))
+   
+    # Verifica se a requisição é do tipo POST (envio de formulário)
+    if request.method == 'POST':
+        # Obtém o ID do usuário da sessão (primeira posição do array)
+        id_usuario = session['usuario'][0]
+        # Obtém a data do formulário
+        data_str = request.form['data']
+        # Obtém o tipo do formulário (provavelmente 'despesa')
+        tipo = request.form['tipo']
+        # Obtém o valor do formulário e substitui vírgula por ponto para conversão decimal
+        valor_str = request.form['valor'].replace(',', '.')
+        # Obtém a descrição da despesa do formulário
+        descricao = request.form['descricao']
+ 
+        # Tenta converter o valor para float e validá-lo
+        try:
+            valor = float(valor_str)
+            # Verifica se o valor é positivo (não permite zero ou negativo)
+            if valor <= 0:
+                flash("Valor inválido. Não é permitido valor negativo ou zero.", "error")
+                # Redireciona de volta para o formulário em caso de erro
+                return redirect(url_for('nova_despesa'))
+        except ValueError:
+            # Se a conversão para float falhar, exibe mensagem de erro
+            flash("Valor inválido.", "error")
+            # Redireciona de volta para o formulário
+            return redirect(url_for('nova_despesa'))
+ 
+        # Tenta inserir os dados no banco de dados
+        try:
+            # Converte a string de data para objeto datetime
+            data_obj = datetime.strptime(data_str, '%Y-%m-%d')
+            # Formata a data para o padrão ISO (banco de dados)
+            data_formatada = data_obj.strftime('%Y-%m-%d')
+           
+            # Cria cursor para executar queries no banco
+            cursor = con.cursor()
+            # Executa query para inserir nova transação na tabela TRANSACOES
+            cursor.execute("""
+                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO)
+                VALUES (?, ?, ?, ?, ?)
+            """, (id_usuario, tipo, valor, descricao, data_formatada))
+            # Confirma a transação no banco de dados
+            con.commit()
+            # Exibe mensagem de sucesso para o usuário
+            flash("Despesa cadastrada com sucesso!", "success")
+            # Redireciona para a página de transações após sucesso
+            return redirect(url_for('transacoes'))
+        except Exception as e:
+            # Captura qualquer erro durante a inserção no banco
+            flash(f"Erro ao cadastrar despesa: {e}", "error")
+        finally:
+            # Garante que o cursor seja fechado mesmo em caso de erro
+            if 'cursor' in locals():
+                cursor.close()
+                
+    # Renderiza o template do formulário de nova despesa
+    # (para requisições GET ou se houve erro no POST)
     return render_template('nova_despesa.html')
+
+
+
+# Define a rota '/editar_transacao/<int:id_transacao>' que aceita GET e POST
+# O <int:id_transacao> captura um parâmetro inteiro da URL
+@app.route('/editar_transacao/<int:id_transacao>', methods=['GET', 'POST'])
+def editar_transacao(id_transacao):
+    # Verifica se o usuário não está na sessão (não está logado)
+    if 'usuario' not in session:
+        # Exibe mensagem de erro informando que precisa estar logado
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login
+        return redirect(url_for('login'))
+   
+    # Obtém o ID do usuário da sessão
+    id_usuario = session['usuario'][0]
+    # Cria cursor para executar queries no banco
+    cursor = con.cursor()
+    # Inicializa variável para armazenar os dados da transação
+    transacao = None
+   
+    try:
+        # Busca a transação específica do usuário no banco
+        cursor.execute("""
+            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO
+            FROM TRANSACOES
+            WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?
+        """, (id_transacao, id_usuario))
+        # Obtém o primeiro resultado da query
+        t = cursor.fetchone()
+        # Verifica se a transação foi encontrada
+        if not t:
+            flash("Transação não encontrada.", "error")
+            cursor.close()
+            return redirect(url_for('transacoes'))
+
+        # Obtém a data da transação (quarta coluna - índice 4)
+        dt = t[4]
+        # Verifica se a data é string e converte para datetime se necessário
+        if isinstance(dt, str):
+            dt_obj = datetime.strptime(dt.split()[0], '%Y-%m-%d')
+        else:
+            dt_obj = dt
+        # Formata a data para o padrão HTML (YYYY-MM-DD) para preencher o formulário
+        data_formatada = dt_obj.strftime('%Y-%m-%d')
+
+        # Cria tupla com os dados formatados da transação
+        transacao = (t[0], t[1], float(t[2]), t[3], data_formatada)
+
+        # Verifica se é uma requisição POST (envio do formulário)
+        if request.method == 'POST':
+            # Verifica se o botão de excluir foi pressionado
+            if 'excluir' in request.form:
+                try:
+                    # Executa query para excluir a transação
+                    cursor.execute("DELETE FROM TRANSACOES WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?", (id_transacao, id_usuario))
+                    # Confirma a exclusão no banco
+                    con.commit()
+                    flash("Exclusão da transação com sucesso!", "success")
+                    cursor.close()
+                    return redirect(url_for('transacoes'))
+                except Exception as e:
+                    flash(f"Erro ao excluir transação: {e}", "error")
+                    return redirect(url_for('editar_transacao', id_transacao=id_transacao))
+           
+            # Se não é exclusão, é edição - obtém os dados do formulário
+            data_str = request.form['data']
+            tipo = request.form['tipo']
+            valor_str = request.form['valor'].replace(',', '.')
+            descricao = request.form['descricao']
+
+            # Valida o valor informado
+            try:
+                valor = float(valor_str)
+                if valor <= 0:
+                    flash("Valor inválido. Não é permitido valor negativo ou zero.", "error")
+                    cursor.close()
+                    return redirect(url_for('editar_transacao', id_transacao=id_transacao))
+            except ValueError:
+                flash("Valor inválido.", "error")
+                cursor.close()
+                return redirect(url_for('editar_transacao', id_transacao=id_transacao))
+
+            # Tenta atualizar a transação no banco
+            try:
+                cursor.execute("""
+                    UPDATE TRANSACOES SET DATA_TRANSACAO = ?, TIPO = ?, VALOR = ?, DESCRICAO = ?
+                    WHERE ID_TRANSACOES= ? AND ID_USUARIO = ?
+                """, (data_str, tipo, valor, descricao, id_transacao, id_usuario))
+                con.commit()
+                flash("Transação atualizada com sucesso!", "success")
+                cursor.close()
+                return redirect(url_for('transacoes'))
+            except Exception as e:
+                flash(f"Erro ao atualizar transação: {e}", "error")
+                return redirect(url_for('editar_transacao', id_transacao=id_transacao))
+                
+    # Captura qualquer erro durante o processamento
+    except Exception as e:
+        flash(f"Erro ao processar a transação: {e}", "error")
+        return redirect(url_for('transacoes'))
+    finally:
+        # Garante que o cursor seja fechado
+        cursor.close()
+
+    # Renderiza o template de edição passando os dados da transação
+    return render_template('editar_transacao.html', transacao=transacao)
 
 # Define a rota '/app/admin/users'.
 @app.route('/app/admin/users')

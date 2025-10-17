@@ -1,22 +1,21 @@
-{% extends 'templateDashboard.html' %}
-
+% extends 'templateDashboard.html' %}
+ 
 {% block conteudo %}
-
 <div class="container">
     {% include 'components/sidebar.html' %}
     <div class="main-content">
-        <div class="flash-messages-container" >
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
+        <div class="flash-messages-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
             {% for category, message in messages %}
-                <div class="flash-message flash-{{ category }}" >
-                    <span class="flash-text">{{ message }}</span>
-                    <button class="flash-close" onclick="this.parentElement.style.display='no   ne'">&times;</button>
-                </div>
+            <div class="flash-message flash-{{ category }}">
+                <span class="flash-text">{{ message }}</span>
+                <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
             {% endfor %}
-        {% endif %}
-    {% endwith %}
-</div>
+            {% endif %}
+            {% endwith %}
+        </div>
         <section>
             <h3 class="section-title">Seu Resumo Financeiro</h3>
             <div class="cards cards--summary">
@@ -46,11 +45,11 @@
                     <p class="card__value card__value--lg">R$0,00</p>
                 </article>
                 <article class="card card--white">
-                    <h4 class="card__title">Parcelas<br/>Restantes</h4>
+                    <h4 class="card__title">Parcelas<br />Restantes</h4>
                     <p class="card__value card__value--lg">0</p>
                 </article>
                 <article class="card card--white">
-                    <h4 class="card__title">Próximo<br/>Vencimento</h4>
+                    <h4 class="card__title">Próximo<br />Vencimento</h4>
                     <p class="card__value card__value--lg">Não Definido</p>
                 </article>
             </div>

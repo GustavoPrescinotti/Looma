@@ -1,5 +1,5 @@
 {% extends 'templateDashboard.html' %}
-
+ 
 {% block conteudo %}
 <div class="container">
     {% include 'components/sidebar.html' %}
@@ -7,16 +7,37 @@
         <main class="content">
             <section class="card">
                 <h1 class="card-title">Nova Despesa</h1>
-                <form class="form" aria-label="Nova Despesa" method="post">
+                <div class="flash-messages-container">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span class="flash-icon">
+                            {% if category == 'success' %}
+                            ✓
+                            {% elif category == 'error' %}
+                            ✕
+                            {% else %}
+                            ℹ
+                            {% endif %}
+                        </span>
+                        <span class="flash-text">{{ message }}</span>
+                        <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                <form class="form" aria-label="Nova Despesa" method="post" action="{{ url_for('nova_despesa') }}">
                     <div class="field">
                         <label class="label" for="data">Data:</label>
-                        <input class="input" id="data" name="data" type="date" required>
+                        <input class="input" id="data" name="data" type="date" required
+                            value="{{ transacao[4] if transacao and transacao[4] else '' }}">
                     </div>
                     <div class="field">
                         <label class="label" for="tipo">Tipo:</label>
                         <div class="select-wrap">
                             <select class="input select" id="tipo" name="tipo" required>
-                                <option value="" disabled>Selecione um tipo</option>
                                 <option value="Despesa" selected>Despesa</option>
                                 <option value="Receita">Receita</option>
                             </select>
@@ -24,15 +45,17 @@
                     </div>
                     <div class="field">
                         <label class="label" for="valor">Valor:</label>
-                        <input class="input" id="valor" name="valor" type="text" inputmode="decimal" placeholder="R$ 0,00" required>
+                        <input class="input" id="valor" name="valor" type="text" inputmode="decimal"
+                            placeholder="R$ 0,00" required>
                     </div>
                     <div class="field">
                         <label class="label" for="descricao">Descrição:</label>
-                        <textarea class="input textarea" id="descricao" name="descricao" rows="3" placeholder="Escreva aqui..."></textarea>
+                        <textarea class="input textarea" id="descricao" name="descricao" rows="3"
+                            placeholder="Escreva aqui..."></textarea>
                     </div>
                     <div class="actions-row">
-                        <button type="submit" class="btn-primary btn-lg">Adicionar</button>
-                        <a href="{{url_for('transacoes')}}" class="btn-outline btn-lg">Cancelar</a>
+                        <button type="submit" class="btn btn--primary">Adicionar</button>
+                        <a href="{{ url_for('transacoes') }}" class="btn btn--outline">Cancelar</a>
                     </div>
                 </form>
             </section>
@@ -40,4 +63,3 @@
     </div>
 </div>
 {% endblock %}
-
