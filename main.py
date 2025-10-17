@@ -317,8 +317,8 @@ def dashboard():
     try:
         # Verifica se o usuário logado é um administrador (posição 4 do array de sessão)
         if session['usuario'][4] == 'admin':
-            # Executa query para contar usuários ativos (ativo = 1)
-            cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = 1")
+            # Executa a query em uma única linha, passando os parâmetros corretamente
+            cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = ?", (1,))
             # Busca o resultado da query
             res = cursor.fetchone()
             # Extrai o total de usuários ativos do resultado, ou 0 se não houver resultados
@@ -354,148 +354,149 @@ def logout():
 
 # Define a rota para criar taxas, aceitando métodos GET e POST.
 @app.route('/app/taxas/criar', methods=['GET', 'POST'])
-# Define a função 'nova_taxa'.
 def nova_taxa():
-    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
-        # Exibe mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para o login.
         return redirect(url_for('login'))
 
-    # Verifica se o usuário logado não é um administrador.
     if session['usuario'][4] != 'admin':
-        # Exibe mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
-        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Verifica se a requisição é do tipo GET.
     if request.method == 'GET':
-        # Renderiza a página para criar uma nova taxa.
-        return render_template('nova_taxa.html')
+        # Define o ano atual como padrão
+        ano_atual = datetime.now().year
+        return render_template('nova_taxa.html', ano_atual=ano_atual)
 
-    # Cria um cursor para interagir com o banco de dados.
     cursor = con.cursor()
 
-    # Inicia um bloco de tratamento de exceções.
     try:
-        # Pega o ano do formulário.
         ano = request.form['ano']
-        # Pega o valor da taxa do formulário.
         valor = request.form['taxa']
-        # Obtém a data atual.
         data = date.today()
-        # Pega o ID do usuário logado na sessão.
         id_usuario = session['usuario'][0]
 
-        # Executa o comando SQL para inserir a nova taxa.
+        # Validação: Verificar se já existe uma taxa criada hoje
+        cursor.execute('SELECT COUNT(*) FROM TAXA_JURO WHERE DATA_CRIACAO = ? AND ID_USUARIO = ?',
+                       (data, id_usuario))
+        taxas_hoje = cursor.fetchone()[0]
+
+        if taxas_hoje > 0:
+            flash("Você já criou uma taxa hoje. Apenas uma taxa por dia é permitida.", "error")
+            return redirect(url_for('nova_taxa'))
+
+        # Validação: Verificar se o ano é válido
+        ano_atual = datetime.now().year
+        try:
+            ano_int = int(ano)
+            if ano_int != ano_atual:
+                flash(f"O ano deve ser {ano_atual}.", "error")
+                return redirect(url_for('nova_taxa'))
+        except ValueError:
+            flash("Ano inválido.", "error")
+            return redirect(url_for('nova_taxa'))
+
+        # Validação: Verificar se a taxa é um número válido
+        try:
+            valor_float = float(valor)
+            if valor_float <= 0:
+                flash("A taxa deve ser um valor positivo.", "error")
+                return redirect(url_for('nova_taxa'))
+        except ValueError:
+            flash("Valor da taxa inválido.", "error")
+            return redirect(url_for('nova_taxa'))
+
         cursor.execute('INSERT INTO TAXA_JURO (ANO, TAXA_MENSAL, DATA_CRIACAO, ID_USUARIO) VALUES (?, ?, ?, ?)',
-                       # Passa os valores como parâmetros para a consulta.
                        (ano, valor, data, id_usuario))
-        # Confirma a transação.
         con.commit()
 
-        # Exibe uma mensagem de sucesso.
         flash("Taxa de juros criada com sucesso!", "success")
-    # Captura qualquer exceção.
     except Exception as e:
-        # Exibe uma mensagem de erro.
         flash("Erro ao criar taxa de juros. Por favor, tente novamente.", "error")
-    # Bloco que sempre será executado.
     finally:
-        # Fecha o cursor.
         cursor.close()
 
-    # Redireciona para a página de listagem de taxas.
     return redirect(url_for('taxas'))
-
 
 # Define a rota para editar uma taxa, recebendo um ID e aceitando GET/POST.
 @app.route('/app/taxas/editar/<id>', methods=['GET', 'POST'])
-# Define a função 'editar_taxa' que recebe o ID da taxa.
 def editar_taxa(id):
-    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
-        # Exibe mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para o login.
         return redirect(url_for('login'))
 
-    # Verifica se o usuário logado não é um administrador.
     if session['usuario'][4] != 'admin':
-        # Exibe mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
-        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Verifica se a requisição é do tipo GET.
     if request.method == "GET":
-        # Cria um cursor para o banco de dados.
         cursor = con.cursor()
-        # Inicializa a variável para armazenar os dados da taxa.
         dadosTaxa = None
 
-        # Inicia um bloco de tratamento de exceções.
         try:
-            # Busca os dados da taxa pelo ID
-            # Executa a consulta para buscar a taxa pelo ID.
-            cursor.execute('SELECT ano, taxa_mensal FROM taxa_juro WHERE id_taxajuro = ?', (id,))
-            # Armazena o resultado da busca.
-            dadosTaxa = cursor.fetchone()
+            cursor.execute('SELECT ano, taxa_mensal, data_criacao FROM taxa_juro WHERE id_taxajuro = ?', (id,))
+            dadosTaxa_raw = cursor.fetchone()
 
-            # Verifica se a taxa não foi encontrada.
-            if not dadosTaxa:
-                # Exibe uma mensagem de erro.
+            if not dadosTaxa_raw:
                 flash("Taxa não encontrada.", "error")
-                # Redireciona para a listagem de taxas.
                 return redirect(url_for('taxas'))
-        # Captura qualquer exceção.
+
+            # Formata a data para exibição
+            data_criacao = dadosTaxa_raw[2]
+            if isinstance(data_criacao, str):
+                data_obj = datetime.strptime(data_criacao.split()[0], '%Y-%m-%d')
+            else:
+                data_obj = data_criacao
+            data_formatada = data_obj.strftime('%d/%m/%Y')
+
+            # Cria tupla com dados formatados
+            dadosTaxa = (dadosTaxa_raw[0], dadosTaxa_raw[1], data_formatada)
+
         except Exception as e:
-            # Exibe uma mensagem de erro.
             flash("Erro ao buscar dados da taxa.", "error")
-        # Bloco que sempre será executado.
         finally:
-            # Fecha o cursor.
             cursor.close()
 
-        # Renderiza a página de edição, passando os dados da taxa.
         return render_template('editar_taxa.html', dadosTaxa=dadosTaxa)
 
     # Se for POST, atualiza os dados
-    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
 
-    # Inicia um bloco de tratamento de exceções.
     try:
-        # Obtém os novos dados do formulário
-        # Pega o novo ano do formulário.
         vigencia = request.form['ano']
-        # Pega o novo valor da taxa do formulário.
         valor = request.form['taxa']
 
-        # Atualiza a taxa no banco de dados
-        # Executa o comando SQL para atualizar a taxa.
+        # Validações
+        ano_atual = datetime.now().year
+        try:
+            ano_int = int(vigencia)
+            if ano_int != ano_atual:
+                flash(f"O ano deve ser {ano_atual}.", "error")
+                return redirect(url_for('editar_taxa', id=id))
+        except ValueError:
+            flash("Ano inválido.", "error")
+            return redirect(url_for('editar_taxa', id=id))
+
+        try:
+            valor_float = float(valor)
+            if valor_float <= 0:
+                flash("A taxa deve ser um valor positivo.", "error")
+                return redirect(url_for('editar_taxa', id=id))
+        except ValueError:
+            flash("Valor da taxa inválido.", "error")
+            return redirect(url_for('editar_taxa', id=id))
+
         cursor.execute('UPDATE TAXA_JURO SET ano = ?, taxa_mensal = ? WHERE id_taxajuro = ?',
-                       # Passa os novos valores e o ID como parâmetros.
                        (vigencia, valor, id))
-        # Confirma a transação.
         con.commit()
 
-        # Exibe uma mensagem de sucesso.
         flash("Taxa atualizada com sucesso!", "success")
-    # Captura qualquer exceção.
     except Exception as e:
-        # Exibe uma mensagem de erro.
         flash("Houve um erro ao atualizar as informações. Por favor, tente novamente.", "error")
-    # Bloco que sempre será executado.
     finally:
-        # Fecha o cursor.
         cursor.close()
 
-    # Redireciona para a página de listagem de taxas.
     return redirect(url_for('taxas'))
-
 
 # Define a rota para excluir uma taxa, recebendo um ID inteiro.
 @app.route('/app/taxas/excluir/<int:id>')
@@ -536,24 +537,16 @@ def excluir_taxa(id):
 
 # Define a rota para '/app/taxas'.
 @app.route('/app/taxas')
-# Define a função 'taxas' para listar todas as taxas.
 def taxas():
-    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
-        # Exibe uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
-    # Inicializa uma lista vazia para armazenar as taxas.
     todastaxas = []
-    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
 
-    # Inicia um bloco de tratamento de exceções.
     try:
-        # Busca todas as taxas com JOIN para obter o nome do usuário criador
-        # Executa a consulta SQL para buscar todas as taxas e o nome do usuário que as criou.
+        # Busca todas as taxas com JOIN para obter o nome do usuário criador e formata a data
         cursor.execute('''SELECT id_taxajuro
                                , ano
                                , taxa_mensal
@@ -561,18 +554,28 @@ def taxas():
                                , u.NOME
                                FROM TAXA_JURO tj
                                INNER JOIN USUARIO u ON u.ID_USUARIO = tj.ID_USUARIO''')
-        # Armazena todos os resultados da busca na lista.
-        todastaxas = cursor.fetchall()
-    # Captura qualquer exceção.
+        taxas_raw = cursor.fetchall()
+
+        # Formata as datas para o padrão brasileiro
+        todastaxas = []
+        for taxa in taxas_raw:
+            # Converte a data para o formato brasileiro
+            data_criacao = taxa[3]
+            if isinstance(data_criacao, str):
+                data_obj = datetime.strptime(data_criacao.split()[0], '%Y-%m-%d')
+            else:
+                data_obj = data_criacao
+            data_formatada = data_obj.strftime('%d/%m/%Y')
+
+            # Cria nova tupla com a data formatada
+            taxa_formatada = (taxa[0], taxa[1], taxa[2], data_formatada, taxa[4])
+            todastaxas.append(taxa_formatada)
+
     except Exception as e:
-        # Exibe uma mensagem de erro.
         flash("Houve um erro ao obter as taxas. Por favor, tente novamente.", "error")
-    # Bloco que sempre será executado.
     finally:
-        # Fecha o cursor.
         cursor.close()
 
-    # Renderiza a página de listagem de taxas, passando a lista de taxas.
     return render_template('tabelaJuro.html', taxas=todastaxas)
 
 

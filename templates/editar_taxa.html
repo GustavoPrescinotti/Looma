@@ -10,15 +10,22 @@
                 <form action="" method="post">
                     <div class="form-group">
                         <label for="ano">Ano:</label>
-                        <input name="ano" id="ano" type="text" class="form-input" value="{{dadosTaxa[0]}}">
+                        <input name="ano" id="ano" type="text" class="form-input" value="{{dadosTaxa[0]}}" readonly>
+                        <small class="form-help">O ano não pode ser alterado.</small>
                     </div>
                     <div class="form-group">
                         <label for="taxa">Quantidade Taxa:</label>
-                        <input name="taxa" id="taxa" type="text" class="form-input" value="{{dadosTaxa[1]}}">
+                        <input name="taxa" id="taxa" type="text" class="form-input" value="{{dadosTaxa[1]}}" required>
+                        <small class="form-help">Digite o valor da taxa mensal em porcentagem.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Criação:</label>
+                        <input type="text" class="form-input" value="{{dadosTaxa[2]}}" readonly>
+                        <small class="form-help">Data no formato brasileiro (dia/mês/ano).</small>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-secondary">Salvar Alterações</button>
-                        <button type="button" class="btn-primary"><a href="{{url_for('taxas')}}">Cancelar</a></button>
+                        <a href="{{url_for('taxas')}}" class="btn-primary">Cancelar</a>
                     </div>
                 </form>
             </div>
