@@ -1,8 +1,4 @@
-/* ========================================================================== */
-/* ===== RESET GERAL E VARIÁVEIS GLOBAIS ===== */
-/* ========================================================================== */
 
-/* O seletor universal (*) aplica estas regras a TODOS os elementos da página. */
 * {
     margin: 0; /* Remove a margem externa padrão de todos os elementos. */
     padding: 0; /* Remove o preenchimento (espaçamento interno) padrão de todos os elementos. */
@@ -40,13 +36,10 @@ p {
     font-size: 1.4rem; /* Define o tamanho da fonte para 1.4 vezes o tamanho da fonte raiz. */
 }
 
-/* ========================================================================== */
-/* ===== CABEÇALHO PRINCIPAL ===== */
-/* ========================================================================== */
 
 .cabecalho-principal {
-    top: 0; /* Posiciona o cabeçalho no topo da página (usado com position). */
-    left: 0; /* Posiciona o cabeçalho no lado esquerdo da página. */
+    top: 0;
+    left: 0; 
     width: 100vw; /* Define a largura como 100% da largura da janela de visualização. */
     display: flex; /* Usa flexbox para alinhar os itens internos (logo, navegação). */
     justify-content: space-between; /* Distribui os itens com espaço máximo entre eles (logo na esquerda, resto na direita). */

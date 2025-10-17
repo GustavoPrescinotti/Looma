@@ -44,9 +44,10 @@
                            id="cpf"
                            name="cpf"
                            class="input"
-                           placeholder="000.000.000-00"
+                           placeholder="Informe o seu CPF"
                            value="{{session['usuario'][6]}}"
-                           maxlength="14"
+                           oninput="this.value = this.value.replace(/[^0-9.-]/g, '').slice(0, 14);"
+                           maxlength="11"
                            required>
                 </div>
                 <div class="field">
@@ -55,11 +56,15 @@
                            id="telefone"
                            name="telefone"
                            class="input"
-                           placeholder="(00) 00000-0000"
+                           placeholder="Informe o seu Telefone"
                            value="{{session['usuario'][8]}}"
-                           maxlength="15"
+                           maxlength="11"
+                           inputmode="numeric"
+                            oninput="this.value = this.value.replace(/[^0-9.-]/g, '').slice(0, 14);"
                            required>
                 </div>
+
+
                 <div class="field">
                     <label for="senha">Senha:</label>
                     <input type="password" id="senha" name="senha" class="input" placeholder="Deixe em branco para não alterar">

@@ -1,493 +1,555 @@
-# Importações necessárias para o funcionamento da aplicação Flask
+# Importa classes e funções do Flask para criar a app, renderizar templates, redirecionar, usar sessões, etc.
 from flask import Flask, render_template, redirect, session, url_for, request, flash
+# Importa funções do Flask-Bcrypt para gerar e verificar hashes de senhas.
 from flask_bcrypt import generate_password_hash, check_password_hash
+# Importa a classe date do módulo datetime para trabalhar com datas.
 from datetime import date
+# Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
-# Inicialização da aplicação Flask
+# Cria uma instância da aplicação Flask, usando o nome do módulo atual.
 app = Flask(__name__)
 
-# Chave secreta para gerenciar sessões de forma segura
+# Define uma chave secreta para a aplicação, usada para assinar cookies de sessão.
 # IMPORTANTE: Em produção, use uma chave mais complexa e armazenada em variável de ambiente
 app.secret_key = 'IgorELaisMeDeemNota'
 
-# Configurações de conexão com o banco de dados Firebird
+# Define o endereço do servidor do banco de dados.
 host = 'localhost'
-database = r'C:\Users\Aluno\Desktop\Looma\Looma.FDB'
+# Define o caminho para o arquivo do banco de dados Firebird.
+database = r'C:\Users\Aluno\Desktop\Looma.FDB'
+# Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
+# Define a senha para a conexão com o banco de dados.
 password = 'sysdba'
 
-# Estabelece a conexão com o banco de dados
+# Conecta-se ao banco de dados Firebird usando as configurações definidas.
 con = fdb.connect(host=host, database=database, user=user, password=password)
 
 
+# Define uma função chamada verificar_senha_forte que recebe uma senha como argumento.
 def verificar_senha_forte(senha):
-    """
-    Função que verifica se a senha atende aos critérios de segurança.
-
-    Critérios:
-    - Mínimo de 8 caracteres
-    - Pelo menos uma letra maiúscula
-    - Pelo menos uma letra minúscula
-    - Pelo menos um número
-    - Pelo menos um caractere especial
-
-    Args:
-        senha (str): A senha a ser validada
-
-    Returns:
-        bool: True se a senha for forte, False caso contrário
-    """
-    # Verificar o comprimento da senha
+    # Verifica se o comprimento da senha é menor que 8 caracteres.
     if len(senha) < 8:
+        # Se for menor que 8, retorna False, indicando que a senha não é forte.
         return False
 
-    # Inicializa as variáveis de controle para cada critério
+    # Inicializa a variável para verificar se há letra maiúscula como False.
     tem_maiuscula = False
+    # Inicializa a variável para verificar se há letra minúscula como False.
     tem_minuscula = False
+    # Inicializa a variável para verificar se há número como False.
     tem_numero = False
+    # Inicializa a variável para verificar se há caractere especial como False.
     tem_especial = False
+    # Define uma string com os caracteres especiais permitidos.
     caracteres_especiais = "!@#$%^&*()_-+=<>?/.,;:"
 
-    # Verificar cada caractere da senha
+    # Inicia um loop para percorrer cada caractere na string da senha.
     for char in senha:
+        # Verifica se o caractere atual é uma letra maiúscula.
         if char.isupper():
+            # Se for maiúscula, define a variável tem_maiuscula como True.
             tem_maiuscula = True
+        # Se não for maiúscula, verifica se é uma letra minúscula.
         elif char.islower():
+            # Se for minúscula, define a variável tem_minuscula como True.
             tem_minuscula = True
+        # Se não for letra, verifica se é um dígito numérico.
         elif char.isdigit():
+            # Se for um número, define a variável tem_numero como True.
             tem_numero = True
+        # Se não for nenhum dos anteriores, verifica se está na lista de caracteres especiais.
         elif char in caracteres_especiais:
+            # Se for um caractere especial, define a variável tem_especial como True.
             tem_especial = True
 
-    # Verificar se todas as condições foram atendidas
+    # Verifica se todas as quatro condições (maiúscula, minúscula, número, especial) são verdadeiras.
     if tem_maiuscula and tem_minuscula and tem_numero and tem_especial:
+        # Se todas forem verdadeiras, retorna True, indicando que a senha é forte.
         return True
+    # Se alguma das condições não for atendida, retorna False.
     return False
 
 
-
-
-
-
-
-
+# Define um decorador que associa a URL raiz ('/') à função 'index'.
 @app.route('/')
+# Define a função 'index' que será executada quando a URL raiz for acessada.
 def index():
-    """
-    Rota principal da aplicação.
-    Renderiza a página inicial (home).
-
-    Returns:
-        Template HTML da página inicial
-    """
+    # Retorna o conteúdo do arquivo 'index.html' renderizado para o navegador.
     return render_template('index.html')
 
 
+# Define um decorador para a URL '/auth/login', aceitando os métodos GET e POST.
 @app.route('/auth/login', methods=['GET', 'POST'])
+# Define a função 'login' que lida com a autenticação do usuário.
 def login():
-    """
-    Rota de autenticação de usuários.
-
-    GET: Exibe o formulário de login
-    POST: Processa as credenciais e autentica o usuário
-
-    Validações:
-    - Verifica se o usuário já está logado
-    - Valida email e senha
-    - Verifica se a conta está ativa
-    - Controla tentativas de login (máximo 3 tentativas)
-
-    Returns:
-        Template de login ou redirecionamento para dashboard
-    """
-    # Se o usuário já está logado, redireciona para o dashboard
+    # Verifica se a chave 'usuario' existe na sessão atual.
     if 'usuario' in session:
+        # Se o usuário já estiver logado, redireciona para a página do dashboard.
         return redirect(url_for('dashboard'))
 
-    # Se for uma requisição GET, apenas exibe o formulário
+    # Verifica se o método da requisição HTTP é GET.
     if request.method == 'GET':
+        # Se for GET, renderiza e exibe a página de login.
         return render_template('login.html')
 
-    # Cria um cursor para executar comandos SQL
+    # Cria um objeto cursor para interagir com o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco try para tratamento de exceções durante o processo de login.
     try:
-        # Obtém os dados do formulário
+        # Pega o valor do campo 'email' enviado pelo formulário.
         email = request.form['email']
+        # Pega o valor do campo 'password' enviado pelo formulário.
         senha = request.form['password']
 
-        # Busca o usuário no banco de dados pelo email
+        # Executa uma consulta SQL para selecionar um usuário pelo email.
         cursor.execute(
+            # A consulta SQL a ser executada.
             "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE email = ?",
+        # Passa o email como um parâmetro para a consulta, evitando injeção de SQL.
         (email,))
+        # Busca a primeira linha do resultado da consulta.
         usuario = cursor.fetchone()
 
-        # Se o usuário não existe, exibe mensagem de erro e redireciona
+        # Verifica se a consulta não retornou nenhum usuário.
         if not usuario:
+            # Exibe uma mensagem de erro para o usuário.
             flash("Email ou senha incorretos. Por favor, tente novamente.", "error")
+            # Redireciona de volta para a página de login.
             return redirect(url_for('login'))
 
-        # Extrai informações do usuário
+        # Extrai o tipo de usuário (ex: 'admin', 'user') do resultado da consulta.
         tipo = usuario[4]
+        # Extrai o número de tentativas de login do resultado da consulta.
         tentativas = usuario[5]
+        # Extrai o status da conta (ativo/inativo) do resultado da consulta.
         ativo = usuario[7]
 
-        # Verifica se a conta está ativa
+        # Verifica se a conta do usuário não está ativa.
         if not ativo:
+            # Exibe uma mensagem informando que a conta está bloqueada.
             flash("Sua conta foi bloqueada devido a múltiplas tentativas de login. Entre em contato com o suporte.",
+                  # Define a categoria da mensagem como 'error'.
                   "error")
+            # Redireciona de volta para a página de login.
             return redirect(url_for('login'))
 
-        # Verifica se a senha está correta
+        # Compara a senha fornecida com o hash armazenado no banco de dados.
         if check_password_hash(usuario[3], senha):
             #check_password_hash :
             # Senha correta: cria a sessão do usuário
 
+            # Inicia um bloco try para a atualização das tentativas.
             try:
+                # Atualiza o número de tentativas para 0 no banco de dados.
                 cursor.execute("UPDATE USUARIO SET TENTATIVAS = ? WHERE id_usuario = ?", (0, usuario[0]))
+                # Confirma a transação, salvando a alteração no banco.
                 con.commit()
+            # Captura qualquer exceção que ocorra durante a atualização.
             except Exception as e:
+                # Exibe uma mensagem de erro caso a atualização falhe.
                 flash("Não foi possível atualizar o usuário.", "error")
 
 
+            # Armazena os dados do usuário na sessão, efetivando o login.
             session['usuario'] = usuario
+            # Exibe uma mensagem de sucesso para o usuário.
             flash("Login realizado com sucesso! Bem-vindo(a)!", "success")
+            # Redireciona o usuário para a página do dashboard.
             return redirect(url_for('dashboard'))
+        # Se a senha estiver incorreta.
         else:
             # Senha incorreta: incrementa o contador de tentativas
+            # Exibe uma mensagem de erro de credenciais inválidas.
             flash("Email ou senha incorretos. Por favor, tente novamente.", "error")
 
             # Apenas usuários comuns têm limite de tentativas
+            # Verifica se o tipo do usuário é 'user'.
             if tipo == 'user':
+                # Incrementa o contador de tentativas de login.
                 tentativas = tentativas + 1
 
                 # Se atingiu 3 tentativas, bloqueia a conta
+                # Inicia um bloco try para atualizar as tentativas e o status da conta.
                 try:
+                    # Executa um comando SQL para atualizar as tentativas e o status.
                     cursor.execute("UPDATE USUARIO SET TENTATIVAS = ?, ATIVO = ? WHERE ID_USUARIO = ?",
+                                   # Passa os novos valores para a consulta (ativa a conta se tentativas < 3).
                                    (tentativas, (True if tentativas < 3 else False), usuario[0]))
+                    # Confirma a transação no banco de dados.
                     con.commit()
 
 
                     # Se a conta foi bloqueada, informa o usuário
+                    # Verifica se o número de tentativas atingiu ou ultrapassou 3.
                     if tentativas >= 3:
+                        # Exibe uma mensagem informando o bloqueio da conta.
                         flash("Sua conta foi bloqueada devido a múltiplas tentativas de login incorretas.", "error")
+                # Captura qualquer exceção durante a atualização.
                 except Exception as e:
+                    # Exibe uma mensagem de erro genérica.
                     flash("Erro ao processar tentativa de login.", "error")
+                # Bloco que é executado independentemente de ter ocorrido erro ou não.
                 finally:
+                    # Fecha o cursor para liberar recursos.
                     cursor.close()
+    # Captura qualquer exceção que possa ocorrer no bloco try principal.
     except Exception as e:
         # Captura qualquer erro durante o processo de login
+        # Exibe uma mensagem de erro genérica para o usuário.
         flash("Houve um erro ao fazer login. Por favor, tente novamente.", "error")
+    # Bloco que é executado sempre, com ou sem erro.
     finally:
+        # Garante que o cursor seja fechado para liberar recursos do banco de dados.
         cursor.close()
 
+    # Redireciona o usuário de volta para a página de login em caso de falha.
     return redirect(url_for('login'))
 
 
+# Define a rota '/auth/cadastro' que aceita métodos GET e POST.
 @app.route('/auth/cadastro', methods=['GET', 'POST'])
+# Define a função 'cadastro' para registrar novos usuários.
 def cadastro():
-    """
-    Rota de cadastro de novos usuários.
 
-    GET: Exibe o formulário de cadastro
-    POST: Processa os dados e cria um novo usuário
-
-    Validações:
-    - Verifica se o usuário já está logado
-    - Valida força da senha
-    - Verifica se o email já está cadastrado
-    - Criptografa a senha antes de armazenar
-
-    Returns:
-        Template de cadastro ou redirecionamento para login
-    """
-    # Se o usuário já está logado, redireciona para o dashboard
+    # Verifica se já existe um usuário na sessão.
     if 'usuario' in session:
+        # Se sim, redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Se for uma requisição GET, apenas exibe o formulário
+    # Verifica se o método da requisição é GET.
     if request.method == 'GET':
+        # Se for GET, exibe a página de cadastro.
         return render_template('cadastro.html')
 
-    # Cria um cursor para executar comandos SQL
+    # Cria um novo cursor para interagir com o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco try para tratamento de erros durante o cadastro.
     try:
-        # Obtém os dados do formulário
+        # Obtém o email do formulário de cadastro.
         email = request.form['email']
+        # Obtém o nome do formulário de cadastro.
         nome = request.form['name']
+        # Obtém a senha do formulário de cadastro.
         senha = request.form['password']
+        # Obtém o CPF do formulário de cadastro.
         cpf = request.form['cpf']
+        # Obtém o telefone do formulário de cadastro.
         telefone = request.form['phone']
+        # Obtém a confirmação da senha do formulário.
         confirmar_senha = request.form['confirm_password']
 
-        # Valida a força da senha
+        # Chama a função para verificar se a senha atende aos critérios de segurança.
         if not verificar_senha_forte(senha):
+            # Exibe uma mensagem de erro se a senha for fraca.
             flash(
+                # Texto da mensagem de erro.
                 "A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.",
+                # Categoria da mensagem.
                 "error")
+            # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
 
+        # Verifica se a senha e a confirmação de senha são diferentes.
         if senha != confirmar_senha:
+            # Exibe uma mensagem de erro se as senhas não coincidirem.
             flash("As senhas não coincidem. Por favor, tente novamente.", "error")
+            # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
 
-        # Verifica se o email já está cadastrado
+        # Executa uma consulta para verificar se o email já existe.
         cursor.execute("SELECT id_usuario FROM usuario WHERE email = ?", (email,))
+        # Busca o resultado da consulta.
         usuario = cursor.fetchone()
         #fetchone: usar fetchone() porque só deve existir um usuário com aquele e-mail.
         #fetchall : Ele vai buscar todos os usuarios
+        # Se a consulta retornou um usuário (ou seja, o email já existe).
         if usuario:
+            # Exibe uma mensagem de erro.
             flash("Este email já está cadastrado. Por favor, use outro email ou faça login.", "error")
+            # Fecha o cursor.
             cursor.close()
+            # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
 
 
-        # Criptografa a senha usando bcrypt
+        # Gera um hash seguro da senha e o decodifica para string UTF-8.
         hash_senha = generate_password_hash(senha).decode('utf-8')
 
-        # Insere o novo usuário no banco de dados
+        # Executa um comando SQL para inserir o novo usuário na tabela.
         cursor.execute(
+            # A instrução SQL de inserção.
             "INSERT INTO usuario(email, nome, senha, cpf, telefone, tipo, tentativas, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            # Passa os dados do novo usuário como parâmetros para a inserção.
             (email, nome, hash_senha, cpf, telefone, 'user', 0, True))
+        # Confirma a transação, salvando o novo usuário no banco de dados.
         con.commit()
 
-        # Exibe mensagem de sucesso
+        # Exibe uma mensagem de sucesso para o usuário.
         flash("Cadastro realizado com sucesso! Faça login para continuar.", "success")
+    # Captura qualquer exceção que ocorra durante o processo.
     except Exception as e:
         # Captura qualquer erro durante o cadastro
+        # Exibe uma mensagem de erro genérica.
         flash("Não foi possível criar sua conta. Por favor, tente novamente.", "error")
+        # Redireciona de volta para a página de cadastro.
         return redirect(url_for('cadastro'))
+    # Bloco que sempre será executado.
     finally:
+        # Garante que o cursor seja fechado.
         cursor.close()
 
+    # Redireciona para a página de login após o cadastro bem-sucedido.
     return redirect(url_for('login'))
 
 
+# Define a rota para '/app'.
 @app.route('/app')
+# Define a função 'dashboard' que exibe a página principal após o login.
 def dashboard():
-    """
-    Rota do dashboard principal.
-
-    Redireciona para o dashboard apropriado baseado no tipo de usuário:
-    - Admin: dashboard administrativo
-    - User: dashboard de usuário comum
-
-    Requer autenticação.
-
-    Returns:
-        Template do dashboard ou redirecionamento para login
-    """
-    # Verifica se o usuário está autenticado
+    # Verifica se não há um usuário na sessão.
     if 'usuario' not in session:
+        # Exibe uma mensagem de erro se o usuário não estiver logado.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
-    # Redireciona para o dashboard apropriado baseado no tipo de usuário
+    # Verifica se o tipo de usuário na sessão é 'admin'.
     if session['usuario'][4] == 'admin':
+        # Se for admin, renderiza o dashboard de administrador.
         return render_template('dashboard_admin.html')
 
+    # Caso contrário, renderiza o dashboard de usuário comum.
     return render_template('dashboard_usuario.html')
 
 
+# Define a rota para '/logout'.
 @app.route('/logout')
+# Define a função 'logout' para encerrar a sessão do usuário.
 def logout():
-    """
-    Rota para encerrar a sessão do usuário.
-
-    Remove os dados da sessão e redireciona para a página de login.
-
-    Returns:
-        Redirecionamento para a página de login
-    """
     # Remove o usuário da sessão
+    # Verifica se existe um usuário na sessão.
     if 'usuario' in session:
+        # Remove a chave 'usuario' da sessão, efetivamente deslogando o usuário.
         session.pop("usuario", None)
+        # Exibe uma mensagem de sucesso.
         flash("Logout realizado com sucesso!", "success")
 
+    # Redireciona o usuário para a página de login.
     return redirect(url_for('login'))
 
 
-# ========================================================================
+
 # ROTAS ADMINISTRATIVAS - Apenas para usuários com perfil 'admin'
-# ========================================================================
 
+
+# Define a rota para criar taxas, aceitando métodos GET e POST.
 @app.route('/app/taxas/criar', methods=['GET', 'POST'])
+# Define a função 'nova_taxa'.
 def nova_taxa():
-    """
-    Rota para criar uma nova taxa de juros.
-
-    Acesso restrito a administradores.
-
-    GET: Exibe o formulário de criação
-    POST: Processa e salva a nova taxa no banco
-
-    Returns:
-        Template de criação ou redirecionamento para lista de taxas
-    """
-    # Verifica se o usuário está autenticado
+    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
+        # Exibe mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para o login.
         return redirect(url_for('login'))
 
-    # Verifica se o usuário é administrador
+    # Verifica se o usuário logado não é um administrador.
     if session['usuario'][4] != 'admin':
+        # Exibe mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Se for GET, exibe o formulário
+    # Verifica se a requisição é do tipo GET.
     if request.method == 'GET':
+        # Renderiza a página para criar uma nova taxa.
         return render_template('nova_taxa.html')
 
-    # Cria um cursor para executar comandos SQL
+    # Cria um cursor para interagir com o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco de tratamento de exceções.
     try:
-        # Obtém os dados do formulário
+        # Pega o ano do formulário.
         ano = request.form['ano']
+        # Pega o valor da taxa do formulário.
         valor = request.form['taxa']
+        # Obtém a data atual.
         data = date.today()
+        # Pega o ID do usuário logado na sessão.
         id_usuario = session['usuario'][0]
 
-        # Insere a nova taxa no banco de dados
+        # Executa o comando SQL para inserir a nova taxa.
         cursor.execute('INSERT INTO TAXA_JURO (ANO, TAXA_MENSAL, DATA_CRIACAO, ID_USUARIO) VALUES (?, ?, ?, ?)',
+                       # Passa os valores como parâmetros para a consulta.
                        (ano, valor, data, id_usuario))
+        # Confirma a transação.
         con.commit()
 
+        # Exibe uma mensagem de sucesso.
         flash("Taxa de juros criada com sucesso!", "success")
+    # Captura qualquer exceção.
     except Exception as e:
+        # Exibe uma mensagem de erro.
         flash("Erro ao criar taxa de juros. Por favor, tente novamente.", "error")
+    # Bloco que sempre será executado.
     finally:
+        # Fecha o cursor.
         cursor.close()
 
+    # Redireciona para a página de listagem de taxas.
     return redirect(url_for('taxas'))
 
 
+# Define a rota para editar uma taxa, recebendo um ID e aceitando GET/POST.
 @app.route('/app/taxas/editar/<id>', methods=['GET', 'POST'])
+# Define a função 'editar_taxa' que recebe o ID da taxa.
 def editar_taxa(id):
-    """
-    Rota para editar uma taxa de juros existente.
-
-    Acesso restrito a administradores.
-
-    GET: Exibe o formulário preenchido com os dados atuais
-    POST: Atualiza a taxa no banco de dados
-
-    Args:
-        id: ID da taxa a ser editada
-
-    Returns:
-        Template de edição ou redirecionamento para lista de taxas
-    """
-    # Verifica se o usuário está autenticado
+ 
+    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
+        # Exibe mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para o login.
         return redirect(url_for('login'))
 
-    # Verifica se o usuário é administrador
+    # Verifica se o usuário logado não é um administrador.
     if session['usuario'][4] != 'admin':
+        # Exibe mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Se for GET, busca os dados e exibe o formulário
+    # Verifica se a requisição é do tipo GET.
     if request.method == "GET":
+        # Cria um cursor para o banco de dados.
         cursor = con.cursor()
+        # Inicializa a variável para armazenar os dados da taxa.
         dadosTaxa = None
 
+        # Inicia um bloco de tratamento de exceções.
         try:
             # Busca os dados da taxa pelo ID
+            # Executa a consulta para buscar a taxa pelo ID.
             cursor.execute('SELECT ano, taxa_mensal FROM taxa_juro WHERE id_taxajuro = ?', (id,))
+            # Armazena o resultado da busca.
             dadosTaxa = cursor.fetchone()
 
+            # Verifica se a taxa não foi encontrada.
             if not dadosTaxa:
+                # Exibe uma mensagem de erro.
                 flash("Taxa não encontrada.", "error")
+                # Redireciona para a listagem de taxas.
                 return redirect(url_for('taxas'))
+        # Captura qualquer exceção.
         except Exception as e:
+            # Exibe uma mensagem de erro.
             flash("Erro ao buscar dados da taxa.", "error")
+        # Bloco que sempre será executado.
         finally:
+            # Fecha o cursor.
             cursor.close()
 
+        # Renderiza a página de edição, passando os dados da taxa.
         return render_template('editar_taxa.html', dadosTaxa=dadosTaxa)
 
     # Se for POST, atualiza os dados
+    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco de tratamento de exceções.
     try:
         # Obtém os novos dados do formulário
+        # Pega o novo ano do formulário.
         vigencia = request.form['ano']
+        # Pega o novo valor da taxa do formulário.
         valor = request.form['taxa']
 
         # Atualiza a taxa no banco de dados
+        # Executa o comando SQL para atualizar a taxa.
         cursor.execute('UPDATE TAXA_JURO SET ano = ?, taxa_mensal = ? WHERE id_taxajuro = ?',
+                       # Passa os novos valores e o ID como parâmetros.
                        (vigencia, valor, id))
+        # Confirma a transação.
         con.commit()
 
+        # Exibe uma mensagem de sucesso.
         flash("Taxa atualizada com sucesso!", "success")
+    # Captura qualquer exceção.
     except Exception as e:
+        # Exibe uma mensagem de erro.
         flash("Houve um erro ao atualizar as informações. Por favor, tente novamente.", "error")
+    # Bloco que sempre será executado.
     finally:
+        # Fecha o cursor.
         cursor.close()
 
+    # Redireciona para a página de listagem de taxas.
     return redirect(url_for('taxas'))
 
 
+# Define a rota para excluir uma taxa, recebendo um ID inteiro.
 @app.route('/app/taxas/excluir/<int:id>')
+# Define a função 'excluir_taxa' que recebe o ID da taxa.
 def excluir_taxa(id):
-    """
-    Rota para excluir uma taxa de juros.
 
-    Acesso restrito a administradores.
-
-    Args:
-        id: ID da taxa a ser excluída
-
-    Returns:
-        Redirecionamento para lista de taxas
-    """
-    # Verifica se o usuário é administrador
+    # Verifica se o usuário não está logado ou não é admin.
     if 'usuario' not in session or session['usuario'][4] != 'admin':
+        # Exibe mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem realizar esta ação.", "error")
+        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Cria um cursor para executar comandos SQL
+    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco de tratamento de exceções.
     try:
         # Exclui a taxa do banco de dados
+        # Executa o comando SQL para deletar a taxa pelo ID.
         cursor.execute('DELETE FROM TAXA_JURO WHERE id_taxajuro = ?', (id,))
+        # Confirma a transação.
         con.commit()
 
+        # Exibe uma mensagem de sucesso.
         flash("Taxa excluída com sucesso!", "success")
+    # Captura qualquer exceção.
     except Exception as e:
+        # Exibe uma mensagem de erro.
         flash("Erro ao excluir taxa. Por favor, tente novamente.", "error")
+    # Bloco que sempre será executado.
     finally:
+        # Fecha o cursor.
         cursor.close()
 
+    # Redireciona para a página de listagem de taxas.
     return redirect(url_for('taxas'))
 
 
+# Define a rota para '/app/taxas'.
 @app.route('/app/taxas')
+# Define a função 'taxas' para listar todas as taxas.
 def taxas():
-    """
-    Rota para listar todas as taxas de juros cadastradas.
-
-    Requer autenticação.
-    Exibe todas as taxas com informações do usuário que as criou.
-
-    Returns:
-        Template com a lista de taxas
-    """
-    # Verifica se o usuário está autenticado
+    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
+        # Exibe uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
+    # Inicializa uma lista vazia para armazenar as taxas.
     todastaxas = []
+    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco de tratamento de exceções.
     try:
         # Busca todas as taxas com JOIN para obter o nome do usuário criador
+        # Executa a consulta SQL para buscar todas as taxas e o nome do usuário que as criou.
         cursor.execute('''SELECT id_taxajuro
                                , ano
                                , taxa_mensal
@@ -495,282 +557,412 @@ def taxas():
                                , u.NOME
                                FROM TAXA_JURO tj
                                INNER JOIN USUARIO u ON u.ID_USUARIO = tj.ID_USUARIO''')
+        # Armazena todos os resultados da busca na lista.
         todastaxas = cursor.fetchall()
+    # Captura qualquer exceção.
     except Exception as e:
+        # Exibe uma mensagem de erro.
         flash("Houve um erro ao obter as taxas. Por favor, tente novamente.", "error")
+    # Bloco que sempre será executado.
     finally:
+        # Fecha o cursor.
         cursor.close()
 
+    # Renderiza a página de listagem de taxas, passando a lista de taxas.
     return render_template('tabelaJuro.html', taxas=todastaxas)
 
 
+# Define a rota para '/app/simulacao/criar'.
 @app.route('/app/simulacao/criar')
+# Define a função 'nova_simulacao'.
 def nova_simulacao():
-    """
-    Rota para criar uma nova simulação de empréstimo.
-
-    Requer autenticação.
-
-    Returns:
-        Template do formulário de simulação
-    """
-    # Verifica se o usuário está autenticado
+    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
+        # Exibe uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
+    # Renderiza a página para criar uma nova simulação.
     return render_template('nova_simulacao.html')
 
 
+# Define a rota para '/app/transacoes'.
 @app.route('/app/transacoes')
+# Define a função 'transacoes'.
 def transacoes():
-    """
-    Rota para listar todas as transações do usuário.
-
-    Requer autenticação.
-
-    Returns:
-        Template com a lista de transações
-    """
-    # Verifica se o usuário está autenticado
+    # Verifica se o usuário não está logado.
     if 'usuario' not in session:
+        # Exibe uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
+    # Renderiza a página de transações.
     return render_template('transacoes.html')
 
-
+# Define a rota para '/nova_receita'.
 @app.route('/nova_receita')
+# Define a função 'nova_receita'.
 def nova_receita():
+    # Renderiza a página para adicionar uma nova receita.
     return render_template('nova_receita.html')
 
 
+# Define a rota '/perfil', que aceita os métodos GET e POST.
 @app.route('/perfil', methods=['GET', 'POST'])
+# Define a função 'perfil' para editar os dados do usuário.
 def perfil():
-    """
-    Rota para editar o perfil do usuário.
-
-    GET: Exibe o formulário de edição preenchido com dados atuais
-    POST: Atualiza os dados do usuário no banco
-
-    Validações:
-    - Se a senha for fornecida, verifica se as senhas coincidem e se é forte.
-    - Criptografa a nova senha, se houver.
-    - Atualiza a sessão com os novos dados.
-
-    Returns:
-        Template de edição ou redirecionamento para dashboard
-    """
+    # Verifica se o usuário não está logado na sessão.
     if 'usuario' not in session:
+        # Mostra uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
+    # Verifica se o método da requisição é GET.
     if request.method == 'GET':
+        # Se for GET, exibe a página de edição de perfil.
         return render_template('editar_perfil.html')
 
+    # Cria um cursor para executar comandos no banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco try para tratamento de erros.
     try:
         # Obtém os dados do formulário
+        # Pega o nome enviado pelo formulário.
         nome = request.form['nome']
+        # Pega o email enviado pelo formulário.
         email = request.form['email']
+        # Pega o CPF enviado pelo formulário.
         cpf = request.form["cpf"]
+        # Pega o telefone enviado pelo formulário.
         telefone = request.form["telefone"]
+        # Pega a senha enviada pelo formulário.
         senha = request.form["senha"]
+        # Pega a confirmação de senha enviada pelo formulário.
         confirmarSenha = request.form['confirmar']
 
-        # ========================================================================
-        # ## NOVA LÓGICA IMPLEMENTADA AQUI ##
-        # ========================================================================
+    
+        # NOVA LÓGICA IMPLEMENTADA AQUI #
 
         # Verifica se o usuário preencheu o campo de senha, indicando que quer alterá-la.
+        # Se o campo senha não estiver vazio.
         if senha:
             # Se a senha foi preenchida, fazemos todas as validações necessárias.
+            # Verifica se a nova senha atende aos critérios de segurança.
             if not verificar_senha_forte(senha):
+                # Se não atender, mostra uma mensagem de erro.
                 flash(
+                    # Texto da mensagem.
                     "A nova senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial.",
+                    # Categoria da mensagem.
                     "error")
+                # Redireciona de volta para a página de perfil.
                 return redirect(url_for('perfil'))
 
+            # Verifica se a senha e a confirmação são diferentes.
             if senha != confirmarSenha:
+                # Mostra uma mensagem de erro.
                 flash("As senhas não coincidem. Por favor, tente novamente.", "error")
+                # Redireciona de volta para a página de perfil.
                 return redirect(url_for('perfil'))
 
             # Criptografa a NOVA senha
+            # Gera um hash seguro para a nova senha.
             hashSenha = generate_password_hash(senha).decode('utf-8')
 
             # Prepara a query SQL para atualizar TUDO, incluindo a senha
+            # Comando SQL para atualizar nome, email, cpf, telefone e senha.
             cursor.execute('''UPDATE USUARIO SET
                            nome = ?, email = ?, cpf = ?, telefone = ?, senha = ?
                            WHERE id_usuario = ?''',
+                           # Passa os novos dados e o ID do usuário como parâmetros.
                            (nome, email, cpf, telefone, hashSenha, session['usuario'][0]))
 
+        # Se o campo senha estiver vazio.
         else:
             # Se a senha foi deixada em branco, atualizamos tudo, MENOS a senha.
+            # Comando SQL para atualizar apenas nome, email, cpf e telefone.
             cursor.execute('''UPDATE USUARIO SET
                            nome = ?, email = ?, cpf = ?, telefone = ?
                            WHERE id_usuario = ?''',
+                           # Passa os novos dados (sem a senha) e o ID do usuário como parâmetros.
                            (nome, email, cpf, telefone, session['usuario'][0]))
 
         # Confirma a transação no banco de dados
+        # Efetiva as alterações no banco de dados.
         con.commit()
 
         # Após a atualização, busca os dados mais recentes para atualizar a sessão
+        # Executa uma nova consulta para buscar os dados atualizados do usuário.
         cursor.execute(
+            # Comando SQL de seleção.
             "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE id_usuario = ?",
+            # Passa o ID do usuário da sessão como parâmetro.
             (session["usuario"][0],))
+        # Armazena os dados atualizados do usuário.
         usuarioAtualizado = cursor.fetchone()
 
         # Atualiza a sessão com os novos dados
+        # Substitui os dados antigos na sessão pelos novos.
         session["usuario"] = usuarioAtualizado
 
+        # Mostra uma mensagem de sucesso.
         flash("Informações atualizadas com sucesso!", "success")
 
+        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
+    # Se ocorrer qualquer erro no bloco try.
     except Exception as e:
+        # Mostra uma mensagem de erro detalhada.
         flash(f"Houve um erro ao atualizar as informações: {e}", "error")
+    # Bloco que é executado independentemente de erro.
     finally:
+        # Garante que o cursor do banco de dados seja fechado.
         cursor.close()
 
+    # Redireciona para o dashboard em caso de erro.
     return redirect(url_for('dashboard'))
 
+# Define a rota para '/nova_despesa'.
 @app.route('/nova_despesa')
+# Define a função 'nova_despesa'.
 def nova_despesa():
+    # Renderiza a página para adicionar uma nova despesa.
     return render_template('nova_despesa.html')
 
+# Define a rota '/app/admin/users'.
 @app.route('/app/admin/users')
+# Define a função 'admin_users' para listar usuários.
 def admin_users():
-    """
-    Rota para listar todos os usuários para o administrador.
-
-    Acesso restrito a administradores.
-
-    Returns:
-        Template com a lista de usuários ou redirecionamento para login/dashboard
-    """
+    # Verifica se não há usuário logado na sessão.
     if 'usuario' not in session:
+        # Mostra uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
+    # Verifica se o usuário logado não é um administrador.
     if session['usuario'][4] != 'admin':
+        # Mostra uma mensagem de acesso negado.
         flash("Pá Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
+    # Inicializa uma lista vazia para armazenar os usuários.
     all_users = []
+    # Cria um cursor para interagir com o banco de dados.
     cursor = con.cursor()
 
+    # Inicia um bloco de tratamento de erros.
     try:
+        # Executa uma consulta para selecionar todos os usuários.
         cursor.execute("SELECT id_usuario, nome, email, tipo, tentativas, ativo, cpf, telefone FROM usuario")
+        # Armazena todos os resultados da consulta na lista.
         all_users = cursor.fetchall()
+    # Se ocorrer um erro na consulta.
     except Exception as e:
+        # Mostra uma mensagem de erro.
         flash("Houve um erro ao obter os usuários. Por favor, tente novamente.", "error")
+    # Bloco que sempre será executado.
     finally:
+        # Fecha o cursor do banco de dados.
         cursor.close()
 
+    # Renderiza a página de administração de usuários, passando a lista de usuários.
     return render_template('admin_users.html', users=all_users)
 
 
 
+# Define a rota para editar um usuário específico, aceitando GET e POST.
 @app.route("/app/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
+# Define a função que recebe o ID do usuário a ser editado.
 def admin_edit_user(user_id):
-    """
-    Rota para o administrador editar o perfil de um usuário específico.
-
-    Acesso restrito a administradores.
-
-    GET: Exibe o formulário de edição preenchido com os dados atuais do usuário.
-    POST: Atualiza os dados do usuário no banco de dados.
-
-    Args:
-        user_id (int): O ID do usuário a ser editado.
-
-    Returns:
-        Template de edição ou redirecionamento para a lista de usuários.
-    """
+    # Verifica se o usuário não está logado ou não é um administrador.
     if "usuario" not in session or session["usuario"][4] != "admin":
+        # Mostra uma mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for("login"))
 
+    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
+    # Inicializa a variável para guardar os dados do usuário a ser editado.
     user_to_edit = None
 
+    # Se a requisição for do tipo GET.
     if request.method == "GET":
+        # Inicia um bloco de tratamento de erros.
         try:
+            # Busca os dados do usuário pelo ID.
             cursor.execute("SELECT id_usuario, nome, email, cpf, telefone, tipo, tentativas, ativo FROM usuario WHERE id_usuario = ?", (user_id,))
+            # Armazena o resultado da busca.
             user_to_edit = cursor.fetchone()
 
+            # Se o usuário não for encontrado.
             if not user_to_edit:
+                # Mostra uma mensagem de erro.
                 flash("Usuário não encontrado.", "error")
+                # Redireciona para a lista de usuários.
                 return redirect(url_for("admin_users"))
+        # Se ocorrer um erro na busca.
         except Exception as e:
+            # Mostra uma mensagem de erro.
             flash("Erro ao buscar dados do usuário para edição.", "error")
+        # Bloco que sempre será executado.
         finally:
+            # Fecha o cursor.
             cursor.close()
+        # Renderiza a página de edição, passando os dados do usuário.
         return render_template("admin_edit_user.html", user=user_to_edit)
 
+    # Se a requisição for do tipo POST.
     elif request.method == "POST":
+        # Inicia um bloco de tratamento de erros.
         try:
+            # Pega o nome do formulário.
             nome = request.form["nome"]
+            # Pega o email do formulário.
             email = request.form["email"]
+            # Pega o CPF do formulário.
             cpf = request.form["cpf"]
+            # Pega o telefone do formulário.
             telefone = request.form["telefone"]
+            # Pega o tipo de usuário do formulário.
             tipo = request.form["tipo"]
+            # Verifica se o checkbox 'ativo' está marcado.
             ativo = True if request.form.get("ativo") == "on" else False
+            # Pega a senha do formulário.
             senha = request.form["senha"]
+            # Pega a confirmação de senha do formulário.
             confirmar_senha = request.form["confirmar_senha"]
 
+            # Se o campo de senha foi preenchido.
             if senha:
+                # Verifica se as senhas coincidem.
                 if senha != confirmar_senha:
+                    # Mostra uma mensagem de erro.
                     flash("As senhas não coincidem.", "error")
+                    # Redireciona de volta para a edição.
                     return redirect(url_for("admin_edit_user", user_id=user_id))
+                # Gera o hash da nova senha.
                 hash_senha = generate_password_hash(senha).decode("utf-8")
+                # Executa a atualização incluindo a senha.
                 cursor.execute("UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ?, senha = ? WHERE id_usuario = ?",
+                               # Passa todos os novos dados como parâmetros.
                                (nome, email, cpf, telefone, tipo, ativo, hash_senha, user_id))
+            # Se o campo de senha não foi preenchido.
             else:
+                # Executa a atualização sem a senha.
                 cursor.execute("UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ? WHERE id_usuario = ?",
+                               # Passa os dados (exceto senha) como parâmetros.
                                (nome, email, cpf, telefone, tipo, ativo, user_id))
+            # Confirma a transação no banco de dados.
             con.commit()
+            # Mostra uma mensagem de sucesso.
             flash("Usuário atualizado com sucesso!", "success")
+        # Se ocorrer um erro na atualização.
         except Exception as e:
+            # Mostra uma mensagem de erro detalhada.
             flash(f"Erro ao atualizar usuário: {e}", "error")
+        # Bloco que sempre será executado.
         finally:
+            # Fecha o cursor.
             cursor.close()
+        # Redireciona para a lista de usuários.
         return redirect(url_for("admin_users"))
 
 
-
+# Define a rota para resetar as tentativas de login de um usuário.
 @app.route("/app/admin/users/reset_attempts/<int:user_id>")
+# Define a função que recebe o ID do usuário.
 def admin_reset_attempts(user_id):
-    """
-    Rota para o administrador resetar as tentativas de login de um usuário.
-
-    Acesso restrito a administradores.
-
-    Args:
-        user_id (int): O ID do usuário cujas tentativas serão resetadas.
-
-    Returns:
-        Redirecionamento para a lista de usuários.
-    """
+    # Verifica se o usuário não está logado ou não é um administrador.
     if "usuario" not in session or session["usuario"][4] != "admin":
+        # Mostra uma mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem realizar esta ação.", "error")
+        # Redireciona para a página de login.
         return redirect(url_for("login"))
 
+    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
+    # Inicia um bloco de tratamento de erros.
     try:
+        # Executa o comando para zerar as tentativas e ativar a conta.
         cursor.execute("UPDATE usuario SET tentativas = 0, ativo = True WHERE id_usuario = ?", (user_id,))
+        # Confirma a transação.
         con.commit()
+        # Mostra uma mensagem de sucesso.
         flash("Tentativas de login resetadas e conta ativada com sucesso!", "success")
+    # Se ocorrer um erro.
     except Exception as e:
+        # Mostra uma mensagem de erro detalhada.
         flash(f"Erro ao resetar tentativas de login: {e}", "error")
+    # Bloco que sempre será executado.
     finally:
+        # Fecha o cursor.
         cursor.close()
+    # Redireciona para a lista de usuários.
     return redirect(url_for("admin_users"))
 
 
 
 # Executa a aplicação Flask em modo de desenvolvimento
+# Verifica se o script está sendo executado diretamente (não importado).
 if __name__ == '__main__':
+    # Inicia o servidor de desenvolvimento do Flask com o modo de depuração ativado.
     app.run(debug=True)
 
+### **Linguagem Python (Palavras-chave e Funções Nativas)**
+# `from`: Para importar partes de uma biblioteca.
+# `import`: Para importar uma biblioteca inteira.
+# `def`: Para definir uma função.
+# `if`, `elif`, `else`: Para criar blocos de condição.
+# `for`: Para criar laços de repetição.
+# `in`: Usado em laços `for` e para verificar se um item existe em uma lista, string ou dicionário (como `if 'usuario' in session`).
+# `try`, `except`, `finally`: Para tratamento de erros e exceções.
+# `return`: Para retornar um valor de uma função.
+# `len()`: Para obter o tamanho de uma string ou lista.
+# `True`, `False`: Valores booleanos.
+# `not`: Operador lógico de negação.
+# `and`: Operador lógico "E".
+# `is`: Para verificar identidade (usado em `char.isupper()`, `char.islower()`, `char.isdigit()`).
+
+### **Framework Flask**
+# `Flask()`: Para criar a instância da sua aplicação web.
+# `@app.route()`: Decorador para definir as URLs (rotas) da aplicação.
+# `app.run()`: Para iniciar o servidor de desenvolvimento.
+# `app.secret_key`: Para configurar a chave secreta da sessão.
+# `render_template()`: Para carregar e exibir um arquivo HTML.
+# `redirect()`: Para redirecionar o usuário para outra URL.
+# `url_for()`: Para gerar URLs dinamicamente a partir do nome da função da rota.
+# `session`: Objeto para armazenar informações do usuário entre requisições (login).
+# `request`: Objeto que contém as informações da requisição do usuário (como dados de formulário com `request.form`).
+# `flash()`: Para exibir mensagens temporárias para o usuário (alertas de sucesso ou erro).
+
+# **Biblioteca Flask-Bcrypt (Segurança de Senha)**
+# `generate_password_hash()`: Para criptografar (gerar o hash) de uma senha.
+# `check_password_hash()`: Para comparar uma senha em texto puro com uma senha criptografada.
+
+# **Biblioteca FDB (Banco de Dados Firebird)**
+# `fdb.connect()`: Para estabelecer a conexão com o banco de dados.
+# `con.cursor()`: Para criar um objeto cursor que executa os comandos SQL.
+# `con.commit()`: Para salvar (confirmar) as alterações feitas no banco de dados.
+# `cursor.execute()`: Para executar um comando SQL.
+# `cursor.fetchone()`: Para buscar apenas um resultado da sua consulta SQL.
+# `cursor.fetchall()`: Para buscar todos os resultados da sua consulta SQL.
+# `cursor.close()`: Para fechar o cursor e liberar recursos.
+
+### **Biblioteca Datetime (Datas e Horas)**
+#`date.today()`: Para obter a data atual.
+
+# **Comandos SQL (dentro de strings)**
+# `SELECT`: Para consultar dados.
+# `INSERT INTO`: Para inserir novos registros.
+# `UPDATE`: Para atualizar registros existentes.
+# `DELETE FROM`: Para apagar registros.
+# `WHERE`: Para filtrar os registros em uma consulta.
+# `INNER JOIN`: Para combinar tabelas com base em uma coluna em comum.i

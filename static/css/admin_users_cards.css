@@ -149,7 +149,7 @@ body {
 
 /* Container principal das mensagens flash */
 .flash-messages-container {
-    width: 45%; /* Ocupa toda a largura disponível */
+    width: 90%; /* Ocupa toda a largura disponível */
     margin-bottom: 4.5rem; /* Espaço abaixo do container */
     display: flex; /* Ativa o Flexbox */
     flex-direction: column; /* Organiza as mensagens em coluna */

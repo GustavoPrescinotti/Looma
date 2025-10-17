@@ -1,12 +1,15 @@
+DashBoard admin
+ 
+ 
 {% extends 'templateDashboard.html' %}
-
+ 
 {% block conteudo %}
 <div class="container">
     {% include 'components/sidebar.html' %}
-
-
-
-
+ 
+ 
+ 
+ 
     <div class="main-content"> <br>
         <div class="content-wrapper">
              <div class="flash-messages-container">
@@ -25,11 +28,11 @@
                 {% endwith %}
             </div>
             <h1 class="main-title">Visão Geral:</h1>
-
+ 
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-title">Total de Usuários<br>Cadastrados</div>
-                    <div class="stat-value">0</div>
+                    <div class="stat-value">{{ total_usuarios }}</div>
                 </div>
                 <div class="stat-card highlighted">
                     <div class="stat-title">Total de Simulações<br>Realizadas</div>
@@ -40,7 +43,7 @@
                     <div class="stat-value">0</div>
                 </div>
             </div>
-
+ 
             <div class="chart-section">
                 <div class="chart-header">
                     <h2 class="chart-title">Empréstimos por mês:</h2>
@@ -48,10 +51,10 @@
                         <option>2025</option>
                     </select>
                 </div>
-
+ 
                 <div class="chart-container">
                     <div class="chart">
-
+ 
                         <div class="chart-bar">
                             <span class="bar-value">0</span>
                             <div class="bar" style="height: 0px;"></div>
@@ -119,3 +122,4 @@
     </div>
 </div>
 {% endblock %}
+ 
