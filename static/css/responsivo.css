@@ -1,3 +1,5 @@
+
+
 @media (max-width: 768px) {
 
     /* Estica o terceiro card de empréstimo para ocupar toda a largura */
@@ -2437,7 +2439,7 @@ body {
         color: #333;
         font-size: 1.1rem;
         display: block;
-        margin-bottom: 0.5rem;
+        
     }
 
     .balance .value {

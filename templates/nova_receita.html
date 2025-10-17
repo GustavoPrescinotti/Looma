@@ -6,7 +6,7 @@
     <div class="main">
         <main class="content">
             <section class="card">
-                <h1 class="card-title">Nova Despesa</h1>
+                <h1 class="card-title">Nova Receita</h1>
                 <div class="flash-messages-container">
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -38,8 +38,8 @@
                         <label class="label" for="tipo">Tipo:</label>
                         <div class="select-wrap">
                             <select class="input select" id="tipo" name="tipo" required>
-                                <option value="Despesa" selected>Despesa</option>
-                                <option value="Receita">Receita</option>
+                                <option value="Receita" selected>Receita</option>
+                                <option value="Despesa">Despesa</option>
                             </select>
                         </div>
                     </div>

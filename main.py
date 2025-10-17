@@ -3,7 +3,7 @@ from flask import Flask, render_template, redirect, session, url_for, request, f
 # Importa funções do Flask-Bcrypt para gerar e verificar hashes de senhas.
 from flask_bcrypt import generate_password_hash, check_password_hash
 # Importa a classe date do módulo datetime para trabalhar com datas.
-from datetime import datetime
+from datetime import datetime, date
 # Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
@@ -17,7 +17,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma.FDB'
+database = r'C:\Users\Aluno\Documents\GitHub\Looma-agora-vai\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.

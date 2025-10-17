@@ -453,6 +453,8 @@ p {
     box-shadow: 0 0 0 3px rgba(57, 95, 249, 0.2); /* Adiciona um "brilho" (sombra) ao redor do campo para indicar foco. */
 }
 
+
+
 /* Botão de enviar do formulário. */
 .botao-enviar {
     width: 100%; /* Faz o botão ocupar 100% da largura. */

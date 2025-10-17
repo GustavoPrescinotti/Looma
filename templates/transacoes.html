@@ -1,12 +1,12 @@
 {% extends 'templateDashboard.html' %}
- 
+
 {% block conteudo %}
 <div class="container">
     {% include 'components/sidebar.html' %}
- 
+
     <main class="panel">
         <h1 class="panel-title">Transações Realizadas</h1>
- 
+
         <div class="flash-messages-container">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -28,17 +28,21 @@
             {% endif %}
             {% endwith %}
         </div>
- 
+
         <div class="balance">
             <span class="label">Saldo Atual:</span>
-            <span class="value">R${{ '%.2f'|format(saldo) }}</span>
+            {% if saldo <= 0 %}
+                <span class="value" style="color: red">R${{ '%.2f'|format(saldo) }}</span>
+            {% else %}
+                <span class="value">R${{ '%.2f'|format(saldo) }}</span>
+            {% endif %}
         </div>
- 
+
         <div class="actions-row">
             <a href="{{ url_for('nova_receita') }}" class="cta cta-primary">Nova Receita</a>
             <a href="{{ url_for('nova_despesa') }}" class="cta cta-outline">Nova Despesa</a>
         </div>
- 
+
         <div class="transacoes-cards-container">
             {% if transacoes %}
             {% for transacao in transacoes %}
