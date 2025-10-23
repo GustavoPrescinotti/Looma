@@ -30,8 +30,8 @@
                            id="cpf"
                            name="cpf"
                            class="input"
-                           placeholder="Informe o seu CPF"
-                           value="{{session['usuario'][6]}}"
+                           placeholder="Informe o CPF"
+                           value="{{ user[3] }}"
                            maxlength="14"
                            required>
                 </div>
@@ -41,8 +41,8 @@
                            id="telefone"
                            name="telefone"
                            class="input"
-                           placeholder="Informe o seu Telefone"
-                           value="{{session['usuario'][8]}}"
+                           placeholder="Informe o Telefone"
+                           value="{{ user[4] }}"
                            maxlength="15"
                            required>
                 </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="field">
                     <label for="ativo">Ativo:</label>
-                    <input class="quadrato" type="checkbox" id="ativo" name="ativo">
+                    <input class="quadrato" type="checkbox" id="ativo" name="ativo" {% if user[7] %}checked{% endif %}>
                 </div>
                 <div class="field">
                     <label for="senha">Nova Senha:</label>

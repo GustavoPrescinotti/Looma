@@ -1139,105 +1139,71 @@ def admin_users():
 
 # Define a rota para editar um usuário específico, aceitando GET e POST.
 @app.route("/app/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
-# Define a função que recebe o ID do usuário a ser editado.
 def admin_edit_user(user_id):
-    # Verifica se o usuário não está logado ou não é um administrador.
     if "usuario" not in session or session["usuario"][4] != "admin":
-        # Mostra uma mensagem de acesso negado.
         flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
-        # Redireciona para a página de login.
         return redirect(url_for("login"))
 
-    # Cria um cursor para o banco de dados.
     cursor = con.cursor()
-    # Inicializa a variável para guardar os dados do usuário a ser editado.
     user_to_edit = None
 
-    # Se a requisição for do tipo GET.
-    if request.method == "GET":
-        # Inicia um bloco de tratamento de erros.
-        try:
-            # Busca os dados do usuário pelo ID.
+    try:
+        if request.method == "GET":
             cursor.execute(
                 "SELECT id_usuario, nome, email, cpf, telefone, tipo, tentativas, ativo FROM usuario WHERE id_usuario = ?",
                 (user_id,))
-            # Armazena o resultado da busca.
             user_to_edit = cursor.fetchone()
 
-            # Se o usuário não for encontrado.
             if not user_to_edit:
-                # Mostra uma mensagem de erro.
                 flash("Usuário não encontrado.", "error")
-                # Redireciona para a lista de usuários.
+                cursor.close()
                 return redirect(url_for("admin_users"))
-        # Se ocorrer um erro na busca.
-        except Exception as e:
-            # Mostra uma mensagem de erro.
-            flash("Erro ao buscar dados do usuário para edição.", "error")
-        # Bloco que sempre será executado.
-        finally:
-            # Fecha o cursor.
+
             cursor.close()
-        # Renderiza a página de edição, passando os dados do usuário.
-        return render_template("admin_edit_user.html", user=user_to_edit)
+            return render_template("admin_edit_user.html", user=user_to_edit)
 
-    # Se a requisição for do tipo POST.
-    elif request.method == "POST":
-        # Inicia um bloco de tratamento de erros.
-        try:
-            # Pega o nome do formulário.
+        elif request.method == "POST":
             nome = request.form["nome"]
-            # Pega o email do formulário.
             email = request.form["email"]
-            # Pega o CPF do formulário.
             cpf = request.form["cpf"]
-            # Pega o telefone do formulário.
             telefone = request.form["telefone"]
-            # Pega o tipo de usuário do formulário.
             tipo = request.form["tipo"]
-            # Verifica se o checkbox 'ativo' está marcado.
             ativo = True if request.form.get("ativo") == "on" else False
-            # Pega a senha do formulário.
             senha = request.form["senha"]
-            # Pega a confirmação de senha do formulário.
-            confirmar_senha = request.form["confirmar_senha"]
+            confirmar_senha = request.form["confirmar"]
 
-            # Se o campo de senha foi preenchido.
+            # Validação de senha
             if senha:
-                # Verifica se as senhas coincidem.
                 if senha != confirmar_senha:
-                    # Mostra uma mensagem de erro.
                     flash("As senhas não coincidem.", "error")
-                    # Redireciona de volta para a edição.
+                    cursor.close()
                     return redirect(url_for("admin_edit_user", user_id=user_id))
-                # Gera o hash da nova senha.
+
+                if not verificar_senha_forte(senha):
+                    flash(
+                        "A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial.",
+                        "error")
+                    cursor.close()
+                    return redirect(url_for("admin_edit_user", user_id=user_id))
+
                 hash_senha = generate_password_hash(senha).decode("utf-8")
-                # Executa a atualização incluindo a senha.
                 cursor.execute(
                     "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ?, senha = ? WHERE id_usuario = ?",
-                    # Passa todos os novos dados como parâmetros.
                     (nome, email, cpf, telefone, tipo, ativo, hash_senha, user_id))
-            # Se o campo de senha não foi preenchido.
             else:
-                # Executa a atualização sem a senha.
                 cursor.execute(
                     "UPDATE usuario SET nome = ?, email = ?, cpf = ?, telefone = ?, tipo = ?, ativo = ? WHERE id_usuario = ?",
-                    # Passa os dados (exceto senha) como parâmetros.
                     (nome, email, cpf, telefone, tipo, ativo, user_id))
-            # Confirma a transação no banco de dados.
+
             con.commit()
-            # Mostra uma mensagem de sucesso.
             flash("Usuário atualizado com sucesso!", "success")
-        # Se ocorrer um erro na atualização.
-        except Exception as e:
-            # Mostra uma mensagem de erro detalhada.
-            flash(f"Erro ao atualizar usuário: {e}", "error")
-        # Bloco que sempre será executado.
-        finally:
-            # Fecha o cursor.
             cursor.close()
-        # Redireciona para a lista de usuários.
-        return redirect(url_for("admin_users"))
+            return redirect(url_for("admin_users"))
+
+    except Exception as e:
+        flash(f"Erro ao atualizar usuário: {e}", "error")
+        cursor.close()
+        return redirect(url_for("admin_edit_user", user_id=user_id))
 
 
 # Define a rota para resetar as tentativas de login de um usuário.
