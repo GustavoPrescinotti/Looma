@@ -8,7 +8,7 @@
         <section class="card">
             <h2 class="card-title">Simulação de Empréstimo</h2>
 
-            <form class="form" action="#" method="get">
+            <form id="formEmprestimo" class="form" action="{{url_for('simular')}}" method="post">
                 <div class="field">
                     <label class="label" for="valor">Valor Desejado:</label>
                     <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado" />
@@ -20,18 +20,13 @@
                 </div>
 
                 <div class="field">
-                    <label class="label" for="adm">Administrador da Taxa Anual:</label>
-                    <input id="adm" name="adm" type="text" class="input" placeholder="Digite o administrador" />
-                </div>
-
-                <div class="field">
                     <label class="label" for="prazo">Prazo (Meses):</label>
                     <input id="prazo" name="prazo" type="text" class="input" placeholder="Digite o prazo em meses" />
                 </div>
 
                 <div class="actions-row">
                     <button type="submit" class="btn btn--primary">Simular</button>
-                    <a href="{{url_for('dashboard')}}" class="btn btn--outline">Cancelar</a>
+                    <a href="{{request.referrer or url_for('dashboard')}}" class="btn btn--outline">Cancelar</a>
                 </div>
             </form>
         </section>

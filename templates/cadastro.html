@@ -61,6 +61,25 @@
                 <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirme sua senha"
                     required>
             </div>
+
+            <div class="grupo-termos">
+                <div class="checkbox">
+                    <input type="checkbox" id="termos" required>
+                    <label for="termos" class="termos">
+                        Ao acessar e utilizar o website, você concorda em ficar
+                        vinculado a estes Termos de Uso e a nossa Política de Privacidade, que está incorporada aqui
+                        por referência.
+                    </label>
+                </div> <br>
+
+                <div class="checkbox">
+                    <input type="checkbox" id="promo" required>
+                    <label for="promo" class="promo">Para acessar alguns recursos da Plataforma, poderá ser
+                        necessário criar uma conta. Você é responsável por manter a confidencialidade das
+                        informações de sua conta, incluindo sua senha, e por toda e qualquer atividade que ocorra
+                        sob sua conta.</label>
+                </div><br>
+            </div>
  
             <div class="BotaoFormulario">
                 <button type="button" class="BotaoVoltar"><a href="{{url_for('index')}}">Voltar</a></button>
