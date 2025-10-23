@@ -426,7 +426,6 @@ def nova_taxa():
         return redirect(url_for('dashboard'))
 
     if request.method == 'GET':
-        # Define o ano atual como padrão
         ano_atual = datetime.now().year
         return render_template('nova_taxa.html', ano_atual=ano_atual)
 
@@ -435,16 +434,15 @@ def nova_taxa():
     try:
         ano = request.form['ano']
         valor = request.form['taxa']
-        data = date.today()
+        data = date.today()  # Esta é a data que será registrada para a taxa
         id_usuario = session['usuario'][0]
 
-        # Validação: Verificar se já existe uma taxa criada hoje
-        cursor.execute('SELECT COUNT(*) FROM TAXA_JURO WHERE DATA_CRIACAO = ? AND ID_USUARIO = ?',
-                       (data, id_usuario))
-        taxas_hoje = cursor.fetchone()[0]
+        # CORREÇÃO: Verificar se já existe uma taxa para esta data específica
+        cursor.execute('SELECT COUNT(*) FROM TAXA_JURO WHERE DATA_CRIACAO = ?', (data,))
+        taxa_existente = cursor.fetchone()[0]
 
-        if taxas_hoje > 0:
-            flash("Você já criou uma taxa hoje. Apenas uma taxa por dia é permitida.", "error")
+        if taxa_existente > 0:
+            flash(f"Já existe uma taxa registrada para a data {data.strftime('%d/%m/%Y')}. Cada data deve ter apenas uma taxa.", "error")
             return redirect(url_for('nova_taxa'))
 
         # Validação: Verificar se o ano é válido
