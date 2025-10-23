@@ -21,19 +21,21 @@
             <div class="cards cards--summary">
                 <article class="card card--blue">
                     <h4 class="card__title">Receitas Totais</h4>
-                    <p class="card__value card__value--xl">R$0,00</p>
+                    <p class="card__value card__value--xl">R$ {{ "%.2f"|format(total_receitas) }}</p>
                 </article>
                 <article class="card card--dark">
                     <h4 class="card__title card__title--light">Despesas Totais</h4>
-                    <p class="card__value card__value--xl card__value--light">R$0,00</p>
+                    <p class="card__value card__value--xl card__value--light">R$ {{ "%.2f"|format(total_despesas) }}</p>
                 </article>
                 <article class="card card--white">
                     <h4 class="card__title">Renda Líquida</h4>
-                    <p class="card__value card__value--xl">R$0,00</p>
+                    <p class="card__value card__value--xl {% if renda_liquida < 0 %}card__value--negative{% endif %}">
+                        R$ {{ "%.2f"|format(renda_liquida) }}
+                    </p>
                 </article>
                 <article class="card card--white">
                     <h4 class="card__title">Limite de Empréstimo</h4>
-                    <p class="card__value card__value--xl">R$0,00</p>
+                    <p class="card__value card__value--xl">R$ {{ "%.2f"|format(limite_emprestimo) }}</p>
                 </article>
             </div>
         </section>

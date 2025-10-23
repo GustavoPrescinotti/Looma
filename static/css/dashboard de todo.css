@@ -437,41 +437,42 @@ body {
 
 .form-actions {
     display: flex;
-    gap: 16px;
-    margin-top: 32px;
+    gap: 10px;
+    align-items: center;
 }
 
 .btn-primary,
 .btn-secondary {
-    flex: 1;
     height: 48px;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-}
-
-.btn-secondary a {
-    color: white !important;
-    text-decoration: none !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    font-size: inherit !important;
-    font-weight: inherit !important;
-    background: transparent !important;
-    border: none !important;
-    outline: none !important;
+    padding: 0 20px;
+    /* Remova o flex: 1 */
 }
 
 .btn-primary {
     background-color: white;
     border: 1px solid #526cef;
     color: #526cef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
 }
+
+.btn-secondary {
+    background-color: #526cef;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
 
 .btn-primary:hover {
     background-color: #395ff9;

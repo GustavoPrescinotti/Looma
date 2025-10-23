@@ -7,6 +7,8 @@ from datetime import datetime, date
 # Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
+
+
 # Cria uma instância da aplicação Flask, usando o nome do módulo atual.
 app = Flask(__name__)
 
@@ -17,7 +19,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Documents\GitHub\Looma-agora-vai\Looma.FDB'
+database = r'C:\Users\Aluno\Documents\Looma-alteracoes\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -28,6 +30,37 @@ con = fdb.connect(host=host, database=database, user=user, password=password)
 
 
 # Define uma função chamada verificar_senha_forte que recebe uma senha como argumento.
+
+# Função para criar o usuário admin fixo (execute uma vez)
+def criar_admin_fixo():
+    cursor = con.cursor()
+    try:
+        # Verifica se o admin já existe
+        cursor.execute("SELECT id_usuario FROM usuario WHERE email = ?", ('adm.looma@gmail.com',))
+        admin_existente = cursor.fetchone()
+
+        if not admin_existente:
+            # Cria o hash da senha
+            hash_senha = generate_password_hash('M8#$%oA123456789ert').decode('utf-8')
+
+            # Insere o usuário admin
+            cursor.execute(
+                "INSERT INTO usuario (email, nome, senha, cpf, telefone, tipo, tentativas, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                ('adm.looma@gmail.com', 'Administrador Looma', hash_senha, '000.000.000-00', '(00) 00000-0000', 'admin',
+                 0, True)
+            )
+            con.commit()
+            print("Admin criado com sucesso!")
+        else:
+            print("Admin já existe!")
+    except Exception as e:
+        print(f"Erro ao criar admin: {e}")
+    finally:
+        cursor.close()
+
+
+# Chame esta função uma vez para criar o admin
+# criar_admin_fixo()
 def verificar_senha_forte(senha):
     # Verifica se o comprimento da senha é menor que 8 caracteres.
     if len(senha) < 8:
@@ -70,6 +103,7 @@ def verificar_senha_forte(senha):
         return True
     # Se alguma das condições não for atendida, retorna False.
     return False
+
 
 
 # Define um decorador que associa a URL raiz ('/') à função 'index'.
@@ -205,8 +239,6 @@ def login():
 
     # Redireciona o usuário de volta para a página de login em caso de falha.
     return redirect(url_for('login'))
-
-
 # Define a rota '/auth/cadastro' que aceita métodos GET e POST.
 @app.route('/auth/cadastro', methods=['GET', 'POST'])
 # Define a função 'cadastro' para registrar novos usuários.
@@ -305,33 +337,63 @@ def cadastro():
 # Define a rota para '/app'.
 @app.route('/app')
 def dashboard():
-    # Verifica se o usuário não está na sessão (não está logado)
     if 'usuario' not in session:
-        # Exibe mensagem de erro para o usuário
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login
         return redirect(url_for('login'))
 
-    # Cria um cursor para executar queries no banco de dados
     cursor = con.cursor()
     try:
-        # Verifica se o usuário logado é um administrador (posição 4 do array de sessão)
         if session['usuario'][4] == 'admin':
-            # Executa a query em uma única linha, passando os parâmetros corretamente
             cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = ?", (1,))
-            # Busca o resultado da query
             res = cursor.fetchone()
-            # Extrai o total de usuários ativos do resultado, ou 0 se não houver resultados
             total_usuarios_ativos = res[0] if res else 0
-            # Renderiza o template do dashboard administrativo passando o total de usuários
             return render_template('dashboard_admin.html', total_usuarios=total_usuarios_ativos)
         else:
-            # Se não for admin, apenas renderiza o dashboard comum do usuário
-            return render_template('dashboard_usuario.html')
-    finally:
-        # Fecha o cursor para liberar recursos do banco de dados
-        cursor.close()
+            # CÁLCULOS PARA O DASHBOARD DO USUÁRIO COMUM
+            id_usuario = session['usuario'][0]
 
+            # Busca todas as transações do usuário
+            cursor.execute("""
+                SELECT TIPO, VALOR 
+                FROM TRANSACOES 
+                WHERE ID_USUARIO = ? 
+                ORDER BY DATA_TRANSACAO DESC
+            """, (id_usuario,))
+            transacoes = cursor.fetchall()
+
+            # Calcula totais
+            total_receitas = 0.0
+            total_despesas = 0.0
+
+            for transacao in transacoes:
+                tipo = transacao[0]
+                valor = float(transacao[1])
+
+                if tipo.lower() == 'receita':
+                    total_receitas += valor
+                elif tipo.lower() == 'despesa':
+                    total_despesas += valor
+
+            # Calcula renda líquida
+            renda_liquida = total_receitas - total_despesas
+
+            # Calcula limite de empréstimo (30% da renda líquida)
+            limite_emprestimo = renda_liquida * 0.3 if renda_liquida > 0 else 0
+
+            return render_template('dashboard_usuario.html',
+                                   total_receitas=total_receitas,
+                                   total_despesas=total_despesas,
+                                   renda_liquida=renda_liquida,
+                                   limite_emprestimo=limite_emprestimo)
+    except Exception as e:
+        flash(f"Erro ao carregar dashboard: {e}", "error")
+        return render_template('dashboard_usuario.html',
+                               total_receitas=0,
+                               total_despesas=0,
+                               renda_liquida=0,
+                               limite_emprestimo=0)
+    finally:
+        cursor.close()
 
 # Define a rota para '/logout'.
 @app.route('/logout')
@@ -1214,6 +1276,7 @@ def admin_reset_attempts(user_id):
 # Executa a aplicação Flask em modo de desenvolvimento
 # Verifica se o script está sendo executado diretamente (não importado).
 if __name__ == '__main__':
+    criar_admin_fixo()
     # Inicia o servidor de desenvolvimento do Flask com o modo de depuração ativado.
     app.run(debug=True)
 
