@@ -7,8 +7,6 @@ from datetime import datetime, date
 # Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
-
-
 # Cria uma instância da aplicação Flask, usando o nome do módulo atual.
 app = Flask(__name__)
 
@@ -19,7 +17,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Documents\Looma-alteracoes\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\PauloH\Looma\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -27,7 +25,6 @@ password = 'sysdba'
 
 # Conecta-se ao banco de dados Firebird usando as configurações definidas.
 con = fdb.connect(host=host, database=database, user=user, password=password)
-
 
 # Define uma função chamada verificar_senha_forte que recebe uma senha como argumento.
 
@@ -57,7 +54,6 @@ def criar_admin_fixo():
         print(f"Erro ao criar admin: {e}")
     finally:
         cursor.close()
-
 
 # Chame esta função uma vez para criar o admin
 # criar_admin_fixo()
@@ -103,8 +99,6 @@ def verificar_senha_forte(senha):
         return True
     # Se alguma das condições não for atendida, retorna False.
     return False
-
-
 
 # Define um decorador que associa a URL raiz ('/') à função 'index'.
 @app.route('/')
@@ -1539,6 +1533,22 @@ def admin_reset_attempts(user_id):
     # Redireciona para a lista de usuários.
     return redirect(url_for("admin_users"))
 
+@app.route("/simulacao/criar", methods=['POST'])
+def simular():
+    if not 'usuario' in session:
+        return redirect(url_for('login'))
+
+    userId = session['usuario'][0]
+    cursor = con.cursor()
+
+    try:
+        cursor.execute("INSERT INTO ")
+    except Exception as e:
+        flash("Houve um erro ao fazer simuclação", 'error')
+    finally:
+        cursor.close()
+
+    return redirect(request.referrer)
 
 # Executa a aplicação Flask em modo de desenvolvimento
 # Verifica se o script está sendo executado diretamente (não importado).

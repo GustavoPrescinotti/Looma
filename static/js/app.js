@@ -44,7 +44,6 @@ termos.oninput = function () {
   }
 };
 
-
 const promo = document.getElementById('promo');
 promo.setCustomValidity('Por favor, aceitas os termos para continuar.');
 promo.oninput = function () {
@@ -55,3 +54,36 @@ promo.oninput = function () {
     promo.setCustomValidity('');
   }
 }
+
+const formEmprestimo = document.getElementById('formEmprestimo');
+
+formEmprestimo.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const valor = parseFloat(document.getElementById('valor').value);
+    const ano = parseInt(document.getElementById('ano').value);
+    const parcelas = parseInt(document.getElementById('prazo').value);
+    const taxa = 0.05;
+
+    if (isNaN(valor) || isNaN(parcelas) || isNaN(ano) || valor <= 0 || parcelas <= 0) {
+        alert('Por favor, preencha os campos corretamente.');
+        return;
+    }
+
+    const total = valor * Math.pow(1 + taxa, parcelas);
+    const parcela = total / parcelas;
+
+    const confirmMsg = `
+    Valor: R$ ${valor.toFixed(2)}
+    Ano: ${ano}
+    Parcelas: ${parcelas}
+    Valor da parcela: R$ ${parcela.toFixed(2)}
+    Total: R$ ${total.toFixed(2)}
+
+Deseja confirmar a simulação?`;
+
+    if (confirm(confirmMsg)) {
+        alert('Simulação confirmada!');
+        // Aqui você pode submeter o formulário ou fazer outra ação
+    }
+});

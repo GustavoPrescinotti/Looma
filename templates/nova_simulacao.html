@@ -6,7 +6,6 @@
     <main class="main">
         <section class="card">
             <h2 class="card-title">Simulação de Empréstimo</h2>
-
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="flash-messages">
@@ -54,7 +53,7 @@
 
                 <div class="actions-row">
                     <button type="submit" class="btn btn--primary">Simular</button>
-                    <a href="{{ url_for('dashboard') }}" class="btn btn--outline">Cancelar</a>
+                    <a href="{{request.referrer or url_for('dashboard')}}" class="btn btn--outline">Cancelar</a>
                 </div>
             </form>
         </section>
