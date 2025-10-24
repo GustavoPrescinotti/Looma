@@ -3,3 +3,6 @@
 Looma.FDB
 *.FDB
 Looma.FDB
+
+.idea/
+.venv/
