@@ -335,6 +335,7 @@ def cadastro():
 
 
 # Define a rota para '/app'.
+# Define a rota para '/app'.
 @app.route('/app')
 def dashboard():
     if 'usuario' not in session:
@@ -349,52 +350,129 @@ def dashboard():
             total_usuarios_ativos = res[0] if res else 0
             return render_template('dashboard_admin.html', total_usuarios=total_usuarios_ativos)
         else:
-            # CÁLCULOS PARA O DASHBOARD DO USUÁRIO COMUM
             id_usuario = session['usuario'][0]
 
-            # Busca todas as transações do usuário
+            # Buscar transações (SEM incluir parcelas de empréstimos duplicadas)
             cursor.execute("""
-                SELECT TIPO, VALOR 
+                SELECT TIPO, VALOR, DESCRICAO 
                 FROM TRANSACOES 
                 WHERE ID_USUARIO = ? 
                 ORDER BY DATA_TRANSACAO DESC
             """, (id_usuario,))
             transacoes = cursor.fetchall()
 
-            # Calcula totais
             total_receitas = 0.0
             total_despesas = 0.0
 
             for transacao in transacoes:
                 tipo = transacao[0]
                 valor = float(transacao[1])
+                # Não somar parcelas de empréstimo aqui, vamos calcular separadamente
+                if 'parcela de empréstimo' not in transacao[2].lower():
+                    if tipo.lower() == 'receita':
+                        total_receitas += valor
+                    elif tipo.lower() == 'despesa':
+                        total_despesas += valor
 
-                if tipo.lower() == 'receita':
-                    total_receitas += valor
-                elif tipo.lower() == 'despesa':
-                    total_despesas += valor
+            # Buscar TODOS os empréstimos ativos do usuário
+            cursor.execute("""
+                SELECT ID_EMPRESTIMO, VALOR_EMPRESTIMO, PARCELAS_RESTANTES, 
+                       PROXIMO_VENCIMENTO, PARCELA_MENSAL, DATA_CONTRATACAO
+                FROM EMPRESTIMOS 
+                WHERE ID_USUARIO = ? AND STATUS = 'ativo'
+                ORDER BY DATA_CONTRATACAO DESC
+            """, (id_usuario,))
+            emprestimos_data = cursor.fetchall()
 
-            # Calcula renda líquida
-            renda_liquida = total_receitas - total_despesas
+            # Calcular totais dos empréstimos
+            valor_total_emprestimos = 0.0
+            soma_parcelas_mensais = 0.0
+            total_a_pagar = 0.0
+            emprestimos_lista = []
 
-            # Calcula limite de empréstimo (30% da renda líquida)
-            limite_emprestimo = renda_liquida * 0.3 if renda_liquida > 0 else 0
+            for emprestimo in emprestimos_data:
+                id_emprestimo = emprestimo[0]
+                valor_emprestimo = float(emprestimo[1])
+                parcelas_restantes = int(emprestimo[2])
+                parcela_mensal = float(emprestimo[4])
+                data_contratacao = emprestimo[5]
+
+                valor_total_emprestimos += valor_emprestimo
+                soma_parcelas_mensais += parcela_mensal
+                total_a_pagar += parcela_mensal * parcelas_restantes
+
+                # CORREÇÃO: Tratar data_contratacao quando for None
+                if data_contratacao:
+                    if isinstance(data_contratacao, str):
+                        data_contratacao_obj = datetime.strptime(data_contratacao.split()[0], '%Y-%m-%d')
+                    else:
+                        data_contratacao_obj = data_contratacao
+                    data_contratacao_formatada = data_contratacao_obj.strftime('%d/%m/%Y')
+                else:
+                    data_contratacao_formatada = "Não informada"
+
+                # Formatar próximo vencimento
+                proximo_vencimento = emprestimo[3]
+                if proximo_vencimento:
+                    if isinstance(proximo_vencimento, str):
+                        vencimento_obj = datetime.strptime(proximo_vencimento.split()[0], '%Y-%m-%d')
+                    else:
+                        vencimento_obj = proximo_vencimento
+                    proximo_vencimento_formatado = vencimento_obj.strftime('%d/%m/%Y')
+                else:
+                    proximo_vencimento_formatado = "Não definido"
+
+                # Adicionar à lista de empréstimos individuais
+                emprestimos_lista.append({
+                    'id': id_emprestimo,
+                    'valor_emprestimo': valor_emprestimo,
+                    'parcelas_restantes': parcelas_restantes,
+                    'proximo_vencimento': proximo_vencimento_formatado,
+                    'parcela_mensal': parcela_mensal,
+                    'total_a_pagar': parcela_mensal * parcelas_restantes,
+                    'data_contratacao': data_contratacao_formatada
+                })
+
+            # AGORA adicionar APENAS as parcelas mensais às despesas
+            total_despesas_com_parcelas = total_despesas + soma_parcelas_mensais
+
+            # Calcular renda líquida COM as parcelas
+            renda_liquida = total_receitas - total_despesas_com_parcelas
+
+            # O limite é 30% da renda líquida SEM as parcelas de empréstimo
+            limite_emprestimo = (total_receitas - total_despesas) * 0.3
+            if limite_emprestimo < 0:
+                limite_emprestimo = 0
+
+            emprestimos = {
+                'valor_total': valor_total_emprestimos,
+                'total_a_pagar': total_a_pagar,
+                'parcelas_restantes': sum(e['parcelas_restantes'] for e in emprestimos_lista),
+                'lista_emprestimos': emprestimos_lista
+            }
 
             return render_template('dashboard_usuario.html',
                                    total_receitas=total_receitas,
-                                   total_despesas=total_despesas,
+                                   total_despesas=total_despesas_com_parcelas,
                                    renda_liquida=renda_liquida,
-                                   limite_emprestimo=limite_emprestimo)
+                                   limite_emprestimo=limite_emprestimo,
+                                   emprestimos=emprestimos)
     except Exception as e:
         flash(f"Erro ao carregar dashboard: {e}", "error")
+        emprestimos = {
+            'valor_total': 0.0,
+            'total_a_pagar': 0.0,
+            'parcelas_restantes': 0,
+            'lista_emprestimos': []
+        }
         return render_template('dashboard_usuario.html',
                                total_receitas=0,
                                total_despesas=0,
                                renda_liquida=0,
-                               limite_emprestimo=0)
+                               limite_emprestimo=0,
+                               emprestimos=emprestimos)
     finally:
         cursor.close()
-
 # Define a rota para '/logout'.
 @app.route('/logout')
 # Define a função 'logout' para encerrar a sessão do usuário.
@@ -639,21 +717,246 @@ def taxas():
     return render_template('tabelaJuro.html', taxas=todastaxas)
 
 
-# Define a rota para '/app/simulacao/criar'.
-@app.route('/app/simulacao/criar')
-# Define a função 'nova_simulacao'.
-def nova_simulacao():
-    # Verifica se o usuário não está logado.
+@app.route('/confirmar_emprestimo', methods=['POST'])
+def confirmar_emprestimo():
     if 'usuario' not in session:
-        # Exibe uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
-    # Renderiza a página para criar uma nova simulação.
-    return render_template('nova_simulacao.html')
+    cursor = con.cursor()
+    try:
+        id_usuario = session['usuario'][0]
 
+        # Dados do formulário
+        valor = float(request.form['valor'])
+        prazo = int(request.form['prazo'])
+        parcela_mensal = float(request.form['parcela_mensal'])
+        data_criacao = request.form.get('data_criacao', date.today().strftime('%d/%m/%Y'))
 
+        # Data atual como data de contratação
+        data_contratacao = date.today()
+
+        # Calcular próximo vencimento (primeiro dia do próximo mês)
+        if data_contratacao.month == 12:
+            proximo_vencimento = data_contratacao.replace(year=data_contratacao.year + 1, month=1, day=1)
+        else:
+            proximo_vencimento = data_contratacao.replace(month=data_contratacao.month + 1, day=1)
+
+        # Inserir empréstimo COM data_contratacao
+        cursor.execute("""
+            INSERT INTO EMPRESTIMOS 
+            (ID_USUARIO, VALOR_EMPRESTIMO, PARCELAS_RESTANTES, PROXIMO_VENCIMENTO, 
+             PARCELA_MENSAL, STATUS, DATA_CONTRATACAO) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (id_usuario, valor, prazo, proximo_vencimento, parcela_mensal, 'ativo', data_contratacao))
+
+        # Inserir APENAS a parcela mensal como despesa
+        descricao = f"Parcela de empréstimo - {prazo}x de R$ {parcela_mensal:.2f}"
+        cursor.execute("""
+            INSERT INTO TRANSACOES 
+            (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO) 
+            VALUES (?, ?, ?, ?, ?)
+        """, (id_usuario, 'despesa', parcela_mensal, descricao, proximo_vencimento))
+
+        con.commit()
+
+        # Limpar a simulação da sessão após confirmar
+        if 'simulacao_resultado' in session:
+            session.pop('simulacao_resultado')
+
+        flash(
+            f"Empréstimo contratado com sucesso! A parcela mensal de R$ {parcela_mensal:.2f} foi adicionada às suas despesas.",
+            "success")
+
+    except Exception as e:
+        flash(f"Erro ao confirmar empréstimo: {e}", "error")
+    finally:
+        cursor.close()
+
+    return redirect(url_for('dashboard'))
+
+# Define a rota para '/app/simulacao/criar'.
+@app.route('/app/simulacao/criar', methods=['GET', 'POST'])
+def nova_simulacao():
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+
+    cursor = con.cursor()
+    # Buscar administradores para select no formulário
+    cursor.execute("""
+        SELECT DISTINCT u.NOME
+        FROM TAXA_JURO tj
+        JOIN USUARIO u ON u.ID_USUARIO = tj.ID_USUARIO
+        WHERE u.TIPO = 'admin'
+    """)
+    admins = [{'nome': row[0]} for row in cursor.fetchall()]
+
+    current_year = datetime.now().year
+    current_date = datetime.now().strftime('%Y-%m-%d')
+
+    if request.method == 'GET':
+        cursor.close()
+        return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                               current_date=current_date)
+
+    # Se for POST
+    try:
+        id_usuario = session['usuario'][0]
+
+        # Usar get() para evitar KeyError
+        valor_str = request.form.get('valor', '').replace(',', '.')
+        ano_emprestimo = request.form.get('ano', '')
+        adm = request.form.get('adm', '')
+        prazo_str = request.form.get('prazo', '')
+        data_criacao = request.form.get('data_criacao', '')
+
+        # Validações básicas
+        if not all([valor_str, ano_emprestimo, adm, prazo_str]):
+            flash('Por favor, preencha todos os campos obrigatórios.', "error")
+            return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                                   current_date=current_date)
+
+        try:
+            valor = float(valor_str)
+            prazo = int(prazo_str)
+
+            if valor <= 0:
+                flash("O valor deve ser maior que zero.", "error")
+                return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                                       current_date=current_date)
+
+            if prazo <= 0:
+                flash("O prazo deve ser maior que zero.", "error")
+                return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                                       current_date=current_date)
+
+        except ValueError:
+            flash('Por favor, insira valores válidos nos campos numéricos.', "error")
+            return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                                   current_date=current_date)
+
+        # Buscar taxa do administrador
+        cursor.execute("""
+            SELECT FIRST 1 TAXA_MENSAL FROM TAXA_JURO
+            WHERE ID_USUARIO = (SELECT ID_USUARIO FROM USUARIO WHERE NOME = ?)
+            AND ANO = ?
+            ORDER BY DATA_CRIACAO DESC
+        """, (adm, ano_emprestimo))
+        taxa = cursor.fetchone()
+
+        if not taxa:
+            flash('Taxa não encontrada para o administrador e ano informado', "error")
+            return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                                   current_date=current_date)
+
+        # CORREÇÃO DO CÁLCULO DA PARCELA
+        i = float(taxa[0]) / 100  # Convertendo taxa percentual para decimal (ex: 5% → 0.05)
+        PV = valor
+        n = prazo
+
+        # Fórmula correta da parcela: PMT = PV * [i * (1 + i)^n] / [(1 + i)^n - 1]
+        if i == 0:  # Se taxa for zero, parcela é simplesmente valor dividido pelo prazo
+            PMT = PV / n
+        else:
+            fator = (1 + i) ** n
+            PMT = PV * (i * fator) / (fator - 1)
+
+        total_pagar = PMT * n
+        juros_total = total_pagar - PV
+        lucro_mensal = juros_total / n  # Lucro mensal aproximado
+
+        # Calcular renda líquida atual (sem parcelas futuras)
+        cursor.execute("""
+            SELECT TIPO, VALOR, DESCRICAO 
+            FROM TRANSACOES 
+            WHERE ID_USUARIO = ?
+        """, (id_usuario,))
+        transacoes = cursor.fetchall()
+
+        total_receitas = 0.0
+        total_despesas_atual = 0.0
+
+        for transacao in transacoes:
+            tipo = transacao[0]
+            valor_transacao = float(transacao[1])
+            descricao = transacao[2].lower() if transacao[2] else ""
+
+            if tipo.lower() == "receita":
+                total_receitas += valor_transacao
+            elif tipo.lower() == "despesa":
+                total_despesas_atual += valor_transacao
+
+        # Calcular limite (30% da renda líquida atual)
+        renda_liquida_atual = total_receitas - total_despesas_atual
+        limite_emprestimo = renda_liquida_atual * 0.3
+        if limite_emprestimo < 0:
+            limite_emprestimo = 0
+
+        if valor > limite_emprestimo:
+            flash(f"O valor do empréstimo (R$ {valor:.2f}) excede seu limite permitido (R$ {limite_emprestimo:.2f}).",
+                  "error")
+            return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                                   current_date=current_date)
+
+        # Calcular comprometimento com a renda líquida atual
+        comprometimento = (PMT / renda_liquida_atual) * 100 if renda_liquida_atual > 0 else 0
+
+        if comprometimento < 20:
+            risco = "Baixo"
+        elif comprometimento <= 35:
+            risco = "Médio"
+        else:
+            risco = "Alto"
+
+        cursor.close()
+
+        # CORREÇÃO: SALVAR NA SESSÃO ANTES DE REDIRECIONAR
+        session['simulacao_resultado'] = {
+            'valor': valor,
+            'ano': ano_emprestimo,
+            'adm': adm,
+            'prazo': prazo,
+            'parcela': PMT,
+            'total': total_pagar,
+            'lucro': lucro_mensal,
+            'comprometimento': comprometimento,
+            'risco': risco,
+            'data_criacao': datetime.now().strftime('%d/%m/%Y')  # ← ADICIONAR DATA AQUI
+        }
+
+        # REDIRECIONAR para a rota de resultado em vez de renderizar diretamente
+        return redirect(url_for('resultado_simulacao'))
+
+    except Exception as e:
+        flash(f'Erro ao processar simulação: {str(e)}', "error")
+        return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
+                               current_date=current_date)
+    finally:
+        cursor.close()
+@app.route('/app/simulacao/resultado')
+def resultado_simulacao():
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+
+    simulacao = session.get('simulacao_resultado')
+
+    if not simulacao:
+        flash("Nenhum resultado de simulação encontrado. Faça a simulação primeiro.", "error")
+        return redirect(url_for('nova_simulacao'))
+
+    return render_template('resultado_simulacao.html',
+                           valor=simulacao['valor'],
+                           ano=simulacao['ano'],
+                           adm=simulacao['adm'],
+                           prazo=simulacao['prazo'],
+                           parcela=simulacao['parcela'],
+                           total=simulacao['total'],
+                           lucro=simulacao['lucro'],
+                           comprometimento=simulacao['comprometimento'],
+                           risco=simulacao['risco'],
+                           data_criacao=simulacao['data_criacao'])  # ← AGORA VAI FUNCIONAR
 # Define a rota para '/app/transacoes'.
 # Define a rota '/app/transacoes' para acessar a página de transações
 @app.route('/app/transacoes')

@@ -6,59 +6,68 @@
 
     <main class="main">
         <section class="card">
-            <h2 class="card-title">Simulação de Empréstimo</h2>
+            <h2 class="card-title">Resultado da Simulação de Empréstimo</h2>
 
-            <form class="form" action="#" method="get">
+            <form class="form" action="{{ url_for('confirmar_emprestimo') }}" method="POST">
                 <div class="field">
                     <label class="label" for="valor">Valor Desejado:</label>
-                    <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado" />
+                    <input id="valor" name="valor" type="text" class="input" value="{{ '%.2f'|format(valor) }}" readonly />
                 </div>
 
                 <div class="field">
-                    <label class="label label--center" for="ano">Ano do Empréstimo</label>
-                    <input id="ano" name="ano" type="text" class="input" placeholder="Digite o ano" />
+                    <label class="label label--center" for="ano">Ano do Empréstimo:</label>
+                    <input id="ano" name="ano" type="text" class="input" value="{{ ano }}" readonly />
                 </div>
 
                 <div class="field">
                     <label class="label" for="adm">Administrador da Taxa Anual:</label>
-                    <input id="adm" name="adm" type="text" class="input" placeholder="Digite o administrador" />
+                    <input id="adm" name="adm" type="text" class="input" value="{{ adm }}" readonly />
+                </div>
+
+                <div class="field">
+                    <label class="label" for="data_criacao">Data de Criação da Simulação:</label>
+                    <input id="data_criacao" name="data_criacao" type="text" class="input"
+                           value="{{ data_criacao if data_criacao else current_date }}" readonly />
                 </div>
 
                 <div class="field">
                     <label class="label" for="prazo">Prazo (Meses):</label>
-                    <input id="prazo" name="prazo" type="text" class="input" placeholder="Digite o prazo em meses" />
+                    <input id="prazo" name="prazo" type="text" class="input" value="{{ prazo }}" readonly />
                 </div>
 
+                <!-- Campos hidden para passar os dados necessários -->
+                <input type="hidden" name="parcela_mensal" value="{{ '%.2f'|format(parcela) }}">
+                <input type="hidden" name="data_criacao" value="{{ data_criacao if data_criacao else current_date }}">
+
                 <div class="actions-row">
-                    <a href="{{url_for('dashboard')}}" class="btn btn--primary">Confirmar Empréstimo</a>
-                    <a href="{{url_for('nova_simulacao')}}" class="btn btn--outline">Voltar</a>
+                    <button type="submit" class="btn btn--primary">Confirmar Empréstimo</button>
+                    <a href="{{ url_for('nova_simulacao') }}" class="btn btn--outline">Voltar</a>
                 </div>
-            </form>
+            </form> <!-- FECHAMENTO CORRETO DO FORM -->
         </section>
 
         <section class="resultado-cards">
             <div class="resultado-card">
                 <span class="resultado-label">Parcela:</span>
-                <span class="resultado-valor">R$ 0,00</span>
+                <span class="resultado-valor">R$ {{ '%.2f'|format(parcela) }}</span>
             </div>
             <div class="resultado-card">
                 <span class="resultado-label">Total a pagar:</span>
-                <span class="resultado-valor">R$ 0,00</span>
+                <span class="resultado-valor">R$ {{ '%.2f'|format(total) }}</span>
             </div>
             <div class="resultado-card">
                 <span class="resultado-label">Lucro mensal:</span>
-                <span class="resultado-valor">R$ 0,00</span>
+                <span class="resultado-valor">R$ {{ '%.2f'|format(lucro) }}</span>
             </div>
             <div class="resultado-card">
                 <span class="resultado-label">Comprometimento:</span>
-                <span class="resultado-valor">0%</span>
+                <span class="resultado-valor">{{ '%.2f'|format(comprometimento) }}%</span>
             </div>
             <div class="resultado-card">
                 <span class="resultado-label">Risco:</span>
-                <span class="resultado-valor">Baixo</span>
+                <span class="resultado-valor">{{ risco }}</span>
             </div>
         </section>
     </main>
 </div>
 {% endblock %}
-

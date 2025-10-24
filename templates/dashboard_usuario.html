@@ -16,6 +16,7 @@
             {% endif %}
             {% endwith %}
         </div>
+
         <section>
             <h3 class="section-title">Seu Resumo Financeiro</h3>
             <div class="cards cards--summary">
@@ -39,22 +40,35 @@
                 </article>
             </div>
         </section>
+
         <section>
             <h3 class="section-title section-title--sm">Seus Empréstimos</h3>
-            <div class="cards cards--loans">
-                <article class="card card--white">
-                    <h4 class="card__title">Valor Total</h4>
-                    <p class="card__value card__value--lg">R$0,00</p>
-                </article>
-                <article class="card card--white">
-                    <h4 class="card__title">Parcelas<br />Restantes</h4>
-                    <p class="card__value card__value--lg">0</p>
-                </article>
-                <article class="card card--white">
-                    <h4 class="card__title">Próximo<br />Vencimento</h4>
-                    <p class="card__value card__value--lg">Não Definido</p>
-                </article>
-            </div>
+            {% if emprestimos.lista_emprestimos %}
+                {% for emprestimo in emprestimos.lista_emprestimos %}
+                <div class="cards cards--loans">
+                    <article class="card card--white">
+                        <h4 class="card__title">Valor Total</h4>
+                        <p class="card__value card__value--lg">R$ {{ '%.2f'|format(emprestimo.total_a_pagar) }}</p>
+                    </article>
+                    <article class="card card--white">
+                        <h4 class="card__title">Parcelas<br />Restantes</h4>
+                        <p class="card__value card__value--lg">{{ emprestimo.parcelas_restantes }}</p>
+                    </article>
+                    <article class="card card--white">
+                        <h4 class="card__title">Próximo<br />Vencimento</h4>
+                        <p class="card__value card__value--lg">
+                            {% if emprestimo.proximo_vencimento %}
+                                {{ emprestimo.proximo_vencimento }}
+                            {% else %}
+                                Não Definido
+                            {% endif %}
+                        </p>
+                    </article>
+                </div>
+                {% endfor %}
+            {% else %}
+            <p>Você não possui empréstimos no momento.</p>
+            {% endif %}
         </section>
     </div>
 </div>
