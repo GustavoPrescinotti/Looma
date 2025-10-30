@@ -66,6 +66,18 @@
                     <span class="transacao-card-label">Descrição:</span>
                     <span class="transacao-card-value">{{ transacao[3] }}</span>
                 </div>
+                <div class="transacao-card-linha">
+                    <span class="transacao-card-label">Classificação:</span>
+                    <span class="transacao-card-value">
+                        {% if transacao[1] == 'Despesa' and transacao[5] %}
+                            {{ transacao[5] }}
+                        {% elif transacao[1] == 'Despesa' %}
+                            Não informada
+                        {% else %}
+                            -
+                        {% endif %}
+                    </span>
+                </div>
                 <div class="transacao-card-actions">
                     <a href="{{ url_for('editar_transacao', id_transacao=transacao[0]) }}"
                         class="btn-card btn-card-edit">Editar</a>
