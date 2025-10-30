@@ -434,7 +434,7 @@ def dashboard():
             renda_liquida = total_receitas - total_despesas_com_parcelas
 
             # O limite é 30% da renda líquida SEM as parcelas de empréstimo
-            limite_emprestimo = (total_receitas - total_despesas) * 0.3
+            limite_emprestimo = (total_receitas - total_despesas_com_parcelas) * 0.3
             if limite_emprestimo < 0:
                 limite_emprestimo = 0
 
