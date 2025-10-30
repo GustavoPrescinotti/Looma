@@ -1,5 +1,5 @@
 {% extends 'templateDashboard.html' %}
- 
+
 {% block conteudo %}
 <div class="container">
     {% include 'components/sidebar.html' %}
@@ -52,6 +52,16 @@
                         <label class="label" for="descricao">Descrição:</label>
                         <textarea class="input textarea" id="descricao" name="descricao" rows="3"
                             placeholder="Escreva aqui..."></textarea>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="classificacao">Classificação:</label>
+                        <div class="select-wrap">
+                            <select class="input select" id="classificacao" name="classificacao" required>
+                                <option value="">Selecione...</option>
+                                <option value="Fixa">Fixa</option>
+                                <option value="Variável">Variável</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="actions-row">
                         <button type="submit" class="btn btn--primary">Adicionar</button>

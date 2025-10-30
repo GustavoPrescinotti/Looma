@@ -17,7 +17,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\PauloH\Looma\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-alteracoes-2\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -969,7 +969,7 @@ def transacoes():
     try:
         # Executa query para buscar todas as transações do usuário
         cursor.execute("""
-            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO
+            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO
             FROM TRANSACOES
             WHERE ID_USUARIO = ?
             ORDER BY DATA_TRANSACAO DESC
@@ -999,7 +999,7 @@ def transacoes():
             data_formatada = dt_obj.strftime('%d/%m/%Y') if dt_obj else ''
 
             # Adiciona transação formatada à lista, convertendo valor para float
-            transacoes.append((t[0], t[1], float(t[2]), t[3], data_formatada))
+            transacoes.append((t[0], t[1], float(t[2]), t[3], data_formatada, t[5]))
 
             # Atualiza o saldo baseado no tipo de transação
             if t[1].lower() == 'receita':
@@ -1235,6 +1235,7 @@ def nova_despesa():
         valor_str = request.form['valor'].replace(',', '.')
         # Obtém a descrição da despesa do formulário
         descricao = request.form['descricao']
+        classificacao = request.form['classificacao']
 
         # Tenta converter o valor para float e validá-lo
         try:
@@ -1261,9 +1262,9 @@ def nova_despesa():
             cursor = con.cursor()
             # Executa query para inserir nova transação na tabela TRANSACOES
             cursor.execute("""
-                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO)
-                VALUES (?, ?, ?, ?, ?)
-            """, (id_usuario, tipo, valor, descricao, data_formatada))
+                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO)
+                VALUES (?, ?, ?, ?, ?,?)
+            """, (id_usuario, tipo, valor, descricao, data_formatada, classificacao))
             # Confirma a transação no banco de dados
             con.commit()
             # Exibe mensagem de sucesso para o usuário
@@ -1304,7 +1305,7 @@ def editar_transacao(id_transacao):
     try:
         # Busca a transação específica do usuário no banco
         cursor.execute("""
-            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO
+            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO
             FROM TRANSACOES
             WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?
         """, (id_transacao, id_usuario))
@@ -1327,7 +1328,7 @@ def editar_transacao(id_transacao):
         data_formatada = dt_obj.strftime('%Y-%m-%d')
 
         # Cria tupla com os dados formatados da transação
-        transacao = (t[0], t[1], float(t[2]), t[3], data_formatada)
+        transacao = (t[0], t[1], float(t[2]), t[3], data_formatada, t[5])
 
         # Verifica se é uma requisição POST (envio do formulário)
         if request.method == 'POST':
@@ -1351,6 +1352,7 @@ def editar_transacao(id_transacao):
             tipo = request.form['tipo']
             valor_str = request.form['valor'].replace(',', '.')
             descricao = request.form['descricao']
+            classificacao = request.form['classificacao']
 
             # Valida o valor informado
             try:
@@ -1367,9 +1369,9 @@ def editar_transacao(id_transacao):
             # Tenta atualizar a transação no banco
             try:
                 cursor.execute("""
-                    UPDATE TRANSACOES SET DATA_TRANSACAO = ?, TIPO = ?, VALOR = ?, DESCRICAO = ?
+                    UPDATE TRANSACOES SET DATA_TRANSACAO = ?, TIPO = ?, VALOR = ?, DESCRICAO = ?, CLASSIFICACAO = ?
                     WHERE ID_TRANSACOES= ? AND ID_USUARIO = ?
-                """, (data_str, tipo, valor, descricao, id_transacao, id_usuario))
+                """, (data_str, tipo, valor, descricao, classificacao, id_transacao, id_usuario))
                 con.commit()
                 flash("Transação atualizada com sucesso!", "success")
                 cursor.close()
