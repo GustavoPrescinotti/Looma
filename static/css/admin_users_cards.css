@@ -505,7 +505,7 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
     gap: 20px;
     padding: px;
-    height: 400px;
+    height: 475px;
     overflow-y: scroll;
 }
 
