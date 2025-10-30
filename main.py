@@ -340,17 +340,17 @@ def dashboard():
     try:
         if session['usuario'][4] == 'admin':
             cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = ?", (1,))
-            res = cursor.fetchone()
-            total_usuarios_ativos = res[0] if res else 0
+            usuariosAtivos = cursor.fetchone()
+            total_usuarios_ativos = usuariosAtivos[0] if usuariosAtivos else 0
             return render_template('dashboard_admin.html', total_usuarios=total_usuarios_ativos)
         else:
             id_usuario = session['usuario'][0]
 
             # Buscar transações (SEM incluir parcelas de empréstimos duplicadas)
             cursor.execute("""
-                SELECT TIPO, VALOR, DESCRICAO 
-                FROM TRANSACOES 
-                WHERE ID_USUARIO = ? 
+                SELECT TIPO, VALOR, DESCRICAO
+                FROM TRANSACOES
+                WHERE ID_USUARIO = ?
                 ORDER BY DATA_TRANSACAO DESC
             """, (id_usuario,))
             transacoes = cursor.fetchall()
@@ -551,7 +551,7 @@ def nova_taxa():
     return redirect(url_for('taxas'))
 
 # Define a rota para editar uma taxa, recebendo um ID e aceitando GET/POST.
-@app.route('/app/taxas/editar/<id>', methods=['GET', 'POST'])
+@app.route('/app/taxas/editar/<int:id>', methods=['GET', 'POST'])
 def editar_taxa(id):
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -928,6 +928,7 @@ def nova_simulacao():
                                current_date=current_date)
     finally:
         cursor.close()
+
 @app.route('/app/simulacao/resultado')
 def resultado_simulacao():
     if 'usuario' not in session:
@@ -951,6 +952,7 @@ def resultado_simulacao():
                            comprometimento=simulacao['comprometimento'],
                            risco=simulacao['risco'],
                            data_criacao=simulacao['data_criacao'])  # ← AGORA VAI FUNCIONAR
+
 # Define a rota para '/app/transacoes'.
 # Define a rota '/app/transacoes' para acessar a página de transações
 @app.route('/app/transacoes')

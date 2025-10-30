@@ -19,15 +19,16 @@
             <form class="form" action="{{ url_for('nova_simulacao') }}" method="post" novalidate>
                 <div class="field">
                     <label class="label" for="valor">Valor Desejado:</label>
-                    <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado"
+                    <input id="valor" name="valor" type="number" class="input" placeholder="Digite o valor desejado" />
+                    <!-- <input id="valor" name="valor" type="text" class="input" placeholder="Digite o valor desejado"
                            value="{{ request.form.valor or '' }}" required pattern="^\d+(\.\d{1,2})?$"
-                           title="Digite um valor numérico válido (ex: 5000.00)" />
+                           title="Digite um valor numérico válido (ex: 5000.00)" /> -->
                 </div>
 
                 <div class="field">
                     <label class="label label--center" for="ano">Ano do Empréstimo:</label>
                     <input id="ano" name="ano" type="number" class="input" placeholder="Digite o ano"
-                           value="{{ current_year }}" readonly />
+                            value="{{ current_year }}" readonly />
                 </div>
 
                 <div class="field">
@@ -47,8 +48,8 @@
 
                 <div class="field">
                     <label class="label" for="prazo">Prazo (Meses):</label>
-                    <input id="prazo" name="prazo" type="number" class="input" placeholder="Digite o prazo em meses"
-                           value="{{ request.form.prazo or '' }}" required min="1" max="360" />
+                    <input id="prazo" name="prazo" type="text" class="input" placeholder="Digite o prazo em meses"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                 </div>
 
                 <div class="actions-row">
