@@ -69,12 +69,10 @@
                 <div class="transacao-card-linha">
                     <span class="transacao-card-label">Classificação:</span>
                     <span class="transacao-card-value">
-                        {% if transacao[1] == 'Despesa' and transacao[5] %}
+                        {% if transacao[5] %}
                             {{ transacao[5] }}
-                        {% elif transacao[1] == 'Despesa' %}
-                            Não informada
                         {% else %}
-                            -
+                            Não informada
                         {% endif %}
                     </span>
                 </div>
