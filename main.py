@@ -17,7 +17,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-agora-vai\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-31-10-2025\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -744,13 +744,13 @@ def confirmar_emprestimo():
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (id_usuario, valor, prazo, proximo_vencimento, parcela_mensal, 'ativo', data_contratacao))
 
-        # Inserir APENAS a parcela mensal como despesa
+        # Inserir APENAS a parcela mensal como despesa COM CLASSIFICAÇÃO "Empréstimo"
         descricao = f"Parcela de empréstimo - {prazo}x de R$ {parcela_mensal:.2f}"
         cursor.execute("""
             INSERT INTO TRANSACOES 
-            (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO) 
-            VALUES (?, ?, ?, ?, ?)
-        """, (id_usuario, 'despesa', parcela_mensal, descricao, proximo_vencimento))
+            (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (id_usuario, 'despesa', parcela_mensal, descricao, proximo_vencimento, 'Empréstimo'))
 
         con.commit()
 
@@ -845,16 +845,14 @@ def nova_simulacao():
                                    current_date=current_date)
 
         # CORREÇÃO DO CÁLCULO DA PARCELA
-        i = float(taxa[0]) / 100  # Convertendo taxa percentual para decimal (ex: 5% → 0.05)
+        i = float(taxa[0]) / 100
         PV = valor
         n = prazo
 
-        # Fórmula correta da parcela: PMT = PV * [i * (1 + i)^n] / [(1 + i)^n - 1]
-        if i == 0:  # Se taxa for zero, parcela é simplesmente valor dividido pelo prazo
+        if i == 0:
             PMT = PV / n
         else:
-            fator = (1 + i) ** n
-            PMT = PV * (i * fator) / (fator - 1)
+            PMT = PV * i / (1 - (1 + i) ** -n)
 
         total_pagar = PMT * n
         juros_total = total_pagar - PV
@@ -869,17 +867,19 @@ def nova_simulacao():
         transacoes = cursor.fetchall()
 
         total_receitas = 0.0
-        total_despesas_atual = 0.0
+        total_despesas_atual = 0.0  # CORREÇÃO: Mantido como total_despesas_atual
 
         for transacao in transacoes:
             tipo = transacao[0]
-            valor_transacao = float(transacao[1])
+            valor_transacao = float(transacao[1])  # CORREÇÃO: Renomeado para evitar conflito
             descricao = transacao[2].lower() if transacao[2] else ""
 
-            if tipo.lower() == "receita":
-                total_receitas += valor_transacao
-            elif tipo.lower() == "despesa":
-                total_despesas_atual += valor_transacao
+            # Ignorar parcelas de empréstimo no cálculo das despesas normais
+            if 'parcela de empréstimo' not in descricao:
+                if tipo.lower() == 'receita':
+                    total_receitas += valor_transacao
+                elif tipo.lower() == 'despesa':
+                    total_despesas_atual += valor_transacao  # CORREÇÃO: Usando total_despesas_atual
 
         # Calcular limite (30% da renda líquida atual)
         renda_liquida_atual = total_receitas - total_despesas_atual
@@ -916,7 +916,7 @@ def nova_simulacao():
             'lucro': lucro_mensal,
             'comprometimento': comprometimento,
             'risco': risco,
-            'data_criacao': datetime.now().strftime('%d/%m/%Y')  # ← ADICIONAR DATA AQUI
+            'data_criacao': datetime.now().strftime('%d/%m/%Y')
         }
 
         # REDIRECIONAR para a rota de resultado em vez de renderizar diretamente
@@ -951,7 +951,7 @@ def resultado_simulacao():
                            lucro=simulacao['lucro'],
                            comprometimento=simulacao['comprometimento'],
                            risco=simulacao['risco'],
-                           data_criacao=simulacao['data_criacao'])  # ← AGORA VAI FUNCIONAR
+                           data_criacao=simulacao['data_criacao'])
 
 # Define a rota para '/app/transacoes'.
 # Define a rota '/app/transacoes' para acessar a página de transações
@@ -1290,18 +1290,12 @@ def nova_despesa():
 # O <int:id_transacao> captura um parâmetro inteiro da URL
 @app.route('/editar_transacao/<int:id_transacao>', methods=['GET', 'POST'])
 def editar_transacao(id_transacao):
-    # Verifica se o usuário não está na sessão (não está logado)
     if 'usuario' not in session:
-        # Exibe mensagem de erro informando que precisa estar logado
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login
         return redirect(url_for('login'))
 
-    # Obtém o ID do usuário da sessão
     id_usuario = session['usuario'][0]
-    # Cria cursor para executar queries no banco
     cursor = con.cursor()
-    # Inicializa variável para armazenar os dados da transação
     transacao = None
 
     try:
@@ -1311,36 +1305,33 @@ def editar_transacao(id_transacao):
             FROM TRANSACOES
             WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?
         """, (id_transacao, id_usuario))
-        # Obtém o primeiro resultado da query
         t = cursor.fetchone()
-        # Verifica se a transação foi encontrada
+
         if not t:
             flash("Transação não encontrada.", "error")
             cursor.close()
             return redirect(url_for('transacoes'))
 
-        # Obtém a data da transação (quarta coluna - índice 4)
+        # VERIFICA SE É UMA TRANSAÇÃO DE EMPRÉSTIMO (BLOQUEAR EDIÇÃO/EXCLUSÃO)
+        if t[5] and t[5].lower() == 'empréstimo':
+            flash("Esta transação é uma parcela de empréstimo e não pode ser editada ou excluída.", "error")
+            cursor.close()
+            return redirect(url_for('transacoes'))
+
         dt = t[4]
-        # Verifica se a data é string e converte para datetime se necessário
         if isinstance(dt, str):
             dt_obj = datetime.strptime(dt.split()[0], '%Y-%m-%d')
         else:
             dt_obj = dt
-        # Formata a data para o padrão HTML (YYYY-MM-DD) para preencher o formulário
         data_formatada = dt_obj.strftime('%Y-%m-%d')
 
-        # Cria tupla com os dados formatados da transação
         transacao = (t[0], t[1], float(t[2]), t[3], data_formatada, t[5])
 
-        # Verifica se é uma requisição POST (envio do formulário)
         if request.method == 'POST':
-            # Verifica se o botão de excluir foi pressionado
             if 'excluir' in request.form:
                 try:
-                    # Executa query para excluir a transação
                     cursor.execute("DELETE FROM TRANSACOES WHERE ID_TRANSACOES = ? AND ID_USUARIO = ?",
                                    (id_transacao, id_usuario))
-                    # Confirma a exclusão no banco
                     con.commit()
                     flash("Exclusão da transação com sucesso!", "success")
                     cursor.close()
@@ -1349,14 +1340,12 @@ def editar_transacao(id_transacao):
                     flash(f"Erro ao excluir transação: {e}", "error")
                     return redirect(url_for('editar_transacao', id_transacao=id_transacao))
 
-            # Se não é exclusão, é edição - obtém os dados do formulário
             data_str = request.form['data']
             tipo = request.form['tipo']
             valor_str = request.form['valor'].replace(',', '.')
             descricao = request.form['descricao']
             classificacao = request.form['classificacao']
 
-            # Valida o valor informado
             try:
                 valor = float(valor_str)
                 if valor <= 0:
@@ -1368,7 +1357,6 @@ def editar_transacao(id_transacao):
                 cursor.close()
                 return redirect(url_for('editar_transacao', id_transacao=id_transacao))
 
-            # Tenta atualizar a transação no banco
             try:
                 cursor.execute("""
                     UPDATE TRANSACOES SET DATA_TRANSACAO = ?, TIPO = ?, VALOR = ?, DESCRICAO = ?, CLASSIFICACAO = ?
@@ -1382,17 +1370,13 @@ def editar_transacao(id_transacao):
                 flash(f"Erro ao atualizar transação: {e}", "error")
                 return redirect(url_for('editar_transacao', id_transacao=id_transacao))
 
-    # Captura qualquer erro durante o processamento
     except Exception as e:
         flash(f"Erro ao processar a transação: {e}", "error")
         return redirect(url_for('transacoes'))
     finally:
-        # Garante que o cursor seja fechado
         cursor.close()
 
-    # Renderiza o template de edição passando os dados da transação
     return render_template('editar_transacao.html', transacao=transacao)
-
 
 # Define a rota '/app/admin/users'.
 @app.route('/app/admin/users')

@@ -46,7 +46,14 @@
         <div class="transacoes-cards-container">
             {% if transacoes %}
             {% for transacao in transacoes %}
-            <div class="transacao-card">
+            <div class="transacao-card {% if transacao[5] and transacao[5].lower() == 'empréstimo' %}transacao-emprestimo{% endif %}">
+                {% if transacao[5] and transacao[5].lower() == 'empréstimo' %}
+                <div class="emprestimo-badge">
+                    <span class="badge-icon"></span>
+                    Parcela de Empréstimo
+                </div>
+                {% endif %}
+
                 <div class="transacao-card-linha">
                     <span class="transacao-card-label">Data:</span>
                     <span class="transacao-card-value">{{ transacao[4] }}</span>
@@ -77,17 +84,26 @@
                     </span>
                 </div>
                 <div class="transacao-card-actions">
-                    <a href="{{ url_for('editar_transacao', id_transacao=transacao[0]) }}"
-                        class="btn-card btn-card-edit">Editar</a>
-                    <form action="{{ url_for('editar_transacao', id_transacao=transacao[0]) }}" method="post"
-                        style="display:inline;">
-                        <button type="submit" name="excluir" value="1" class="btn-card btn-card-delete">Excluir</button>
-                    </form>
+                    {% if transacao[5] and transacao[5].lower() == 'empréstimo' %}
+                        <span class="btn-card btn-card-disabled"></span>
+                        <span class="btn-card btn-card-info" title="Parcela de empréstimo não pode ser editada ou excluída"></span>
+                    {% else %}
+                        <a href="{{ url_for('editar_transacao', id_transacao=transacao[0]) }}"
+                            class="btn-card btn-card-edit">Editar</a>
+                        <form action="{{ url_for('editar_transacao', id_transacao=transacao[0]) }}" method="post"
+                            style="display:inline;">
+                            <button type="submit" name="excluir" value="1" class="btn-card btn-card-delete">Excluir</button>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
             {% else %}
-            <p>Nenhuma transação cadastrada.</p>
+            <div class="empty-state">
+                <div class="empty-icon">💸</div>
+                <h3>Nenhuma transação cadastrada</h3>
+                <p>Comece adicionando sua primeira receita ou despesa!</p>
+            </div>
             {% endif %}
         </div>
     </main>

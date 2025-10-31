@@ -1700,4 +1700,14 @@ body {
 
 .td-actions .chip-outline:hover a {
     color: white !important;
+
+
+.btn-card-disabled {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
