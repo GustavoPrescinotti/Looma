@@ -1538,6 +1538,45 @@ def simular():
 
     return redirect(request.referrer)
 
+
+@app.route('/app/admin/emprestimos-por-mes')
+def emprestimos_por_mes():
+    if 'usuario' not in session or session['usuario'][4] != 'admin':
+        return {'success': False, 'error': 'Acesso negado'}
+
+    cursor = con.cursor()
+    try:
+        # Buscar empréstimos agrupados por mês de criação
+        cursor.execute("""
+            SELECT 
+                EXTRACT(MONTH FROM DATA_CONTRATACAO) as mes,
+                COUNT(*) as quantidade
+            FROM EMPRESTIMOS 
+            WHERE EXTRACT(YEAR FROM DATA_CONTRATACAO) = EXTRACT(YEAR FROM CURRENT_DATE)
+            GROUP BY EXTRACT(MONTH FROM DATA_CONTRATACAO)
+            ORDER BY mes
+        """)
+
+        resultados = cursor.fetchall()
+
+        # Inicializar array com 12 meses (todos zero)
+        emprestimos_por_mes = [0] * 12
+
+        # Preencher os meses que têm dados
+        for mes, quantidade in resultados:
+            if 1 <= mes <= 12:
+                emprestimos_por_mes[mes - 1] = quantidade
+
+        return {
+            'success': True,
+            'emprestimosPorMes': emprestimos_por_mes
+        }
+
+    except Exception as e:
+        return {'success': False, 'error': str(e)}
+    finally:
+        cursor.close()
+
 # Executa a aplicação Flask em modo de desenvolvimento
 # Verifica se o script está sendo executado diretamente (não importado).
 if __name__ == '__main__':
