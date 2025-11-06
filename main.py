@@ -20,7 +20,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Documents\Looma\Looma\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-3\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -55,16 +55,22 @@ def criar_admin_fixo():
             # Cria o hash da senha
             hash_senha = generate_password_hash('M8#$%oA123456789ert').decode('utf-8')
 
-            # Insere o usuário admin
+            # Insere o usuário admin COM FOTO DEFINIDA
             cursor.execute(
                 "INSERT INTO usuario (email, nome, senha, cpf, telefone, tipo, tentativas, ativo, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 ('adm.looma@gmail.com', 'Administrador Looma', hash_senha, '000.000.000-00', '(00) 00000-0000', 'admin',
-                 0, True, 'default.png')
+                 0, True, 'default.png')  # Garantir que a foto está definida
             )
             con.commit()
             print("Admin criado com sucesso!")
         else:
-            print("Admin já existe!")
+            # Atualiza o admin existente para garantir que tem foto
+            cursor.execute(
+                "UPDATE usuario SET foto = ? WHERE email = ?",
+                ('default.png', 'adm.looma@gmail.com')
+            )
+            con.commit()
+            print("Admin atualizado com foto padrão!")
     except Exception as e:
         print(f"Erro ao criar admin: {e}")
     finally:
@@ -125,7 +131,6 @@ def index():
 
 # Define um decorador para a URL '/auth/login', aceitando os métodos GET e POST.
 @app.route('/auth/login', methods=['GET', 'POST'])
-# Define a função 'login' que lida com a autenticação do usuário.
 def login():
     # Verifica se a chave 'usuario' existe na sessão atual.
     if 'usuario' in session:
@@ -181,8 +186,17 @@ def login():
 
         # Compara a senha fornecida com o hash armazenado no banco de dados.
         if check_password_hash(usuario[3], senha):
-            # check_password_hash :
             # Senha correta: cria a sessão do usuário
+
+            # Converter para lista para poder modificar
+            usuario_list = list(usuario)
+
+            # CORREÇÃO: Se a foto for None, NoneType ou string vazia, usar 'default.png'
+            if usuario_list[9] is None or usuario_list[9] == '' or usuario_list[9] == 'None':
+                usuario_list[9] = 'default.png'
+
+            # Atualizar a sessão com os dados corrigidos
+            session['usuario'] = tuple(usuario_list)
 
             # Inicia um bloco try para a atualização das tentativas.
             try:
@@ -195,8 +209,6 @@ def login():
                 # Exibe uma mensagem de erro caso a atualização falhe.
                 flash("Não foi possível atualizar o usuário.", "error")
 
-            # Armazena os dados do usuário na sessão, efetivando o login.
-            session['usuario'] = usuario
             # Exibe uma mensagem de sucesso para o usuário.
             flash("Login realizado com sucesso! Bem-vindo(a)!", "success")
             # Redireciona o usuário para a página do dashboard.
@@ -267,6 +279,7 @@ def cadastro():
         telefone = request.form['phone']
         confirmar_senha = request.form['confirm_password']
 
+        # SEMPRE definir foto como 'default.png' por padrão
         foto = 'default.png'
         if 'foto' in request.files:
             file = request.files['foto']
@@ -278,8 +291,7 @@ def cadastro():
 
                 # Salva o arquivo diretamente
                 file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
-                foto = filename
-
+                foto = filename  # Só substitui se realmente enviou uma foto válida
 
         if not verificar_senha_forte(senha):
             flash(
@@ -303,7 +315,7 @@ def cadastro():
 
         cursor.execute(
             "INSERT INTO usuario(email, nome, senha, cpf, telefone, tipo, tentativas, ativo, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            (email, nome, hash_senha, cpf, telefone, 'user', 0, True, foto))
+            (email, nome, hash_senha, cpf, telefone, 'user', 0, True, foto))  # Garantir que foto nunca seja NULL
         con.commit()
 
         flash("Cadastro realizado com sucesso! Faça login para continuar.", "success")
@@ -324,13 +336,46 @@ def dashboard():
 
     cursor = con.cursor()
     try:
-        if session['usuario'][4] == 'admin':
+
+        usuario = session.get('usuario')
+
+
+        if usuario is None or len(usuario) < 10:
+            
+            user_id = usuario[0] if usuario and len(usuario) > 0 else None
+
+            if user_id:
+                cursor.execute(
+                    "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone, foto FROM usuario WHERE id_usuario = ?",
+                    (user_id,))
+                usuario_completo = cursor.fetchone()
+            else:
+                # Se não temos ID, redirecionar para login
+                flash("Sessão inválida. Faça login novamente.", "error")
+                session.pop('usuario', None)
+                return redirect(url_for('login'))
+
+            if usuario_completo:
+                # Converter para lista para modificar
+                usuario_list = list(usuario_completo)
+                # Garantir que a foto não seja None
+                if not usuario_list[9] or usuario_list[9] == 'None':
+                    usuario_list[9] = 'default.png'
+                session['usuario'] = tuple(usuario_list)
+                usuario = session['usuario']
+            else:
+                flash("Erro ao carregar dados do usuário. Faça login novamente.", "error")
+                session.pop('usuario', None)
+                return redirect(url_for('login'))
+
+        # AGORA podemos acessar com segurança os índices
+        if usuario[4] == 'admin':
             cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = ?", (1,))
             usuariosAtivos = cursor.fetchone()
             total_usuarios_ativos = usuariosAtivos[0] if usuariosAtivos else 0
             return render_template('dashboard_admin.html', total_usuarios=total_usuarios_ativos)
         else:
-            id_usuario = session['usuario'][0]
+            id_usuario = usuario[0]
 
             # Buscar transações (SEM incluir parcelas de empréstimos duplicadas)
             cursor.execute("""
@@ -439,18 +484,9 @@ def dashboard():
                                    emprestimos=emprestimos)
     except Exception as e:
         flash(f"Erro ao carregar dashboard: {e}", "error")
-        emprestimos = {
-            'valor_total': 0.0,
-            'total_a_pagar': 0.0,
-            'parcelas_restantes': 0,
-            'lista_emprestimos': []
-        }
-        return render_template('dashboard_usuario.html',
-                               total_receitas=0,
-                               total_despesas=0,
-                               renda_liquida=0,
-                               limite_emprestimo=0,
-                               emprestimos=emprestimos)
+
+        session.pop('usuario', None)
+        return redirect(url_for('login'))
     finally:
         cursor.close()
 # Define a rota para '/logout'.
