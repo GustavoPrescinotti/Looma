@@ -4,6 +4,9 @@ from flask import Flask, render_template, redirect, session, url_for, request, f
 from flask_bcrypt import generate_password_hash, check_password_hash
 # Importa a classe date do módulo datetime para trabalhar com datas.
 from datetime import datetime, date
+from flask import send_from_directory
+from werkzeug.utils import secure_filename
+from fpdf import FPDF
 # Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
@@ -17,11 +20,23 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-31-10-2025\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
 password = 'sysdba'
+
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB máximo
+
+
+
+def allowed_file(filename):
+    if '.' not in filename:
+        return False
+    extensao = filename.rsplit('.', 1)[1].lower()
+    return extensao in app.config['ALLOWED_EXTENSIONS']
 
 # Conecta-se ao banco de dados Firebird usando as configurações definidas.
 con = fdb.connect(host=host, database=database, user=user, password=password)
@@ -42,9 +57,9 @@ def criar_admin_fixo():
 
             # Insere o usuário admin
             cursor.execute(
-                "INSERT INTO usuario (email, nome, senha, cpf, telefone, tipo, tentativas, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO usuario (email, nome, senha, cpf, telefone, tipo, tentativas, ativo, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 ('adm.looma@gmail.com', 'Administrador Looma', hash_senha, '000.000.000-00', '(00) 00000-0000', 'admin',
-                 0, True)
+                 0, True, 'default.png')
             )
             con.commit()
             print("Admin criado com sucesso!")
@@ -135,7 +150,7 @@ def login():
         # Executa uma consulta SQL para selecionar um usuário pelo email.
         cursor.execute(
             # A consulta SQL a ser executada.
-            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE email = ?",
+            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone, foto FROM usuario WHERE email = ?",
             # Passa o email como um parâmetro para a consulta, evitando injeção de SQL.
             (email,))
         # Busca a primeira linha do resultado da consulta.
@@ -235,99 +250,70 @@ def login():
     return redirect(url_for('login'))
 # Define a rota '/auth/cadastro' que aceita métodos GET e POST.
 @app.route('/auth/cadastro', methods=['GET', 'POST'])
-# Define a função 'cadastro' para registrar novos usuários.
 def cadastro():
-    # Verifica se já existe um usuário na sessão.
     if 'usuario' in session:
-        # Se sim, redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Verifica se o método da requisição é GET.
     if request.method == 'GET':
-        # Se for GET, exibe a página de cadastro.
         return render_template('cadastro.html')
 
-    # Cria um novo cursor para interagir com o banco de dados.
     cursor = con.cursor()
 
-    # Inicia um bloco try para tratamento de erros durante o cadastro.
     try:
-        # Obtém o email do formulário de cadastro.
         email = request.form['email']
-        # Obtém o nome do formulário de cadastro.
         nome = request.form['name']
-        # Obtém a senha do formulário de cadastro.
         senha = request.form['password']
-        # Obtém o CPF do formulário de cadastro.
         cpf = request.form['cpf']
-        # Obtém o telefone do formulário de cadastro.
         telefone = request.form['phone']
-        # Obtém a confirmação da senha do formulário.
         confirmar_senha = request.form['confirm_password']
 
-        # Chama a função para verificar se a senha atende aos critérios de segurança.
+        foto = 'default.png'
+        if 'foto' in request.files:
+            file = request.files['foto']
+            if file and file.filename != '' and allowed_file(file.filename):
+                # Versão sem os - usando string simples
+                filename = secure_filename(file.filename)
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                filename = f"{timestamp}_{filename}"
+
+                # Salva o arquivo diretamente
+                file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
+                foto = filename
+
+        # Resto do código permanece igual...
         if not verificar_senha_forte(senha):
-            # Exibe uma mensagem de erro se a senha for fraca.
             flash(
-                # Texto da mensagem de erro.
                 "A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.",
-                # Categoria da mensagem.
                 "error")
-            # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
 
-        # Verifica se a senha e a confirmação de senha são diferentes.
         if senha != confirmar_senha:
-            # Exibe uma mensagem de erro se as senhas não coincidirem.
             flash("As senhas não coincidem. Por favor, tente novamente.", "error")
-            # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
 
-        # Executa uma consulta para verificar se o email já existe.
         cursor.execute("SELECT id_usuario FROM usuario WHERE email = ?", (email,))
-        # Busca o resultado da consulta.
         usuario = cursor.fetchone()
-        # fetchone: usar fetchone() porque só deve existir um usuário com aquele e-mail.
-        # fetchall : Ele vai buscar todos os usuarios
-        # Se a consulta retornou um usuário (ou seja, o email já existe).
+
         if usuario:
-            # Exibe uma mensagem de erro.
             flash("Este email já está cadastrado. Por favor, use outro email ou faça login.", "error")
-            # Fecha o cursor.
             cursor.close()
-            # Redireciona de volta para a página de cadastro.
             return redirect(url_for('cadastro'))
 
-        # Gera um hash seguro da senha e o decodifica para string UTF-8.
         hash_senha = generate_password_hash(senha).decode('utf-8')
 
-        # Executa um comando SQL para inserir o novo usuário na tabela.
         cursor.execute(
-            # A instrução SQL de inserção.
-            "INSERT INTO usuario(email, nome, senha, cpf, telefone, tipo, tentativas, ativo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            # Passa os dados do novo usuário como parâmetros para a inserção.
-            (email, nome, hash_senha, cpf, telefone, 'user', 0, True))
-        # Confirma a transação, salvando o novo usuário no banco de dados.
+            "INSERT INTO usuario(email, nome, senha, cpf, telefone, tipo, tentativas, ativo, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (email, nome, hash_senha, cpf, telefone, 'user', 0, True, foto))
         con.commit()
 
-        # Exibe uma mensagem de sucesso para o usuário.
         flash("Cadastro realizado com sucesso! Faça login para continuar.", "success")
-    # Captura qualquer exceção que ocorra durante o processo.
     except Exception as e:
-        # Captura qualquer erro durante o cadastro
-        # Exibe uma mensagem de erro genérica.
-        flash("Não foi possível criar sua conta. Por favor, tente novamente.", "error")
-        # Redireciona de volta para a página de cadastro.
+        flash(f"Não foi possível criar sua conta. Erro: {str(e)}", "error")
         return redirect(url_for('cadastro'))
-    # Bloco que sempre será executado.
     finally:
-        # Garante que o cursor seja fechado.
         cursor.close()
 
-    # Redireciona para a página de login após o cadastro bem-sucedido.
     return redirect(url_for('login'))
-
-
 # Define a rota para '/app'.
 # Define a rota para '/app'.
 @app.route('/app')
@@ -717,6 +703,17 @@ def confirmar_emprestimo():
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
 
+    # VERIFICAÇÃO DE SEGURANÇA: Verificar se há simulação na sessão e se o risco não é alto
+    simulacao = session.get('simulacao_resultado')
+    if not simulacao:
+        flash("Nenhuma simulação encontrada. Por favor, faça uma simulação primeiro.", "error")
+        return redirect(url_for('nova_simulacao'))
+
+    if simulacao.get('risco') == 'Alto':
+        flash("Não é possível confirmar empréstimos com risco alto. Por favor, ajuste os valores da simulação.",
+              "error")
+        return redirect(url_for('resultado_simulacao'))
+
     cursor = con.cursor()
     try:
         id_usuario = session['usuario'][0]
@@ -726,6 +723,38 @@ def confirmar_emprestimo():
         prazo = int(request.form['prazo'])
         parcela_mensal = float(request.form['parcela_mensal'])
         data_criacao = request.form.get('data_criacao', date.today().strftime('%d/%m/%Y'))
+
+        # VALIDAÇÃO ADICIONAL: Recalcular o comprometimento para garantir que não é alto
+        cursor.execute("""
+            SELECT TIPO, VALOR, DESCRICAO 
+            FROM TRANSACOES 
+            WHERE ID_USUARIO = ?
+        """, (id_usuario,))
+        transacoes = cursor.fetchall()
+
+        total_receitas = 0.0
+        total_despesas_atual = 0.0
+
+        for transacao in transacoes:
+            tipo = transacao[0]
+            valor_transacao = float(transacao[1])
+            descricao = transacao[2].lower() if transacao[2] else ""
+
+            if 'parcela de empréstimo' not in descricao:
+                if tipo.lower() == 'receita':
+                    total_receitas += valor_transacao
+                elif tipo.lower() == 'despesa':
+                    total_despesas_atual += valor_transacao
+
+        renda_liquida_atual = total_receitas - total_despesas_atual
+        comprometimento = (parcela_mensal / renda_liquida_atual) * 100 if renda_liquida_atual > 0 else 0
+
+        # BLOQUEAR SE COMPROMETIMENTO FOR MAIOR QUE 35%
+        if comprometimento > 35:
+            flash(
+                f"Empréstimo bloqueado: comprometimento de {comprometimento:.1f}% excede o limite de segurança de 35%.",
+                "error")
+            return redirect(url_for('resultado_simulacao'))
 
         # Data atual como data de contratação
         data_contratacao = date.today()
@@ -768,7 +797,6 @@ def confirmar_emprestimo():
         cursor.close()
 
     return redirect(url_for('dashboard'))
-
 # Define a rota para '/app/simulacao/criar'.
 @app.route('/app/simulacao/criar', methods=['GET', 'POST'])
 def nova_simulacao():
@@ -1099,119 +1127,79 @@ def nova_receita():
 
 # Define a rota '/perfil', que aceita os métodos GET e POST.
 @app.route('/perfil', methods=['GET', 'POST'])
-# Define a função 'perfil' para editar os dados do usuário.
 def perfil():
-    # Verifica se o usuário não está logado na sessão.
     if 'usuario' not in session:
-        # Mostra uma mensagem de erro.
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login.
         return redirect(url_for('login'))
 
-    # Verifica se o método da requisição é GET.
     if request.method == 'GET':
-        # Se for GET, exibe a página de edição de perfil.
         return render_template('editar_perfil.html')
 
-    # Cria um cursor para executar comandos no banco de dados.
     cursor = con.cursor()
 
-    # Inicia um bloco try para tratamento de erros.
     try:
-        # Obtém os dados do formulário
-        # Pega o nome enviado pelo formulário.
         nome = request.form['nome']
-        # Pega o email enviado pelo formulário.
         email = request.form['email']
-        # Pega o CPF enviado pelo formulário.
         cpf = request.form["cpf"]
-        # Pega o telefone enviado pelo formulário.
         telefone = request.form["telefone"]
-        # Pega a senha enviada pelo formulário.
         senha = request.form["senha"]
-        # Pega a confirmação de senha enviada pelo formulário.
         confirmarSenha = request.form['confirmar']
 
-        # NOVA LÓGICA IMPLEMENTADA AQUI #
+        nova_foto = None
+        if 'foto' in request.files:
+            file = request.files['foto']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                filename = f"{timestamp}_{filename}"
 
-        # Verifica se o usuário preencheu o campo de senha, indicando que quer alterá-la.
-        # Se o campo senha não estiver vazio.
+                # Salva sem usar os
+                file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
+                nova_foto = filename
+
+        # Resto da lógica permanece igual...
         if senha:
-            # Se a senha foi preenchida, fazemos todas as validações necessárias.
-            # Verifica se a nova senha atende aos critérios de segurança.
             if not verificar_senha_forte(senha):
-                # Se não atender, mostra uma mensagem de erro.
-                flash(
-                    # Texto da mensagem.
-                    "A nova senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial.",
-                    # Categoria da mensagem.
-                    "error")
-                # Redireciona de volta para a página de perfil.
+                flash("A nova senha deve ter pelo menos 8 caracteres...", "error")
                 return redirect(url_for('perfil'))
 
-            # Verifica se a senha e a confirmação são diferentes.
             if senha != confirmarSenha:
-                # Mostra uma mensagem de erro.
-                flash("As senhas não coincidem. Por favor, tente novamente.", "error")
-                # Redireciona de volta para a página de perfil.
+                flash("As senhas não coincidem...", "error")
                 return redirect(url_for('perfil'))
 
-            # Criptografa a NOVA senha
-            # Gera um hash seguro para a nova senha.
             hashSenha = generate_password_hash(senha).decode('utf-8')
 
-            # Prepara a query SQL para atualizar TUDO, incluindo a senha
-            # Comando SQL para atualizar nome, email, cpf, telefone e senha.
-            cursor.execute('''UPDATE USUARIO SET
-                           nome = ?, email = ?, cpf = ?, telefone = ?, senha = ?
-                           WHERE id_usuario = ?''',
-                           # Passa os novos dados e o ID do usuário como parâmetros.
-                           (nome, email, cpf, telefone, hashSenha, session['usuario'][0]))
-
-        # Se o campo senha estiver vazio.
+            if nova_foto:
+                cursor.execute(
+                    '''UPDATE USUARIO SET nome=?, email=?, cpf=?, telefone=?, senha=?, foto=? WHERE id_usuario=?''',
+                    (nome, email, cpf, telefone, hashSenha, nova_foto, session['usuario'][0]))
+            else:
+                cursor.execute('''UPDATE USUARIO SET nome=?, email=?, cpf=?, telefone=?, senha=? WHERE id_usuario=?''',
+                               (nome, email, cpf, telefone, hashSenha, session['usuario'][0]))
         else:
-            # Se a senha foi deixada em branco, atualizamos tudo, MENOS a senha.
-            # Comando SQL para atualizar apenas nome, email, cpf e telefone.
-            cursor.execute('''UPDATE USUARIO SET
-                           nome = ?, email = ?, cpf = ?, telefone = ?
-                           WHERE id_usuario = ?''',
-                           # Passa os novos dados (sem a senha) e o ID do usuário como parâmetros.
-                           (nome, email, cpf, telefone, session['usuario'][0]))
+            if nova_foto:
+                cursor.execute('''UPDATE USUARIO SET nome=?, email=?, cpf=?, telefone=?, foto=? WHERE id_usuario=?''',
+                               (nome, email, cpf, telefone, nova_foto, session['usuario'][0]))
+            else:
+                cursor.execute('''UPDATE USUARIO SET nome=?, email=?, cpf=?, telefone=? WHERE id_usuario=?''',
+                               (nome, email, cpf, telefone, session['usuario'][0]))
 
-        # Confirma a transação no banco de dados
-        # Efetiva as alterações no banco de dados.
         con.commit()
 
-        # Após a atualização, busca os dados mais recentes para atualizar a sessão
-        # Executa uma nova consulta para buscar os dados atualizados do usuário.
         cursor.execute(
-            # Comando SQL de seleção.
-            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone FROM usuario WHERE id_usuario = ?",
-            # Passa o ID do usuário da sessão como parâmetro.
+            "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone, foto FROM usuario WHERE id_usuario = ?",
             (session["usuario"][0],))
-        # Armazena os dados atualizados do usuário.
         usuarioAtualizado = cursor.fetchone()
-
-        # Atualiza a sessão com os novos dados
-        # Substitui os dados antigos na sessão pelos novos.
         session["usuario"] = usuarioAtualizado
 
-        # Mostra uma mensagem de sucesso.
         flash("Informações atualizadas com sucesso!", "success")
-
-        # Redireciona para o dashboard.
         return redirect(url_for('dashboard'))
 
-    # Se ocorrer qualquer erro no bloco try.
     except Exception as e:
-        # Mostra uma mensagem de erro detalhada.
         flash(f"Houve um erro ao atualizar as informações: {e}", "error")
-    # Bloco que é executado independentemente de erro.
     finally:
-        # Garante que o cursor do banco de dados seja fechado.
         cursor.close()
 
-    # Redireciona para o dashboard em caso de erro.
     return redirect(url_for('dashboard'))
 
 
@@ -1574,6 +1562,246 @@ def emprestimos_por_mes():
 
     except Exception as e:
         return {'success': False, 'error': str(e)}
+    finally:
+        cursor.close()
+
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/app/relatorios')
+def relatorios():
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+    return render_template('relatorios.html')
+
+
+@app.route('/app/relatorios/emprestimos')
+def relatorio_emprestimos():
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+
+    cursor = con.cursor()
+
+    try:
+        if session['usuario'][4] == 'admin':
+            cursor.execute("""
+                SELECT u.nome, e.valor_emprestimo, e.parcela_mensal, e.parcelas_restantes, 
+                       e.data_contratacao, e.status
+                FROM emprestimos e
+                JOIN usuario u ON e.id_usuario = u.id_usuario
+                ORDER BY e.data_contratacao DESC
+            """)
+        else:
+            cursor.execute("""
+                SELECT u.nome, e.valor_emprestimo, e.parcela_mensal, e.parcelas_restantes, 
+                       e.data_contratacao, e.status
+                FROM emprestimos e
+                JOIN usuario u ON e.id_usuario = u.id_usuario
+                WHERE e.id_usuario = ?
+                ORDER BY e.data_contratacao DESC
+            """, (session['usuario'][0],))
+
+        emprestimos = cursor.fetchall()
+
+        pdf = FPDF()
+        pdf.add_page()
+
+        # Cabeçalho
+        pdf.set_font('Arial', 'B', 16)
+        pdf.cell(0, 10, 'Relatório de Empréstimos - Looma', 0, 1, 'C')
+        pdf.ln(5)
+
+        # Informações - FORMATO BRASILEIRO
+        pdf.set_font('Arial', '', 10)
+        pdf.cell(0, 10, f'Gerado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
+        if session['usuario'][4] == 'admin':
+            pdf.cell(0, 10, 'Tipo: Relatório Geral (Todos os usuários)', 0, 1)
+        else:
+            pdf.cell(0, 10, f'Usuário: {session["usuario"][1]}', 0, 1)
+        pdf.ln(5)
+
+        # Tabela de empréstimos
+        pdf.set_font('Arial', 'B', 10)
+        col_widths = [40, 30, 30, 30, 30, 20]
+
+        # Cabeçalho da tabela
+        headers = ['Cliente', 'Valor Total', 'Parcela', 'Parcelas Rest.', 'Data Contrato', 'Status']
+        for i, header in enumerate(headers):
+            pdf.cell(col_widths[i], 10, header, 1, 0, 'C')
+        pdf.ln()
+
+        # Dados dos empréstimos
+        pdf.set_font('Arial', '', 8)
+        total_emprestimos = 0
+
+        for emp in emprestimos:
+            nome = emp[0][:15] + '...' if len(emp[0]) > 15 else emp[0]
+            valor_total = float(emp[1])
+            parcela = float(emp[2])
+            parcelas_rest = int(emp[3])
+
+            # Formatar data no padrão brasileiro
+            data_contrato = emp[4]
+            if data_contrato:
+                if isinstance(data_contrato, str):
+                    try:
+                        data_obj = datetime.strptime(data_contrato.split()[0], '%Y-%m-%d')
+                        data_formatada = data_obj.strftime('%d/%m/%Y')
+                    except:
+                        data_formatada = "Data inválida"
+                else:
+                    data_formatada = data_contrato.strftime('%d/%m/%Y')
+            else:
+                data_formatada = "N/A"
+
+            status = emp[5]
+            total_emprestimos += valor_total
+
+            pdf.cell(col_widths[0], 8, nome, 1)
+            pdf.cell(col_widths[1], 8, f'R$ {valor_total:.2f}', 1)
+            pdf.cell(col_widths[2], 8, f'R$ {parcela:.2f}', 1)
+            pdf.cell(col_widths[3], 8, str(parcelas_rest), 1)
+            pdf.cell(col_widths[4], 8, data_formatada, 1)
+            pdf.cell(col_widths[5], 8, status, 1)
+            pdf.ln()
+
+        # Totais
+        pdf.ln(5)
+        pdf.set_font('Arial', 'B', 10)
+        pdf.cell(0, 10, f'Total de Empréstimos: R$ {total_emprestimos:.2f}', 0, 1)
+        pdf.cell(0, 10, f'Total de Registros: {len(emprestimos)}', 0, 1)
+
+        # Salvar e retornar o PDF
+        filename = f"relatorio_emprestimos_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        pdf.output(f"uploads/{filename}")
+
+        return send_from_directory('uploads', filename, as_attachment=True)
+
+    except Exception as e:
+        flash(f"Erro ao gerar relatório: {e}", "error")
+        return redirect(url_for('relatorios'))
+    finally:
+        cursor.close()
+
+
+@app.route('/app/relatorios/transacoes', methods=['POST'])
+def relatorio_transacoes():
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+
+    data_inicio = request.form['data_inicio']
+    data_fim = request.form['data_fim']
+
+    cursor = con.cursor()
+
+    try:
+        id_usuario = session['usuario'][0]
+
+        cursor.execute("""
+            SELECT tipo, valor, descricao, data_transacao, classificacao
+            FROM transacoes
+            WHERE id_usuario = ? AND data_transacao BETWEEN ? AND ?
+            ORDER BY data_transacao DESC
+        """, (id_usuario, data_inicio, data_fim))
+
+        transacoes = cursor.fetchall()
+
+        saldo = 0
+
+        # Calcular saldo
+        for transacao in transacoes:
+            valor = float(transacao[1])
+            if transacao[0].lower() == 'receita':
+                saldo += valor
+            else:
+                saldo -= valor
+
+        # Criar PDF
+        pdf = FPDF()
+        pdf.add_page()
+
+        # Cabeçalho
+        pdf.set_font('Arial', 'B', 16)
+        pdf.cell(0, 10, 'Relatório de Transações - Looma', 0, 1, 'C')
+        pdf.ln(5)
+
+        # Informações do período - FORMATO BRASILEIRO
+        pdf.set_font('Arial', '', 10)
+
+        # Converter datas para formato brasileiro
+        data_inicio_br = datetime.strptime(data_inicio, '%Y-%m-%d').strftime('%d/%m/%Y')
+        data_fim_br = datetime.strptime(data_fim, '%Y-%m-%d').strftime('%d/%m/%Y')
+
+        pdf.cell(0, 10, f'Período: {data_inicio_br} a {data_fim_br}', 0, 1)
+        pdf.cell(0, 10, f'Usuário: {session["usuario"][1]}', 0, 1)
+        pdf.cell(0, 10, f'Gerado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
+        pdf.ln(5)
+
+        # Apenas o saldo (removido totais de receitas e despesas)
+        pdf.set_font('Arial', 'B', 12)
+        pdf.cell(0, 10, f'Saldo no período: R$ {saldo:.2f}', 0, 1)
+        pdf.cell(0, 10, f'Total de Transações: {len(transacoes)}', 0, 1)
+        pdf.ln(5)
+
+        # Tabela de transações
+        if transacoes:
+            pdf.set_font('Arial', 'B', 10)
+            col_widths = [25, 30, 60, 40, 25]
+
+            # Cabeçalho da tabela
+            headers = ['Tipo', 'Valor', 'Descrição', 'Data', 'Categoria']
+            for i, header in enumerate(headers):
+                pdf.cell(col_widths[i], 10, header, 1, 0, 'C')
+            pdf.ln()
+
+            # Dados das transações
+            pdf.set_font('Arial', '', 8)
+
+            for trans in transacoes:
+                tipo = trans[0]
+                valor = float(trans[1])
+                descricao = trans[2][:25] + '...' if len(trans[2]) > 25 else trans[2]
+
+                # Formatar data no padrão brasileiro
+                data_trans = trans[3]
+                if data_trans:
+                    if isinstance(data_trans, str):
+                        try:
+                            data_obj = datetime.strptime(data_trans.split()[0], '%Y-%m-%d')
+                            data_formatada = data_obj.strftime('%d/%m/%Y')
+                        except:
+                            data_formatada = "Data inválida"
+                    else:
+                        data_formatada = data_trans.strftime('%d/%m/%Y')
+                else:
+                    data_formatada = "N/A"
+
+                categoria = trans[4] if trans[4] else 'Outros'
+
+                pdf.cell(col_widths[0], 8, tipo.capitalize(), 1)
+                pdf.cell(col_widths[1], 8, f'R$ {valor:.2f}', 1)
+                pdf.cell(col_widths[2], 8, descricao, 1)
+                pdf.cell(col_widths[3], 8, data_formatada, 1)
+                pdf.cell(col_widths[4], 8, categoria, 1)
+                pdf.ln()
+        else:
+            pdf.set_font('Arial', 'I', 12)
+            pdf.cell(0, 10, 'Nenhuma transação encontrada para o período selecionado.', 0, 1, 'C')
+
+        # Salvar e retornar o PDF
+        filename = f'relatorio_transacoes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+        pdf.output(f"uploads/{filename}")
+
+        return send_from_directory('uploads', filename, as_attachment=True)
+
+    except Exception as e:
+        flash(f'Erro ao gerar relatório: {e}', 'error')
+        return redirect(url_for('relatorios'))
     finally:
         cursor.close()
 

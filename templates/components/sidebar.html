@@ -7,8 +7,10 @@
     </div>
 
     <div class="user-profile">
-        <img src="{{url_for('static', filename='img/user.png')}}" alt="Avatar" class="avatar">
-        <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
+    <img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'default.png') }}"
+         alt="Avatar"
+         class="avatar">
+    <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
     </div>
 
     <div class="navigation">
@@ -24,6 +26,9 @@
         {% endif %}
 
         <button class="nav-button inactive" data-section="nova-taxa"> <a href="{{url_for('taxas')}}">Tabela de Taxas</a></button>
+        <button class="nav-button inactive" data-section="relatorios">
+    <a href="{{url_for('relatorios')}}">Relatórios</a>
+</button>
     </div>
 
     <div class="navigation sign-out">

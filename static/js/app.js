@@ -18,6 +18,9 @@ if (btnFechar && menuMobile) {
     });
 }
 
+
+
+
 if (menuMobile) {
     document.querySelectorAll('#menuMobile a').forEach(link => {
         link.addEventListener('click', function () {
@@ -265,3 +268,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Carrega os dados quando a página abre
     carregarDados();
 });
+
+
+
+    const hoje = new Date().toISOString().split('T')[0];
+    const trintaDiasAtras = new Date();
+    trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30);
+    const dataInicio = trintaDiasAtras.toISOString().split('T')[0];
+
+    document.getElementById('data_fim').value = hoje;
+    document.getElementById('data_inicio').value = dataInicio;

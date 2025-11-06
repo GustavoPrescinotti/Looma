@@ -1,0 +1,75 @@
+{% extends 'templateDashboard.html' %}
+
+{% block conteudo %}
+<div class="container">
+    {% include 'components/sidebar.html' %}
+    <div class="main-content">
+        <div class="flash-messages-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+                <span class="flash-text">{{ message }}</span>
+                <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <section>
+
+            <div class="cards cards--summary" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+                <!-- Relatório de Empréstimos -->
+                <article class="card card--blue" style="max-width: 400px; flex: 1 1 300px;">
+                    <h4 class="card__title">Relatório de Empréstimos</h4>
+                    <p class="card__value card__value--xl">
+                        {% if session['usuario'][4] == 'admin' %}
+                        Todos os Empréstimos
+                        {% else %}
+                        Seus Empréstimos
+                        {% endif %}
+                    </p>
+                    <br>
+                    <p class="card__description">
+                        Gere um relatório completo em PDF com
+                        {% if session['usuario'][4] == 'admin' %}
+                        todos os empréstimos do sistema
+                        {% else %}
+                        todos os seus empréstimos
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('relatorio_emprestimos') }}" class="btn btn--primary" style="margin-top: 15px;">
+                        Gerar PDF
+                    </a>
+                </article>
+
+                <!-- Relatório de Transações por Período -->
+                <article class="card card--white" style="max-width: 400px; flex: 1 1 300px;">
+                    <h4 class="card__title">Relatório de Transações</h4>
+                    <p class="card__value card__value--xl">Por Período</p>
+                    <form action="{{ url_for('relatorio_transacoes') }}" method="POST" class="form" style="margin-top: 15px;">
+                        <div class="form-group">
+                            <label for="data_inicio" style="display: block; margin-bottom: 5px; font-weight: 500;">Data Início:</label>
+                            <input type="date" id="data_inicio" name="data_inicio" required
+                                   style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="data_fim" style="display: block; margin-bottom: 5px; font-weight: 500;">Data Fim:</label>
+                            <input type="date" id="data_fim" name="data_fim" required
+                                   style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <button type="submit" class="btn btn--primary" style="width: 100%;">
+                            Gerar PDF
+                        </button>
+                    </form>
+                </article>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

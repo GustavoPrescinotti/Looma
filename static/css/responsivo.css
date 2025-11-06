@@ -2,6 +2,18 @@
 
 @media (max-width: 768px) {
 
+
+    .cards--relatorios {
+            flex-direction: column !important;
+            align-items: center !important;
+            max-width: 500px !important;
+        }
+
+        .card--relatorio {
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+
     /* Estica o terceiro card de empréstimo para ocupar toda a largura */
     .cards--loans .card:nth-child(3) {
         flex-basis: 100% !important;
@@ -431,6 +443,8 @@
         flex-direction: row !important;
         height: 100vh;
     }
+
+
     
     /* Sidebar mantém tamanho original */
     .sidebar {

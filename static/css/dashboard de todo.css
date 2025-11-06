@@ -1748,3 +1748,76 @@ body {
     font-size: 12px;
     color: #666;
 }
+
+    /* Estilos específicos para a página de relatórios - FORÇAR HORIZONTAL */
+    .cards--relatorios {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: stretch !important;
+        gap: 2rem !important;
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .card--relatorio {
+        flex: 1 !important;
+        min-width: 400px !important;
+        max-width: 500px !important;
+        text-align: center !important;
+        padding: 2rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        height: auto !important;
+    }
+
+    .btn--relatorio {
+        margin-top: auto !important;
+        width: 100% !important;
+        padding: 12px 20px !important;
+    }
+
+    .form--relatorio {
+        margin-top: 1.5rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        flex-grow: 1 !important;
+        justify-content: space-between !important;
+    }
+
+    .form-group--relatorio {
+        text-align: left !important;
+    }
+
+    .form-group--relatorio label {
+        display: block !important;
+        margin-bottom: 0.5rem !important;
+        font-weight: 500 !important;
+        color: #333 !important;
+    }
+
+    .form-input--relatorio {
+        width: 100% !important;
+        padding: 0.75rem !important;
+        border: 1px solid #ddd !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+        box-sizing: border-box !important;
+    }
+
+    .card__description {
+        margin: 1rem 0 !important;
+        color: #666 !important;
+        line-height: 1.4 !important;
+        flex-grow: 1 !important;
+    }
+
+    /* Garantir que os cards tenham a mesma altura */
+    .cards--relatorios .card--relatorio {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
+    }
