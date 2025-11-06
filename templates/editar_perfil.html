@@ -33,14 +33,15 @@
             <form class="form" action="" method="post" enctype="multipart/form-data">
                 <!-- Foto de perfil -->
                 <div class="field">
-                    <label for="foto">Foto de Perfil:</label>
-                    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 10px;">
-                        <img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'default.png') }}"
+                    <label for="foto" class="label">Foto de Perfil:</label>
+                    <div  class="profile-upload-container" style="display: flex; align-items: center; gap: 20px; margin-bottom: 10px;"><img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'user.png') }}"
+                        onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/user.png') }}';"
+
                              alt="Foto atual"
                              style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
-                        <input type="file" id="foto" name="foto" accept="image/*">
+                        <input class="form-input-file" type="file" id="foto" name="foto" accept="image/*" >
                     </div>
-                    <small>Formatos permitidos: JPG, PNG, GIF. Tamanho máximo: 2MB</small>
+                    <small class="helper-text"> Formatos permitidos: JPG, PNG, GIF. Tamanho máximo: 6MB</small>
                 </div>
 
                 <div class="field">

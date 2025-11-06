@@ -2054,7 +2054,7 @@
     }
 
     .main-content .card {
-        width: 100% !important;
+        width: 95% !important;
         max-width: 100% !important;
         margin: 0 auto;
         min-height: 120px;
@@ -2694,6 +2694,23 @@ body {
     /* Ajuste no container principal */
     .content-wrapper {
         padding: 0.5rem;
+    }
+}
+@media (max-width: 480px) {
+    .profile-upload-container {
+        flex-direction: column; /* Empilha imagem e input verticalmente */
+        align-items: flex-start; /* Alinha à esquerda */
+        gap: 16px;
+    }
+
+    .profile-image-preview {
+        width: 90px;  /* Um pouco menor em celulares */
+        height: 90px;
+    }
+
+
+    .form-input-file {
+        width: 100%; /* Input ocupa toda a largura disponível */
     }
 }
 

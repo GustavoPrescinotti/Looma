@@ -6,162 +6,84 @@
     <div class="main-content">
         <div class="content-wrapper">
             <h1 class="main-title">Visão Geral:</h1>
-            <!-- Tabela para Desktop -->
-                <div class="table-container">
-                    <div class="table">
-                        <div class="table-row table-header">
-                            <div class="table-cell">Ano</div>
-                            <div class="table-cell">Taxa Mensal</div>
-                            <div class="table-cell">Data Criação</div>
-                            <div class="table-cell">Quem Modificou?</div>
-                            {% if session['usuario'][4] == 'admin' %}
-                            <div class="table-cell">Ações</div>
-                            {% endif %}
-                        </div>
-                        {% for taxa in taxas %}
-                        <div class="table-row">
-                            <div class="table-cell">{{taxa[1]}}</div>
-                            <div class="table-cell">{{taxa[2]}}%</div>
-                            <div class="table-cell">{{taxa[3]}}</div>
-                            <div class="table-cell">{{taxa[4]}}</div>
-                            {% if session['usuario'][4] == 'admin' %}
-                            <div class="table-cell actions">
-                                <button class="btn-edit"><a href="{{url_for('editar_taxa', id=taxa[0])}}">Editar</a></button>
-                                <button class="btn-delete"><a href="{{url_for('excluir_taxa', id=taxa[0])}}">Excluir</a></button>
-                            </div>
-                            {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-messages-container">
+                        {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            <span class="flash-icon">
+                                {% if category == 'success' %}✓{% elif category == 'error' %}✕{% else %}ℹ{% endif %}
+                            </span>
+                            <span class="flash-text">{{ message }}</span>
+                            <button class="flash-close" onclick="this.parentElement.style.display='none'">&times;</button>
                         </div>
                         {% endfor %}
                     </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="table-container">
+                <div class="table">
+                    <div class="table-row table-header">
+                        <div class="table-cell">Ano</div>
+                        <div class="table-cell">Taxa Mensal</div>
+                        <div class="table-cell">Data Criação</div>
+                        <div class="table-cell">Quem Modificou?</div>
+                        {% if session['usuario'][4] == 'admin' %}
+                        <div class="table-cell">Ações</div>
+                        {% endif %}
+                    </div>
+                    {% for taxa in taxas %}
+                    <div class="table-row">
+                        <div class="table-cell">{{taxa[1]}}</div>
+                        <div class="table-cell">{{taxa[2]}}%</div>
+                        <div class="table-cell">{{taxa[3]}}</div>
+                        <div class="table-cell">{{taxa[4]}}</div>
+                        {% if session['usuario'][4] == 'admin' %}
+                        <div class="table-cell actions">
+                            <a href="{{url_for('editar_taxa', id=taxa[0])}}" class="btn-edit">Editar</a>
+                            <a href="{{url_for('excluir_taxa', id=taxa[0])}}" class="btn-delete">Excluir</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
                 </div>
-                
-                <!-- Cards para Mobile -->
-                <div class="cards-container">
-                    <div class="card">
-                        <div class="card-row">
-                            <span class="card-label">Ano:</span>
-                            <span class="card-value" data-type="ano">2025</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Taxa Mensal:</span>
-                            <span class="card-value" data-type="taxa">1,75%</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Data Criação:</span>
-                            <span class="card-value">20/02/2025</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Quem Modificou:</span>
-                            <span class="card-value">Antônio</span>
-                        </div>
-                        <div class="card-row">
-                            <div class="card-actions">
-                                <a href="{{url_for('dashboard')}}" class="btn-edit">Editar</a>
-                                <button class="btn-delete">Excluir</button>
-                            </div>
-                        </div>
+            </div>
+
+            <div class="cards-container">
+                {% for taxa in taxas %}
+                <div class="card card-juros">
+                    <div class="card-row">
+                        <span class="card-label">Ano:</span>
+                        <span class="card-value">{{ taxa[1] }}</span>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-row">
-                            <span class="card-label">Ano:</span>
-                            <span class="card-value" data-type="ano">2024</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Taxa Mensal:</span>
-                            <span class="card-value" data-type="taxa">2,25%</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Data Criação:</span>
-                            <span class="card-value">19/10/2024</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Quem Modificou:</span>
-                            <span class="card-value">Igor</span>
-                        </div>
-                        <div class="card-row">
-                            <div class="card-actions">
-                                <a href="{{url_for('dashboard')}}" class="btn-edit">Editar</a>
-                                <button class="btn-delete">Excluir</button>
-                            </div>
-                        </div>
+                    <div class="card-row">
+                        <span class="card-label">Taxa Mensal:</span>
+                        <span class="card-value">{{ taxa[2] }}%</span>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-row">
-                            <span class="card-label">Ano:</span>
-                            <span class="card-value" data-type="ano">2023</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Taxa Mensal:</span>
-                            <span class="card-value" data-type="taxa">1,05%</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Data Criação:</span>
-                            <span class="card-value">02/11/2023</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Quem Modificou:</span>
-                            <span class="card-value">Laís</span>
-                        </div>
-                        <div class="card-row">
-                            <div class="card-actions">
-                                <a href="{{url_for('dashboard')}}" class="btn-edit">Editar</a>
-                                <button class="btn-delete">Excluir</button>
-                            </div>
-                        </div>
+                    <div class="card-row">
+                        <span class="card-label">Data Criação:</span>
+                        <span class="card-value">{{ taxa[3] }}</span>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-row">
-                            <span class="card-label">Ano:</span>
-                            <span class="card-value" data-type="ano">2022</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Taxa Mensal:</span>
-                            <span class="card-value" data-type="taxa">3,75%</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Data Criação:</span>
-                            <span class="card-value">05/01/2022</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Quem Modificou:</span>
-                            <span class="card-value">Kauã</span>
-                        </div>
-                        <div class="card-row">
-                            <div class="card-actions">
-                                <a href="{{url_for('dashboard')}}" class="btn-edit">Editar</a>
-                                <button class="btn-delete">Excluir</button>
-                            </div>
-                        </div>
+                    <div class="card-row">
+                        <span class="card-label">Quem Modificou:</span>
+                        <span class="card-value">{{ taxa[4] }}</span>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-row">
-                            <span class="card-label">Ano:</span>
-                            <span class="card-value" data-type="ano">2020</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Taxa Mensal:</span>
-                            <span class="card-value" data-type="taxa">1%</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Data Criação:</span>
-                            <span class="card-value">01/04/2020</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Quem Modificou:</span>
-                            <span class="card-value">Henrique</span>
-                        </div>
-                        <div class="card-row">
-                            <div class="card-actions">
-                                <a href="{{url_for('dashboard')}}" class="btn-edit">Editar</a>
-                                <button class="btn-delete">Excluir</button>
-                            </div>
-                        </div>
+                    {% if session['usuario'][4] == 'admin' %}
+                    <div class="card-actions">
+                        <a href="{{url_for('editar_taxa', id=taxa[0])}}" class="btn-edit">Editar</a>
+                        <a href="{{url_for('excluir_taxa', id=taxa[0])}}" class="btn-delete">Excluir</a>
                     </div>
+                    {% endif %}
                 </div>
+                {% else %}
+                <div class="card">
+                    <p style="text-align: center; padding: 20px; color: #666;">Nenhuma taxa cadastrada.</p>
+                </div>
+                {% endfor %}
+            </div>
+
         </div>
     </div>
 </div>

@@ -9,13 +9,15 @@
         <li><a href="{{ url_for('nova_simulacao') }}" class="nav-link active" data-section="painel">Nova Simulação</a></li>
         <li><a href="{{ url_for('transacoes') }}" class="nav-link" data-section="taxa-juros">Transações</a></li>
 
+
     {% else %}
         <li><a href="{{ url_for('nova_taxa') }}" class="nav-link" data-section="nova-taxa">Nova Taxa</a></li>
         <li><a href="{{ url_for('admin_users') }}" class="nav-link" data-section="">Gerenciar Usuários</a></li>
     {% endif %}
-
+        <li><a href="{{url_for('relatorios')}}">Relatórios</a> </li>
     <li><a href="{{ url_for('perfil') }}" class="nav-link" data-section="nova-taxa">Perfil</a></li>
     <li><a href="{{ url_for('taxas') }}" class="nav-link" data-section="taxas">Tabela de Taxas</a></li>
     <li><a href="{{ url_for('logout') }}" class="nav-link" data-section="taxa-juros">Sair da Conta</a></li>
+
 </ul>
 </nav>

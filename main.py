@@ -20,7 +20,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-2\Looma.FDB'
+database = r'C:\Users\Aluno\Documents\Looma\Looma\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -28,7 +28,7 @@ password = 'sysdba'
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB máximo
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1000 * 1000  # 20MB máximo
 
 
 

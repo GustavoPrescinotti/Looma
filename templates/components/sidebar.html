@@ -7,8 +7,8 @@
     </div>
 
     <div class="user-profile">
-        <img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'default.png') }}"
-             alt="Avatar"
+        <img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'user.png') }}"
+             onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/user.png') }}';"
              class="avatar">
         <span class="user-name">Olá, {{session['usuario'][1].split()[:2] | join(' ')}}</span>
     </div>
@@ -20,15 +20,15 @@
         {% if session['usuario'][4] == 'user' %}
         <button class="nav-button inactive" data-section="painel"> <a href="{{url_for('nova_simulacao')}}">Nova Simulação</a></button>
         <button class="nav-button inactive" data-section="taxa-juros"> <a href="{{url_for('transacoes')}}">Transações</a></button>
+
         {% else %}
         <button class="nav-button inactive" data-section="taxa-juros"> <a href="{{url_for('nova_taxa')}}">Nova Taxa</a></button>
+
         <button class="nav-button inactive" data-section="gerenciar-usuarios"> <a href="{{url_for('admin_users')}}">Gerenciar Usuários</a></button>
         {% endif %}
-
+        <button class="nav-button inactive" data-section="relatorios"><a href="{{url_for('relatorios')}}">Relatórios</a></button>
         <button class="nav-button inactive" data-section="nova-taxa"> <a href="{{url_for('taxas')}}">Tabela de Taxas</a></button>
-        <button class="nav-button inactive" data-section="relatorios">
-            <a href="{{url_for('relatorios')}}">Relatórios</a>
-        </button>
+
     </div>
 
     <div class="navigation sign-out">
@@ -38,7 +38,8 @@
     </div>
 
     <div class="bottom-profile">
-        <img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'default.png') }}"
+         <img src="{{ url_for('uploaded_file', filename=session['usuario'][9] if session['usuario'][9] else 'user.png') }}"
+             onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/user.png') }}';"
              alt="Avatar"
              class="bottom-avatar">
         <div class="profile-info">
