@@ -336,12 +336,9 @@ def dashboard():
 
     cursor = con.cursor()
     try:
-
         usuario = session.get('usuario')
 
-
         if usuario is None or len(usuario) < 10:
-            
             user_id = usuario[0] if usuario and len(usuario) > 0 else None
 
             if user_id:
@@ -350,15 +347,12 @@ def dashboard():
                     (user_id,))
                 usuario_completo = cursor.fetchone()
             else:
-                # Se não temos ID, redirecionar para login
                 flash("Sessão inválida. Faça login novamente.", "error")
                 session.pop('usuario', None)
                 return redirect(url_for('login'))
 
             if usuario_completo:
-                # Converter para lista para modificar
                 usuario_list = list(usuario_completo)
-                # Garantir que a foto não seja None
                 if not usuario_list[9] or usuario_list[9] == 'None':
                     usuario_list[9] = 'default.png'
                 session['usuario'] = tuple(usuario_list)
@@ -368,7 +362,6 @@ def dashboard():
                 session.pop('usuario', None)
                 return redirect(url_for('login'))
 
-        # AGORA podemos acessar com segurança os índices
         if usuario[4] == 'admin':
             cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = ?", (1,))
             usuariosAtivos = cursor.fetchone()
@@ -458,14 +451,17 @@ def dashboard():
                     'data_contratacao': data_contratacao_formatada
                 })
 
-            # AGORA adicionar APENAS as parcelas mensais às despesas
+
             total_despesas_com_parcelas = total_despesas + soma_parcelas_mensais
 
-            # Calcular renda líquida COM as parcelas
-            renda_liquida = total_receitas - total_despesas_com_parcelas
 
-            # O limite é 30% da renda líquida SEM as parcelas de empréstimo
-            limite_emprestimo = (total_receitas - total_despesas_com_parcelas) * 0.3
+            total_receitas_com_emprestimos = total_receitas + valor_total_emprestimos
+
+            # Calcular renda líquida COM as parcelas e INCLUINDO empréstimos nas receitas
+            renda_liquida = total_receitas_com_emprestimos - total_despesas_com_parcelas
+
+            # O limite é 30% da renda líquida (já incluindo os empréstimos)
+            limite_emprestimo = renda_liquida * 0.3
             if limite_emprestimo < 0:
                 limite_emprestimo = 0
 
@@ -477,14 +473,16 @@ def dashboard():
             }
 
             return render_template('dashboard_usuario.html',
-                                   total_receitas=total_receitas,
+                                   total_receitas=total_receitas_com_emprestimos,  # Agora inclui empréstimos
                                    total_despesas=total_despesas_com_parcelas,
                                    renda_liquida=renda_liquida,
                                    limite_emprestimo=limite_emprestimo,
-                                   emprestimos=emprestimos)
+                                   emprestimos=emprestimos,
+                                   valor_emprestimos=valor_total_emprestimos
+                                   # Enviar separadamente para exibir no template
+                                   )
     except Exception as e:
         flash(f"Erro ao carregar dashboard: {e}", "error")
-
         session.pop('usuario', None)
         return redirect(url_for('login'))
     finally:
