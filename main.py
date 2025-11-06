@@ -20,7 +20,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-2\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -280,7 +280,7 @@ def cadastro():
                 file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
                 foto = filename
 
-        # Resto do código permanece igual...
+
         if not verificar_senha_forte(senha):
             flash(
                 "A senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.",
