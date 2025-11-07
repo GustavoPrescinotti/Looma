@@ -20,15 +20,15 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-3\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-07-11\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
 password = 'sysdba'
 
-app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['MAX_CONTENT_LENGTH'] = 20 * 1000 * 1000  # 20MB máximo
+app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1000 * 1000
 
 
 
@@ -38,33 +38,31 @@ def allowed_file(filename):
     extensao = filename.rsplit('.', 1)[1].lower()
     return extensao in app.config['ALLOWED_EXTENSIONS']
 
-# Conecta-se ao banco de dados Firebird usando as configurações definidas.
+
 con = fdb.connect(host=host, database=database, user=user, password=password)
 
-# Define uma função chamada verificar_senha_forte que recebe uma senha como argumento.
 
-# Função para criar o usuário admin fixo (execute uma vez)
 def criar_admin_fixo():
     cursor = con.cursor()
     try:
-        # Verifica se o admin já existe
+
         cursor.execute("SELECT id_usuario FROM usuario WHERE email = ?", ('adm.looma@gmail.com',))
         admin_existente = cursor.fetchone()
 
         if not admin_existente:
-            # Cria o hash da senha
+
             hash_senha = generate_password_hash('M8#$%oA123456789ert').decode('utf-8')
 
-            # Insere o usuário admin COM FOTO DEFINIDA
+
             cursor.execute(
                 "INSERT INTO usuario (email, nome, senha, cpf, telefone, tipo, tentativas, ativo, foto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 ('adm.looma@gmail.com', 'Administrador Looma', hash_senha, '000.000.000-00', '(00) 00000-0000', 'admin',
-                 0, True, 'default.png')  # Garantir que a foto está definida
+                 0, True, 'default.png')
             )
             con.commit()
             print("Admin criado com sucesso!")
         else:
-            # Atualiza o admin existente para garantir que tem foto
+
             cursor.execute(
                 "UPDATE usuario SET foto = ? WHERE email = ?",
                 ('default.png', 'adm.looma@gmail.com')
@@ -76,8 +74,7 @@ def criar_admin_fixo():
     finally:
         cursor.close()
 
-# Chame esta função uma vez para criar o admin
-# criar_admin_fixo()
+
 def verificar_senha_forte(senha):
     # Verifica se o comprimento da senha é menor que 8 caracteres.
     if len(senha) < 8:
@@ -279,19 +276,22 @@ def cadastro():
         telefone = request.form['phone']
         confirmar_senha = request.form['confirm_password']
 
-        # SEMPRE definir foto como 'default.png' por padrão
+
         foto = 'default.png'
         if 'foto' in request.files:
             file = request.files['foto']
-            if file and file.filename != '' and allowed_file(file.filename):
-                # Versão sem os - usando string simples
-                filename = secure_filename(file.filename)
-                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                filename = f"{timestamp}_{filename}"
+            if file and file.filename != '':
+                if allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                    filename = f"{timestamp}_{filename}"
 
-                # Salva o arquivo diretamente
-                file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
-                foto = filename  # Só substitui se realmente enviou uma foto válida
+
+                    file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
+                    foto = filename
+                else:
+                    flash("Formato de imagem não permitido. Use apenas PNG, JPG, JPEG ou GIF.", "error")
+                    return redirect(url_for('cadastro'))
 
         if not verificar_senha_forte(senha):
             flash(
@@ -326,7 +326,7 @@ def cadastro():
         cursor.close()
 
     return redirect(url_for('login'))
-# Define a rota para '/app'.
+
 # Define a rota para '/app'.
 @app.route('/app')
 def dashboard():
@@ -370,11 +370,12 @@ def dashboard():
         else:
             id_usuario = usuario[0]
 
-            # Buscar transações (SEM incluir parcelas de empréstimos duplicadas)
+            # CORREÇÃO: Buscar transações EXCLUINDO parcelas de empréstimo para cálculo da renda real
             cursor.execute("""
-                SELECT TIPO, VALOR, DESCRICAO
+                SELECT TIPO, VALOR, DESCRICAO, DATA_TRANSACAO
                 FROM TRANSACOES
-                WHERE ID_USUARIO = ?
+                WHERE ID_USUARIO = ? 
+                AND (DESCRICAO NOT LIKE '%Parcela%empréstimo%' AND DESCRICAO NOT LIKE '%Parcela%do empréstimo%')
                 ORDER BY DATA_TRANSACAO DESC
             """, (id_usuario,))
             transacoes = cursor.fetchall()
@@ -385,12 +386,24 @@ def dashboard():
             for transacao in transacoes:
                 tipo = transacao[0]
                 valor = float(transacao[1])
-                # Não somar parcelas de empréstimo aqui, vamos calcular separadamente
-                if 'parcela de empréstimo' not in transacao[2].lower():
-                    if tipo.lower() == 'receita':
-                        total_receitas += valor
-                    elif tipo.lower() == 'despesa':
-                        total_despesas += valor
+
+                # Calcular apenas transações reais (não parcelas de empréstimo)
+                if tipo.lower() == 'receita':
+                    total_receitas += valor
+                elif tipo.lower() == 'despesa':
+                    total_despesas += valor
+
+            # CORREÇÃO: Renda líquida REAL (sem incluir empréstimos como receita)
+            renda_liquida_real = total_receitas - total_despesas
+
+            # CORREÇÃO: Cálculo do limite - usar 35% e tratar valores negativos
+            if renda_liquida_real <= 0:
+                limite_emprestimo = 0
+            else:
+                # Usar 35% para ser consistente com a simulação
+                limite_emprestimo = renda_liquida_real * 0.35
+
+
 
             # Buscar TODOS os empréstimos ativos do usuário
             cursor.execute("""
@@ -451,19 +464,11 @@ def dashboard():
                     'data_contratacao': data_contratacao_formatada
                 })
 
-
+            # CORREÇÃO: Calcular despesas totais incluindo parcelas atuais
             total_despesas_com_parcelas = total_despesas + soma_parcelas_mensais
 
-
-            total_receitas_com_emprestimos = total_receitas + valor_total_emprestimos
-
-            # Calcular renda líquida COM as parcelas e INCLUINDO empréstimos nas receitas
-            renda_liquida = total_receitas_com_emprestimos - total_despesas_com_parcelas
-
-            # O limite é 30% da renda líquida (já incluindo os empréstimos)
-            limite_emprestimo = renda_liquida * 0.3
-            if limite_emprestimo < 0:
-                limite_emprestimo = 0
+            # CORREÇÃO: Calcular renda líquida FINAL incluindo empréstimos
+            renda_liquida_final = (total_receitas + valor_total_emprestimos) - total_despesas_com_parcelas
 
             emprestimos = {
                 'valor_total': valor_total_emprestimos,
@@ -473,16 +478,16 @@ def dashboard():
             }
 
             return render_template('dashboard_usuario.html',
-                                   total_receitas=total_receitas_com_emprestimos,  # Agora inclui empréstimos
-                                   total_despesas=total_despesas_com_parcelas,
-                                   renda_liquida=renda_liquida,
-                                   limite_emprestimo=limite_emprestimo,
+                                   total_receitas=total_receitas,  # Receitas reais (sem empréstimos)
+                                   total_despesas=total_despesas_com_parcelas,  # Despesas + parcelas
+                                   renda_liquida=renda_liquida_final,  # Renda líquida final
+                                   limite_emprestimo=limite_emprestimo,  # Limite baseado na renda real
                                    emprestimos=emprestimos,
-                                   valor_emprestimos=valor_total_emprestimos
-                                   # Enviar separadamente para exibir no template
+                                   valor_emprestimos=valor_total_emprestimos  # Valor total dos empréstimos
                                    )
     except Exception as e:
         flash(f"Erro ao carregar dashboard: {e}", "error")
+        print(f"ERRO DETALHADO: {str(e)}")
         session.pop('usuario', None)
         return redirect(url_for('login'))
     finally:
@@ -737,7 +742,6 @@ def confirmar_emprestimo():
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
 
-    # VERIFICAÇÃO DE SEGURANÇA: Verificar se há simulação na sessão e se o risco não é alto
     simulacao = session.get('simulacao_resultado')
     if not simulacao:
         flash("Nenhuma simulação encontrada. Por favor, faça uma simulação primeiro.", "error")
@@ -756,9 +760,8 @@ def confirmar_emprestimo():
         valor = float(request.form['valor'])
         prazo = int(request.form['prazo'])
         parcela_mensal = float(request.form['parcela_mensal'])
-        data_criacao = request.form.get('data_criacao', date.today().strftime('%d/%m/%Y'))
 
-        # VALIDAÇÃO ADICIONAL: Recalcular o comprometimento para garantir que não é alto
+        # **VALIDAÇÃO FINAL DA PARCELA vs LIMITE**
         cursor.execute("""
             SELECT TIPO, VALOR, DESCRICAO 
             FROM TRANSACOES 
@@ -781,25 +784,56 @@ def confirmar_emprestimo():
                     total_despesas_atual += valor_transacao
 
         renda_liquida_atual = total_receitas - total_despesas_atual
-        comprometimento = (parcela_mensal / renda_liquida_atual) * 100 if renda_liquida_atual > 0 else 0
+        limite_parcela_mensal = renda_liquida_atual * 0.35
 
-        # BLOQUEAR SE COMPROMETIMENTO FOR MAIOR QUE 35%
-        if comprometimento > 35:
+        # **VALIDAÇÃO FINAL - PARCELA NÃO PODE EXCEDER O LIMITE**
+        if parcela_mensal > limite_parcela_mensal:
             flash(
-                f"Empréstimo bloqueado: comprometimento de {comprometimento:.1f}% excede o limite de segurança de 35%.",
+                f"Empréstimo bloqueado: parcela mensal (R$ {parcela_mensal:.2f}) excede o limite de segurança (R$ {limite_parcela_mensal:.2f}).",
                 "error")
             return redirect(url_for('resultado_simulacao'))
 
         # Data atual como data de contratação
         data_contratacao = date.today()
 
-        # Calcular próximo vencimento (primeiro dia do próximo mês)
-        if data_contratacao.month == 12:
-            proximo_vencimento = data_contratacao.replace(year=data_contratacao.year + 1, month=1, day=1)
-        else:
-            proximo_vencimento = data_contratacao.replace(month=data_contratacao.month + 1, day=1)
+        # **ADICIONAR O EMPRÉSTIMO COMO RECEITA**
+        cursor.execute("""
+            INSERT INTO TRANSACOES 
+            (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            id_usuario, 'receita', valor, f'Empréstimo contratado - {prazo} parcelas', data_contratacao, 'Empréstimo'))
 
-        # Inserir empréstimo COM data_contratacao
+        # **INSERIR TODAS AS PARCELAS COMO DESPESAS FUTURAS**
+        for i in range(prazo):
+            # Calcular data de vencimento de cada parcela
+            meses_a_adicionar = i + 1
+
+            # Calcular ano e mês corretamente
+            ano_novo = data_contratacao.year
+            mes_novo = data_contratacao.month + meses_a_adicionar
+
+            while mes_novo > 12:
+                mes_novo -= 12
+                ano_novo += 1
+
+            data_vencimento = date(ano_novo, mes_novo, 1)  # Primeiro dia do mês
+
+            # Inserir cada parcela individualmente
+            descricao_parcela = f"Parcela {i + 1}/{prazo} do empréstimo"
+            cursor.execute("""
+                INSERT INTO TRANSACOES 
+                (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO) 
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (id_usuario, 'despesa', parcela_mensal, descricao_parcela, data_vencimento, 'Empréstimo'))
+
+        # Calcular próximo vencimento para o empréstimo (primeira parcela)
+        if data_contratacao.month == 12:
+            proximo_vencimento = date(data_contratacao.year + 1, 1, 1)
+        else:
+            proximo_vencimento = date(data_contratacao.year, data_contratacao.month + 1, 1)
+
+        # Inserir registro do empréstimo
         cursor.execute("""
             INSERT INTO EMPRESTIMOS 
             (ID_USUARIO, VALOR_EMPRESTIMO, PARCELAS_RESTANTES, PROXIMO_VENCIMENTO, 
@@ -807,31 +841,23 @@ def confirmar_emprestimo():
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (id_usuario, valor, prazo, proximo_vencimento, parcela_mensal, 'ativo', data_contratacao))
 
-        # Inserir APENAS a parcela mensal como despesa COM CLASSIFICAÇÃO "Empréstimo"
-        descricao = f"Parcela de empréstimo - {prazo}x de R$ {parcela_mensal:.2f}"
-        cursor.execute("""
-            INSERT INTO TRANSACOES 
-            (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO) 
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (id_usuario, 'despesa', parcela_mensal, descricao, proximo_vencimento, 'Empréstimo'))
-
         con.commit()
 
         # Limpar a simulação da sessão após confirmar
         if 'simulacao_resultado' in session:
             session.pop('simulacao_resultado')
 
-        flash(
-            f"Empréstimo contratado com sucesso! A parcela mensal de R$ {parcela_mensal:.2f} foi adicionada às suas despesas.",
-            "success")
+        flash(f"Empréstimo contratado com sucesso! {prazo} parcelas de R$ {parcela_mensal:.2f} foram agendadas.",
+              "success")
 
     except Exception as e:
         flash(f"Erro ao confirmar empréstimo: {e}", "error")
+        con.rollback()  # Reverter em caso de erro
     finally:
         cursor.close()
 
     return redirect(url_for('dashboard'))
-# Define a rota para '/app/simulacao/criar'.
+
 @app.route('/app/simulacao/criar', methods=['GET', 'POST'])
 def nova_simulacao():
     if 'usuario' not in session:
@@ -839,7 +865,6 @@ def nova_simulacao():
         return redirect(url_for('login'))
 
     cursor = con.cursor()
-    # Buscar administradores para select no formulário
     cursor.execute("""
         SELECT DISTINCT u.NOME
         FROM TAXA_JURO tj
@@ -906,7 +931,7 @@ def nova_simulacao():
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
-        # CORREÇÃO DO CÁLCULO DA PARCELA
+        # Cálculo da parcela
         i = float(taxa[0]) / 100
         PV = valor
         n = prazo
@@ -918,7 +943,7 @@ def nova_simulacao():
 
         total_pagar = PMT * n
         juros_total = total_pagar - PV
-        lucro_mensal = juros_total / n  # Lucro mensal aproximado
+        lucro_mensal = juros_total / n
 
         # Calcular renda líquida atual (sem parcelas futuras)
         cursor.execute("""
@@ -929,11 +954,11 @@ def nova_simulacao():
         transacoes = cursor.fetchall()
 
         total_receitas = 0.0
-        total_despesas_atual = 0.0  # CORREÇÃO: Mantido como total_despesas_atual
+        total_despesas_atual = 0.0
 
         for transacao in transacoes:
             tipo = transacao[0]
-            valor_transacao = float(transacao[1])  # CORREÇÃO: Renomeado para evitar conflito
+            valor_transacao = float(transacao[1])
             descricao = transacao[2].lower() if transacao[2] else ""
 
             # Ignorar parcelas de empréstimo no cálculo das despesas normais
@@ -941,17 +966,20 @@ def nova_simulacao():
                 if tipo.lower() == 'receita':
                     total_receitas += valor_transacao
                 elif tipo.lower() == 'despesa':
-                    total_despesas_atual += valor_transacao  # CORREÇÃO: Usando total_despesas_atual
+                    total_despesas_atual += valor_transacao
 
-        # Calcular limite (30% da renda líquida atual)
+        # Calcular renda líquida atual
         renda_liquida_atual = total_receitas - total_despesas_atual
-        limite_emprestimo = renda_liquida_atual * 0.3
-        if limite_emprestimo < 0:
-            limite_emprestimo = 0
 
-        if valor > limite_emprestimo:
-            flash(f"O valor do empréstimo (R$ {valor:.2f}) excede seu limite permitido (R$ {limite_emprestimo:.2f}).",
-                  "error")
+        # **NOVA LÓGICA: Limite baseado na parcela mensal (35% da renda líquida)**
+        limite_parcela_mensal = renda_liquida_atual * 0.35
+        if limite_parcela_mensal < 0:
+            limite_parcela_mensal = 0
+
+        # **VERIFICAÇÃO DA PARCELA vs LIMITE**
+        if PMT > limite_parcela_mensal:
+            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}). "
+                  f"Reduza o valor ou aumente o prazo do empréstimo.", "error")
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
@@ -967,7 +995,7 @@ def nova_simulacao():
 
         cursor.close()
 
-        # CORREÇÃO: SALVAR NA SESSÃO ANTES DE REDIRECIONAR
+        # Salvar na sessão
         session['simulacao_resultado'] = {
             'valor': valor,
             'ano': ano_emprestimo,
@@ -978,10 +1006,10 @@ def nova_simulacao():
             'lucro': lucro_mensal,
             'comprometimento': comprometimento,
             'risco': risco,
+            'limite_parcela': limite_parcela_mensal,  # Adicionar o limite para exibir
             'data_criacao': datetime.now().strftime('%d/%m/%Y')
         }
 
-        # REDIRECIONAR para a rota de resultado em vez de renderizar diretamente
         return redirect(url_for('resultado_simulacao'))
 
     except Exception as e:
@@ -991,6 +1019,8 @@ def nova_simulacao():
     finally:
         cursor.close()
 
+
+# Define a rota para '/app/simulacao/criar'.
 @app.route('/app/simulacao/resultado')
 def resultado_simulacao():
     if 'usuario' not in session:
@@ -1013,81 +1043,64 @@ def resultado_simulacao():
                            lucro=simulacao['lucro'],
                            comprometimento=simulacao['comprometimento'],
                            risco=simulacao['risco'],
+                           limite_parcela=simulacao['limite_parcela'],
                            data_criacao=simulacao['data_criacao'])
 
 # Define a rota para '/app/transacoes'.
 # Define a rota '/app/transacoes' para acessar a página de transações
 @app.route('/app/transacoes')
 def transacoes():
-    # Verifica se o usuário não está na sessão (não está logado)
     if 'usuario' not in session:
-        # Exibe mensagem de erro para o usuário
         flash("Você precisa fazer login para acessar esta página.", "error")
-        # Redireciona para a página de login
         return redirect(url_for('login'))
 
-    # Obtém o ID do usuário da sessão (primeira posição do array)
     id_usuario = session['usuario'][0]
-    # Cria um cursor para executar queries no banco de dados
     cursor = con.cursor()
     try:
-        # Executa query para buscar todas as transações do usuário
-        cursor.execute("""
-            SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO
-            FROM TRANSACOES
-            WHERE ID_USUARIO = ?
-            ORDER BY DATA_TRANSACAO DESC
-        """, (id_usuario,))
-        # Busca todos os resultados da query
+        # Query mais simples sem comentários
+        cursor.execute("SELECT ID_TRANSACOES, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO FROM TRANSACOES WHERE ID_USUARIO = ? ORDER BY DATA_TRANSACAO ASC", (id_usuario,))
         transacoes_raw = cursor.fetchall()
 
-        # Inicializa lista vazia para armazenar transações formatadas
         transacoes = []
-        # Inicializa saldo com valor zero
         saldo = 0.0
 
-        # Itera sobre cada transação retornada do banco
         for t in transacoes_raw:
-            # Obtém a data da transação (quinta coluna - índice 4)
             dt = t[4]
-
-            # Verifica se a data é uma string (precisa de parsing)
             if isinstance(dt, str):
-                # Converte string para objeto datetime (ignora hora se existir)
-                dt_obj = datetime.strptime(dt.split()[0], '%Y-%m-%d')
+                try:
+                    dt_obj = datetime.strptime(dt.split()[0], '%Y-%m-%d')
+                except:
+                    dt_obj = None
             else:
-                # Se já for objeto datetime, usa diretamente
                 dt_obj = dt
 
-            # Formata a data para o padrão brasileiro (dia/mês/ano)
-            data_formatada = dt_obj.strftime('%d/%m/%Y') if dt_obj else ''
+            data_formatada = dt_obj.strftime('%d/%m/%Y') if dt_obj else 'Data inválida'
 
-            # Adiciona transação formatada à lista, convertendo valor para float
-            transacoes.append((t[0], t[1], float(t[2]), t[3], data_formatada, t[5]))
-
-            # Atualiza o saldo baseado no tipo de transação
-            if t[1].lower() == 'receita':
-                # Se for receita, adiciona ao saldo
-                saldo += float(t[2])
+            # Verificar se é transação futura
+            hoje = date.today()
+            if dt_obj:
+                data_transacao = dt_obj.date() if hasattr(dt_obj, 'date') else dt_obj
+                is_futura = data_transacao > hoje
             else:
-                # Se for despesa, subtrai do saldo
-                saldo -= float(t[2])
+                is_futura = False
 
-    # Captura qualquer exceção que ocorrer durante o processamento
+            transacoes.append((t[0], t[1], float(t[2]), t[3], data_formatada, t[5], is_futura))
+
+            # Calcular saldo apenas para transações não futuras
+            if not is_futura:
+                if t[1].lower() == 'receita':
+                    saldo += float(t[2])
+                else:
+                    saldo -= float(t[2])
+
     except Exception as e:
-        # Exibe mensagem de erro para o usuário
         flash(f"Erro ao carregar transações: {e}", "error")
-        # Define transações como lista vazia em caso de erro
         transacoes = []
-        # Define saldo como zero em caso de erro
         saldo = 0.0
     finally:
-        # Fecha o cursor para liberar recursos do banco de dados
         cursor.close()
 
-    # Renderiza o template passando as transações e saldo calculado
     return render_template('transacoes.html', transacoes=transacoes, saldo=saldo)
-
 
 # Define a rota para '/nova_receita'.
 # Define a rota '/nova_receita' que aceita métodos GET e POST
@@ -1112,6 +1125,7 @@ def nova_receita():
         valor_str = request.form['valor'].replace(',', '.')
         # Obtém a descrição do formulário
         descricao = request.form['descricao']
+        classificacao = request.form['classificacao']
 
         # Tenta converter o valor para float e validá-lo
         try:
@@ -1138,9 +1152,9 @@ def nova_receita():
             cursor = con.cursor()
             # Executa query para inserir nova transação na tabela
             cursor.execute("""
-                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO)
-                VALUES (?, ?, ?, ?, ?)
-            """, (id_usuario, tipo, valor, descricao, data_formatada))
+                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO)
+                VALUES (?, ?, ?, ?, ?,?)
+            """, (id_usuario, tipo, valor, descricao, data_formatada, classificacao))
             # Confirma a transação no banco de dados
             con.commit()
             # Exibe mensagem de sucesso para o usuário
@@ -1182,23 +1196,27 @@ def perfil():
         nova_foto = None
         if 'foto' in request.files:
             file = request.files['foto']
-            if file and file.filename != '' and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                filename = f"{timestamp}_{filename}"
+            if file and file.filename != '':
+                if allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                    filename = f"{timestamp}_{filename}"
 
-                # Salva sem usar os
-                file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
-                nova_foto = filename
+                    # Salva o arquivo
+                    file.save(f"{app.config['UPLOAD_FOLDER']}/{filename}")
+                    nova_foto = filename
+                else:
+                    flash("Formato de imagem não permitido. Use apenas PNG, JPG, JPEG ou GIF.", "error")
+                    return redirect(url_for('perfil'))
 
         # Resto da lógica permanece igual...
         if senha:
             if not verificar_senha_forte(senha):
-                flash("A nova senha deve ter pelo menos 8 caracteres...", "error")
+                flash("A nova senha deve ter pelo menos 8 caracteres, uma letra maiúscula, uma letra minúscula, um número e um caractere especial.", "error")
                 return redirect(url_for('perfil'))
 
             if senha != confirmarSenha:
-                flash("As senhas não coincidem...", "error")
+                flash("As senhas não coincidem. Por favor, tente novamente.", "error")
                 return redirect(url_for('perfil'))
 
             hashSenha = generate_password_hash(senha).decode('utf-8')
@@ -1568,15 +1586,11 @@ def emprestimos_por_mes():
 
     cursor = con.cursor()
     try:
-        # Buscar empréstimos agrupados por mês de criação
+        # ALTERNATIVA COMPATÍVEL: Buscar todos os empréstimos do ano atual e processar em Python
         cursor.execute("""
-            SELECT 
-                EXTRACT(MONTH FROM DATA_CONTRATACAO) as mes,
-                COUNT(*) as quantidade
+            SELECT DATA_CONTRATACAO
             FROM EMPRESTIMOS 
             WHERE EXTRACT(YEAR FROM DATA_CONTRATACAO) = EXTRACT(YEAR FROM CURRENT_DATE)
-            GROUP BY EXTRACT(MONTH FROM DATA_CONTRATACAO)
-            ORDER BY mes
         """)
 
         resultados = cursor.fetchall()
@@ -1584,10 +1598,24 @@ def emprestimos_por_mes():
         # Inicializar array com 12 meses (todos zero)
         emprestimos_por_mes = [0] * 12
 
-        # Preencher os meses que têm dados
-        for mes, quantidade in resultados:
-            if 1 <= mes <= 12:
-                emprestimos_por_mes[mes - 1] = quantidade
+        # Processar os resultados em Python
+        for row in resultados:
+            data_contratacao = row[0]
+            if data_contratacao:
+                # Extrair o mês da data
+                if isinstance(data_contratacao, str):
+                    try:
+                        # Se for string, converter para datetime
+                        data_obj = datetime.strptime(data_contratacao.split()[0], '%Y-%m-%d')
+                        mes = data_obj.month
+                    except:
+                        continue
+                else:
+                    # Se já for objeto de data
+                    mes = data_contratacao.month
+
+                if 1 <= mes <= 12:
+                    emprestimos_por_mes[mes - 1] += 1
 
         return {
             'success': True,
@@ -1595,10 +1623,10 @@ def emprestimos_por_mes():
         }
 
     except Exception as e:
+        print(f"Erro na query emprestimos_por_mes: {e}")
         return {'success': False, 'error': str(e)}
     finally:
         cursor.close()
-
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -1644,12 +1672,12 @@ def relatorio_emprestimos():
         pdf = FPDF()
         pdf.add_page()
 
-        # Cabeçalho
+        # Cabeçalho do relatório
         pdf.set_font('Arial', 'B', 16)
         pdf.cell(0, 10, 'Relatório de Empréstimos - Looma', 0, 1, 'C')
         pdf.ln(5)
 
-        # Informações - FORMATO BRASILEIRO
+        # Informações do relatório
         pdf.set_font('Arial', '', 10)
         pdf.cell(0, 10, f'Gerado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
         if session['usuario'][4] == 'admin':
@@ -1658,27 +1686,33 @@ def relatorio_emprestimos():
             pdf.cell(0, 10, f'Usuário: {session["usuario"][1]}', 0, 1)
         pdf.ln(5)
 
-        # Tabela de empréstimos
+        # Cabeçalhos da tabela - COM ALINHAMENTO CORRETO
         pdf.set_font('Arial', 'B', 10)
         col_widths = [40, 30, 30, 30, 30, 20]
 
-        # Cabeçalho da tabela
         headers = ['Cliente', 'Valor Total', 'Parcela', 'Parcelas Rest.', 'Data Contrato', 'Status']
-        for i, header in enumerate(headers):
-            pdf.cell(col_widths[i], 10, header, 1, 0, 'C')
+
+        # Desenhar cabeçalhos com alinhamento específico
+        pdf.cell(col_widths[0], 10, headers[0], 1, 0, 'C')  # Cliente - Centralizado
+        pdf.cell(col_widths[1], 10, headers[1], 1, 0, 'R')  # Valor Total - Direita ✅
+        pdf.cell(col_widths[2], 10, headers[2], 1, 0, 'R')  # Parcela - Direita ✅
+        pdf.cell(col_widths[3], 10, headers[3], 1, 0, 'C')  # Parcelas Rest. - Centralizado
+        pdf.cell(col_widths[4], 10, headers[4], 1, 0, 'C')  # Data Contrato - Centralizado
+        pdf.cell(col_widths[5], 10, headers[5], 1, 0, 'C')  # Status - Centralizado
         pdf.ln()
 
-        # Dados dos empréstimos
+        # Dados da tabela
         pdf.set_font('Arial', '', 8)
         total_emprestimos = 0
 
         for emp in emprestimos:
-            nome = emp[0][:15] + '...' if len(emp[0]) > 15 else emp[0]
+            nome = emp[0]
+            nome = nome[:15] + '...' if len(nome) > 15 else nome
             valor_total = float(emp[1])
             parcela = float(emp[2])
             parcelas_rest = int(emp[3])
 
-            # Formatar data no padrão brasileiro
+            # Formatar data
             data_contrato = emp[4]
             if data_contrato:
                 if isinstance(data_contrato, str):
@@ -1692,24 +1726,25 @@ def relatorio_emprestimos():
             else:
                 data_formatada = "N/A"
 
-            status = emp[5]
+            status = emp[5].capitalize()
             total_emprestimos += valor_total
 
-            pdf.cell(col_widths[0], 8, nome, 1)
-            pdf.cell(col_widths[1], 8, f'R$ {valor_total:.2f}', 1)
-            pdf.cell(col_widths[2], 8, f'R$ {parcela:.2f}', 1)
-            pdf.cell(col_widths[3], 8, str(parcelas_rest), 1)
-            pdf.cell(col_widths[4], 8, data_formatada, 1)
-            pdf.cell(col_widths[5], 8, status, 1)
+            # Dados com mesmo alinhamento dos cabeçalhos
+            pdf.cell(col_widths[0], 8, nome, 1, 0, 'C')
+            pdf.cell(col_widths[1], 8, f'R$ {valor_total:.2f}', 1, 0, 'R')
+            pdf.cell(col_widths[2], 8, f'R$ {parcela:.2f}', 1, 0, 'R')
+            pdf.cell(col_widths[3], 8, str(parcelas_rest), 1, 0, 'C')
+            pdf.cell(col_widths[4], 8, data_formatada, 1, 0, 'C')
+            pdf.cell(col_widths[5], 8, status, 1, 0, 'C')
             pdf.ln()
 
-        # Totais
+        # Rodapé com totais
         pdf.ln(5)
         pdf.set_font('Arial', 'B', 10)
         pdf.cell(0, 10, f'Total de Empréstimos: R$ {total_emprestimos:.2f}', 0, 1)
         pdf.cell(0, 10, f'Total de Registros: {len(emprestimos)}', 0, 1)
 
-        # Salvar e retornar o PDF
+        # Salvar e retornar
         filename = f"relatorio_emprestimos_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         pdf.output(f"uploads/{filename}")
 
@@ -1746,8 +1781,6 @@ def relatorio_transacoes():
         transacoes = cursor.fetchall()
 
         saldo = 0
-
-        # Calcular saldo
         for transacao in transacoes:
             valor = float(transacao[1])
             if transacao[0].lower() == 'receita':
@@ -1755,19 +1788,16 @@ def relatorio_transacoes():
             else:
                 saldo -= valor
 
-        # Criar PDF
         pdf = FPDF()
         pdf.add_page()
 
-        # Cabeçalho
+        # Cabeçalho do relatório
         pdf.set_font('Arial', 'B', 16)
         pdf.cell(0, 10, 'Relatório de Transações - Looma', 0, 1, 'C')
         pdf.ln(5)
 
-        # Informações do período - FORMATO BRASILEIRO
+        # Informações do relatório
         pdf.set_font('Arial', '', 10)
-
-        # Converter datas para formato brasileiro
         data_inicio_br = datetime.strptime(data_inicio, '%Y-%m-%d').strftime('%d/%m/%Y')
         data_fim_br = datetime.strptime(data_fim, '%Y-%m-%d').strftime('%d/%m/%Y')
 
@@ -1776,7 +1806,7 @@ def relatorio_transacoes():
         pdf.cell(0, 10, f'Gerado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
         pdf.ln(5)
 
-        # Apenas o saldo (removido totais de receitas e despesas)
+        # Saldo e total
         pdf.set_font('Arial', 'B', 12)
         pdf.cell(0, 10, f'Saldo no período: R$ {saldo:.2f}', 0, 1)
         pdf.cell(0, 10, f'Total de Transações: {len(transacoes)}', 0, 1)
@@ -1784,24 +1814,33 @@ def relatorio_transacoes():
 
         # Tabela de transações
         if transacoes:
+            # Cabeçalhos da tabela - COM ALINHAMENTO CORRETO
             pdf.set_font('Arial', 'B', 10)
             col_widths = [25, 30, 60, 40, 25]
 
-            # Cabeçalho da tabela
             headers = ['Tipo', 'Valor', 'Descrição', 'Data', 'Categoria']
-            for i, header in enumerate(headers):
-                pdf.cell(col_widths[i], 10, header, 1, 0, 'C')
+
+            # Desenhar cabeçalhos com alinhamento específico
+            pdf.cell(col_widths[0], 10, headers[0], 1, 0, 'C')  # Tipo - Centralizado
+            pdf.cell(col_widths[1], 10, headers[1], 1, 0, 'R')  # Valor - Direita ✅
+            pdf.cell(col_widths[2], 10, headers[2], 1, 0, 'L')  # Descrição - Esquerda
+            pdf.cell(col_widths[3], 10, headers[3], 1, 0, 'C')  # Data - Centralizado
+            pdf.cell(col_widths[4], 10, headers[4], 1, 0, 'C')  # Categoria - Centralizado
             pdf.ln()
 
-            # Dados das transações
+            # Dados da tabela
             pdf.set_font('Arial', '', 8)
 
             for trans in transacoes:
-                tipo = trans[0]
+                tipo = trans[0].capitalize()
                 valor = float(trans[1])
-                descricao = trans[2][:25] + '...' if len(trans[2]) > 25 else trans[2]
 
-                # Formatar data no padrão brasileiro
+                descricao = trans[2]
+                if descricao:
+                    descricao = descricao.capitalize()
+                descricao = descricao[:25] + '...' if len(descricao) > 200 else descricao
+
+                # Formatar data
                 data_trans = trans[3]
                 if data_trans:
                     if isinstance(data_trans, str):
@@ -1816,18 +1855,20 @@ def relatorio_transacoes():
                     data_formatada = "N/A"
 
                 categoria = trans[4] if trans[4] else 'Outros'
+                categoria = categoria.capitalize()
 
-                pdf.cell(col_widths[0], 8, tipo.capitalize(), 1)
-                pdf.cell(col_widths[1], 8, f'R$ {valor:.2f}', 1)
-                pdf.cell(col_widths[2], 8, descricao, 1)
-                pdf.cell(col_widths[3], 8, data_formatada, 1)
-                pdf.cell(col_widths[4], 8, categoria, 1)
+                # Dados com mesmo alinhamento dos cabeçalhos
+                pdf.cell(col_widths[0], 8, tipo, 1, 0, 'C')
+                pdf.cell(col_widths[1], 8, f'R$ {valor:.2f}', 1, 0, 'R')
+                pdf.cell(col_widths[2], 8, descricao, 1, 0, 'L')
+                pdf.cell(col_widths[3], 8, data_formatada, 1, 0, 'C')
+                pdf.cell(col_widths[4], 8, categoria, 1, 0, 'C')
                 pdf.ln()
         else:
             pdf.set_font('Arial', 'I', 12)
             pdf.cell(0, 10, 'Nenhuma transação encontrada para o período selecionado.', 0, 1, 'C')
 
-        # Salvar e retornar o PDF
+        # Salvar e retornar
         filename = f'relatorio_transacoes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
         pdf.output(f"uploads/{filename}")
 
@@ -1838,6 +1879,7 @@ def relatorio_transacoes():
         return redirect(url_for('relatorios'))
     finally:
         cursor.close()
+
 
 # Executa a aplicação Flask em modo de desenvolvimento
 # Verifica se o script está sendo executado diretamente (não importado).

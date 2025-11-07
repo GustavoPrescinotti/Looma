@@ -61,13 +61,16 @@
                 <div class="transacao-card-linha">
                     <span class="transacao-card-label">Tipo:</span>
                     <span
-                        class="transacao-card-value {% if transacao[1] == 'Receita' %}receita{% else %}despesa{% endif %}">
-                        {{ transacao[1] }}
+                        class="transacao-card-value {% if transacao[1].lower() == 'receita' %}receita{% else %}despesa{% endif %}">
+                        <!-- CORREÇÃO: Primeira letra maiúscula -->
+                        {{ transacao[1].capitalize() }}
                     </span>
                 </div>
                 <div class="transacao-card-linha">
                     <span class="transacao-card-label">Valor:</span>
-                    <span class="transacao-card-value">R$ {{ '%.2f'|format(transacao[2]) }}</span>
+                    <span class="transacao-card-value {% if transacao[1].lower() == 'receita' %}valor-receita{% else %}valor-despesa{% endif %}">
+                        R$ {{ '%.2f'|format(transacao[2]) }}
+                    </span>
                 </div>
                 <div class="transacao-card-linha">
                     <span class="transacao-card-label">Descrição:</span>
@@ -100,12 +103,12 @@
             {% endfor %}
             {% else %}
             <div class="empty-state">
-
                 <h3>Nenhuma transação cadastrada</h3>
-
             </div>
             {% endif %}
         </div>
     </main>
 </div>
+
+
 {% endblock %}

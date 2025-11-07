@@ -65,6 +65,9 @@ body {
     height: auto;
 }
 
+
+
+
 .sidebar .nav-button a {
     color: inherit;
     display: block;
@@ -1880,4 +1883,4 @@ body {
         flex-direction: column !important;
         height: 100% !important;
     }
-  
+

@@ -39,13 +39,14 @@
                         <div class="select-wrap">
                             <select class="input select" id="tipo" name="tipo" required>
                                 <option value="Receita" selected>Receita</option>
-                                <option value="Despesa">Despesa</option>
+
                             </select>
                         </div>
                     </div>
                     <div class="field">
                         <label class="label" for="valor">Valor:</label>
                         <input class="input" id="valor" name="valor" type="text" inputmode="decimal"
+                             oninput="this.value = this.value.replace(/[^0-9.-]/g, '').slice(0, 14);"
                             placeholder="R$ 0,00" required>
                     </div>
                     <div class="field">
