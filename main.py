@@ -858,6 +858,7 @@ def confirmar_emprestimo():
 
     return redirect(url_for('dashboard'))
 
+
 @app.route('/app/simulacao/criar', methods=['GET', 'POST'])
 def nova_simulacao():
     if 'usuario' not in session:
@@ -978,8 +979,20 @@ def nova_simulacao():
 
         # **VERIFICAÇÃO DA PARCELA vs LIMITE**
         if PMT > limite_parcela_mensal:
-            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}). "
-                  f"Reduza o valor ou aumente o prazo do empréstimo.", "error")
+            # Calcular comprometimento para determinar o risco
+            comprometimento = (PMT / renda_liquida_atual) * 100 if renda_liquida_atual > 0 else 0
+
+            # Determinar nível de risco
+            if comprometimento < 20:
+                risco = "Baixo"
+            elif comprometimento <= 35:
+                risco = "Médio"
+            else:
+                risco = "Alto"
+
+            # MENSAGEM ATUALIZADA COM INFORMAÇÃO DO RISCO
+            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}) "
+                  f" e seu risco está {risco}. Reduza o valor ou aumente o prazo do empréstimo.", "error")
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
@@ -1018,7 +1031,6 @@ def nova_simulacao():
                                current_date=current_date)
     finally:
         cursor.close()
-
 
 # Define a rota para '/app/simulacao/criar'.
 @app.route('/app/simulacao/resultado')
@@ -1881,8 +1893,7 @@ def relatorio_transacoes():
         cursor.close()
 
 
-# Executa a aplicação Flask em modo de desenvolvimento
-# Verifica se o script está sendo executado diretamente (não importado).
+
 if __name__ == '__main__':
     criar_admin_fixo()
     # Inicia o servidor de desenvolvimento do Flask com o modo de depuração ativado.
