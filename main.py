@@ -20,7 +20,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-07-11\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-Lais-Corrijir\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -393,14 +393,14 @@ def dashboard():
                 elif tipo.lower() == 'despesa':
                     total_despesas += valor
 
-            # CORREÇÃO: Renda líquida REAL (sem incluir empréstimos como receita)
+
             renda_liquida_real = total_receitas - total_despesas
 
-            # CORREÇÃO: Cálculo do limite - usar 35% e tratar valores negativos
+
             if renda_liquida_real <= 0:
                 limite_emprestimo = 0
             else:
-                # Usar 35% para ser consistente com a simulação
+
                 limite_emprestimo = renda_liquida_real * 0.35
 
 
@@ -478,7 +478,7 @@ def dashboard():
             }
 
             return render_template('dashboard_usuario.html',
-                                   total_receitas=total_receitas,  # Receitas reais (sem empréstimos)
+                                   total_receitas=total_receitas,
                                    total_despesas=total_despesas_com_parcelas,  # Despesas + parcelas
                                    renda_liquida=renda_liquida_final,  # Renda líquida final
                                    limite_emprestimo=limite_emprestimo,  # Limite baseado na renda real
