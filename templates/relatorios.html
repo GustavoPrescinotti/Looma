@@ -19,7 +19,6 @@
         <section>
 
             <div class="cards cards--summary" style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
-                <!-- Relatório de Empréstimos -->
                 <article class="card card--blue" style="max-width: 400px; flex: 1 1 300px;">
                     <h4 class="card__title">Relatório de Empréstimos</h4>
                     <p class="card__value card__value--xl">
@@ -43,7 +42,8 @@
                     </a>
                 </article>
 
-                <!-- Relatório de Transações por Período -->
+                {% if session['usuario'][4] != 'admin' %}
+
                 <article class="card card--white" style="max-width: 400px; flex:  1 300px;">
                     <h4 class="card__title">Relatório de Transações</h4>
                     <p class="card__value card__value--xl">Por Período</p>
@@ -65,6 +65,9 @@
                         </button>
                     </form>
                 </article>
+
+                {% endif %}
+
             </div>
         </section>
     </div>
