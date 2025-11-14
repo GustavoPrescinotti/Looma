@@ -20,11 +20,11 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma\Looma\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-14-11\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
-password = 'sysdba'
+password = 'masterkey'
 
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -258,7 +258,7 @@ def login():
     # Redireciona o usuário de volta para a página de login em caso de falha.
     return redirect(url_for('login'))
 # Define a rota '/auth/cadastro' que aceita métodos GET e POST.
-@app.route('/auth/cadastro', methods=['GET', 'POST'])
+@app.route('/auth/cadastro', methods=['GET', 'POST']) #sprint
 def cadastro():
     if 'usuario' in session:
         return redirect(url_for('dashboard'))
@@ -736,7 +736,7 @@ def taxas():
     return render_template('tabelaJuro.html', taxas=todastaxas)
 
 
-@app.route('/confirmar_emprestimo', methods=['POST'])
+@app.route('/confirmar_emprestimo', methods=['POST']) #sprint
 def confirmar_emprestimo():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1033,7 +1033,7 @@ def nova_simulacao():
         cursor.close()
 
 # Define a rota para '/app/simulacao/criar'.
-@app.route('/app/simulacao/resultado')
+@app.route('/app/simulacao/resultado') #sprint
 def resultado_simulacao():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1186,7 +1186,7 @@ def nova_receita():
 
 
 # Define a rota '/perfil', que aceita os métodos GET e POST.
-@app.route('/perfil', methods=['GET', 'POST'])
+@app.route('/perfil', methods=['GET', 'POST']) #perfil
 def perfil():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1573,7 +1573,7 @@ def admin_reset_attempts(user_id):
     # Redireciona para a lista de usuários.
     return redirect(url_for("admin_users"))
 
-@app.route("/simulacao/criar", methods=['POST'])
+@app.route("/simulacao/criar", methods=['POST']) #sprint
 def simular():
     if not 'usuario' in session:
         return redirect(url_for('login'))
@@ -1644,7 +1644,7 @@ def emprestimos_por_mes():
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route('/app/relatorios')
+@app.route('/app/relatorios') #sprint
 def relatorios():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1652,7 +1652,7 @@ def relatorios():
     return render_template('relatorios.html')
 
 
-@app.route('/app/relatorios/emprestimos')
+@app.route('/app/relatorios/emprestimos') #sprint
 def relatorio_emprestimos():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1769,7 +1769,7 @@ def relatorio_emprestimos():
         cursor.close()
 
 
-@app.route('/app/relatorios/transacoes', methods=['POST'])
+@app.route('/app/relatorios/transacoes', methods=['POST']) #spirnt
 def relatorio_transacoes():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
