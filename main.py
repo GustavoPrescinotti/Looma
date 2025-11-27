@@ -1009,25 +1009,28 @@ def nova_simulacao():
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
-        # Cálculo da parcela
-        i = float(taxa[0]) / 100
-        PV = valor
-        n = prazo
+        # **CORREÇÃO DEFINITIVA DA FÓRMULA**
+        i = float(taxa[0]) / 100  # Taxa mensal em decimal
+        PV = valor  # Valor presente (valor do empréstimo)
+        n = prazo  # Número de parcelas
 
+        # Fórmula correta do sistema price (parcelas fixas)
         if i == 0:
             PMT = PV / n
         else:
-            PMT = PV * i / (1 - (1 + i) ** -n)
+            # Fórmula: PMT = PV * i / (1 - (1 + i)^-n)
+            PMT = (PV * i) / (1 - (1 + i) ** -n)
 
         total_pagar = PMT * n
         juros_total = total_pagar - PV
         lucro_mensal = juros_total / n
 
-        # Calcular renda líquida atual (sem parcelas futuras)
+        # **BUSCAR LIMITE REAL DO DASHBOARD**
         cursor.execute("""
             SELECT TIPO, VALOR, DESCRICAO 
             FROM TRANSACOES 
             WHERE ID_USUARIO = ?
+            AND (DESCRICAO NOT LIKE '%Parcela%empréstimo%' AND DESCRICAO NOT LIKE '%Parcela%do empréstimo%')
         """, (id_usuario,))
         transacoes = cursor.fetchall()
 
@@ -1037,24 +1040,20 @@ def nova_simulacao():
         for transacao in transacoes:
             tipo = transacao[0]
             valor_transacao = float(transacao[1])
-            descricao = transacao[2].lower() if transacao[2] else ""
 
-            # Ignorar parcelas de empréstimo no cálculo das despesas normais
-            if 'parcela de empréstimo' not in descricao:
-                if tipo.lower() == 'receita':
-                    total_receitas += valor_transacao
-                elif tipo.lower() == 'despesa':
-                    total_despesas_atual += valor_transacao
+            if tipo.lower() == 'receita':
+                total_receitas += valor_transacao
+            elif tipo.lower() == 'despesa':
+                total_despesas_atual += valor_transacao
 
-        # Calcular renda líquida atual
         renda_liquida_atual = total_receitas - total_despesas_atual
 
-        # **NOVA LÓGICA: Limite baseado na parcela mensal (35% da renda líquida)**
+        # **LIMITE CORRETO (35% da renda líquida)**
         limite_parcela_mensal = renda_liquida_atual * 0.35
         if limite_parcela_mensal < 0:
             limite_parcela_mensal = 0
 
-        # **VERIFICAÇÃO DA PARCELA vs LIMITE**
+        # **VERIFICAÇÃO CORRETA DA PARCELA vs LIMITE**
         if PMT > limite_parcela_mensal:
             # Calcular comprometimento para determinar o risco
             comprometimento = (PMT / renda_liquida_atual) * 100 if renda_liquida_atual > 0 else 0
@@ -1067,9 +1066,8 @@ def nova_simulacao():
             else:
                 risco = "Alto"
 
-            # MENSAGEM ATUALIZADA COM INFORMAÇÃO DO RISCO
-            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}) "
-                  f" e seu risco está {risco}. Reduza o valor ou aumente o prazo do empréstimo.", "error")
+            # **MENSAGEM CORRIGIDA - MOSTRANDO VALORES REAIS**
+            flash(f"Parcela mensal calculada: R$ {PMT:,.2f} excede seu limite: R$ {limite_parcela_mensal:,.2f} e seu risco está {risco}. Reduza o valor ou aumente o prazo do empréstimo. ", "error")
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
@@ -1096,7 +1094,7 @@ def nova_simulacao():
             'lucro': lucro_mensal,
             'comprometimento': comprometimento,
             'risco': risco,
-            'limite_parcela': limite_parcela_mensal,  # Adicionar o limite para exibir
+            'limite_parcela': limite_parcela_mensal,
             'data_criacao': datetime.now().strftime('%d/%m/%Y')
         }
 
