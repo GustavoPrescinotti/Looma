@@ -564,10 +564,11 @@ body {
 
 /* NOVO: Modificador para alinhar campos na horizontal (ex: checkbox) */
 .field {
-    display: block;  /* Muda a direção para horizontal */
-    align-items: center;   /* Alinha verticalmente ao centro */
-    gap: 3rem; /* Adiciona um espaço entre o label e o input */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
+
     .quadrato{
         height: 30px;
         width: 30px;
@@ -690,7 +691,6 @@ body {
 
 .btn-lg {
     min-width: 14.9rem;
-
     width: 100%;
     height: 65px;
     border-radius: 9px;
@@ -709,6 +709,9 @@ body {
     border: none;
     margin-top: 2rem;
 }
+.btn-primary.btn-lg:hover{
+    background-color: var(--primary);
+}
 
 
 
@@ -724,10 +727,8 @@ body {
 .btn-outline.btn-lg:hover,
 .btn-outline-strong:hover {
     background: var(--looma-blue-primary);
-    color: var(--looma-white);
     transform: translateY(-2px);
 }
-
 .resultado-cards {
     display: flex;
     flex-direction: column;
@@ -738,7 +739,6 @@ body {
     justify-content: flex-start;
     max-width: 720px;
 }
-
 .resultado-card {
     background: hsl(var(--looma-blue));
     color: #fff;
@@ -901,6 +901,12 @@ body {
     transform-origin: center;
     white-space: nowrap;
 }
+.cards--summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 por linha no PC */
+    gap: 20px;
+}
+
 
 .main-content .cards {
     display: grid;
@@ -963,8 +969,9 @@ body {
 }
 
 .main-content .cards--summary {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
 }
+
 
 .main-content .cards--loans {
     grid-template-columns: repeat(3, 1fr);
@@ -983,6 +990,7 @@ body {
     background: #fff;
     border: 1px solid #e0e0e0;
     transition: box-shadow 0.2s;
+    
 }
 
 .main-content .card--white {
@@ -1886,3 +1894,4 @@ body {
         height: 100% !important;
     }
 
+}

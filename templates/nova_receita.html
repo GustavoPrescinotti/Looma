@@ -39,7 +39,6 @@
                         <div class="select-wrap">
                             <select class="input select" id="tipo" name="tipo" required>
                                 <option value="Receita" selected>Receita</option>
-
                             </select>
                         </div>
                     </div>
@@ -59,10 +58,11 @@
                         <div class="select-wrap">
                             <select class="input select" id="classificacao" name="classificacao" required>
                                 <option value="">Selecione...</option>
-                                <option value="Fixa">Fixa</option>
-                                <option value="Variável">Variável</option>
+                                <option value="Fixa">Fixa (Repete mensalmente)</option>
+                                <option value="Variável">Variável (Apenas uma vez)</option>
                             </select>
                         </div>
+                    </div>
                     <div class="actions-row">
                         <button type="submit" class="btn btn--primary">Adicionar</button>
                         <a href="{{ url_for('transacoes') }}" class="btn btn--outline">Cancelar</a>

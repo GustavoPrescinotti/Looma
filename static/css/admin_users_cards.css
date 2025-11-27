@@ -149,8 +149,8 @@ body {
 
 /* Container principal das mensagens flash */
 .flash-messages-container {
-    width: 90%; /* Ocupa toda a largura disponível */
-    margin-bottom: 4.5rem; /* Espaço abaixo do container */
+    width: 100%; /* Ocupa toda a largura disponível */
+    margin-bottom: 2.5rem; /* Espaço abaixo do container */
     display: flex; /* Ativa o Flexbox */
     flex-direction: column; /* Organiza as mensagens em coluna */
     gap: 0.75rem; /* Espaço entre múltiplas mensagens */
@@ -473,7 +473,7 @@ body {
 }
 
 .btn-primary:hover {
-    background-color: #395ff9;
+    background-color: white;
 }
 
 .btn-secondary {
@@ -504,7 +504,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
     gap: 20px;
-    padding: px;
+    
     height: 475px;
     overflow-y: scroll;
 }

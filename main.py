@@ -7,6 +7,7 @@ from datetime import datetime, date
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
 from fpdf import FPDF
+from flask_mail import Mail, Message
 # Importa a biblioteca fdb para conectar com o banco de dados Firebird.
 import fdb
 
@@ -20,7 +21,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-apresentacao-igor\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-correcao\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -29,6 +30,17 @@ password = 'masterkey'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 20 * 1000 * 1000
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'loomasistema@gmail.com' # O seu e-mail
+app.config['MAIL_PASSWORD'] = 'hmmghiewzrhpraus'     # Gere uma senha de app no Google
+app.config['MAIL_DEFAULT_SENDER'] = 'loomasistema@gmail.com'
+
+mail = Mail(app)
+
+
+
 
 
 
@@ -73,6 +85,20 @@ def criar_admin_fixo():
         print(f"Erro ao criar admin: {e}")
     finally:
         cursor.close()
+
+
+def verificar_tipo_usuario():
+    """Verifica se o usuário é do tipo correto para a rota"""
+    if 'usuario' not in session:
+        flash("Você precisa fazer login para acessar esta página.", "error")
+        return redirect(url_for('login'))
+
+    # Se for admin tentando acessar rota de usuário comum
+    if session['usuario'][4] == 'admin':
+        flash("Acesso negado. Administradores não podem acessar esta funcionalidade.", "error")
+        return redirect(url_for('dashboard'))
+
+    return None
 
 
 def verificar_senha_forte(senha):
@@ -124,6 +150,45 @@ def verificar_senha_forte(senha):
 def index():
     # Retorna o conteúdo do arquivo 'index.html' renderizado para o navegador.
     return render_template('index.html')
+
+@app.route('/contato', methods=["GET", "POST"])
+def contato():
+    if request.method == "POST":
+        try:
+            # Captura dados do formulário
+            nome = request.form['name']  # Atenção: no HTML o name="name"
+            email_cliente = request.form['email']
+            telefone = request.form.get('phone', '')  # Telefone é opcional
+            mensagem_texto = request.form['message']  # Atenção: no HTML o name="message"
+
+            # Cria a mensagem de e-mail
+            msg = Message(subject=f"Looma - Contato de {nome}",
+                          recipients=['seu.email.para.receber@gmail.com'])  # Para onde vai o e-mail
+
+            # Corpo do e-mail
+            msg.body = f"""
+            Nova mensagem recebida pelo site:
+
+            Nome: {nome}
+            E-mail: {email_cliente}
+            Telefone: {telefone}
+
+            Mensagem:
+            {mensagem_texto}
+            """
+
+            # Envia
+            mail.send(msg)
+            flash("Mensagem enviada com sucesso! Entraremos em contacto em breve.", "success")
+
+        except Exception as e:
+            print(f"Erro ao enviar e-mail: {e}")
+            flash("Erro ao enviar e-mail. Tente pelo WhatsApp.", "error")
+
+        # Redireciona para o index, na secção de contacto
+        return redirect(url_for('index', _anchor='contato'))
+
+    return redirect(url_for('index'))
 
 
 # Define um decorador para a URL '/auth/login', aceitando os métodos GET e POST.
@@ -334,40 +399,49 @@ def dashboard():
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
 
-    cursor = con.cursor()
-    try:
-        usuario = session.get('usuario')
-
-        if usuario is None or len(usuario) < 10:
-            user_id = usuario[0] if usuario and len(usuario) > 0 else None
-
-            if user_id:
-                cursor.execute(
-                    "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone, foto FROM usuario WHERE id_usuario = ?",
-                    (user_id,))
-                usuario_completo = cursor.fetchone()
-            else:
-                flash("Sessão inválida. Faça login novamente.", "error")
-                session.pop('usuario', None)
-                return redirect(url_for('login'))
-
-            if usuario_completo:
-                usuario_list = list(usuario_completo)
-                if not usuario_list[9] or usuario_list[9] == 'None':
-                    usuario_list[9] = 'default.png'
-                session['usuario'] = tuple(usuario_list)
-                usuario = session['usuario']
-            else:
-                flash("Erro ao carregar dados do usuário. Faça login novamente.", "error")
-                session.pop('usuario', None)
-                return redirect(url_for('login'))
-
-        if usuario[4] == 'admin':
+    # Se for admin, mostra o dashboard do admin
+    if session['usuario'][4] == 'admin':
+        cursor = con.cursor()
+        try:
             cursor.execute("SELECT COUNT(*) FROM usuario WHERE ativo = ?", (1,))
             usuariosAtivos = cursor.fetchone()
             total_usuarios_ativos = usuariosAtivos[0] if usuariosAtivos else 0
             return render_template('dashboard_admin.html', total_usuarios=total_usuarios_ativos)
-        else:
+        except Exception as e:
+            flash(f"Erro ao carregar dashboard: {e}", "error")
+            return redirect(url_for('login'))
+        finally:
+            cursor.close()
+    else:
+        # Se for usuário comum, mostra o dashboard do usuário
+        cursor = con.cursor()
+        try:
+            usuario = session.get('usuario')
+
+            if usuario is None or len(usuario) < 10:
+                user_id = usuario[0] if usuario and len(usuario) > 0 else None
+
+                if user_id:
+                    cursor.execute(
+                        "SELECT id_usuario, nome, email, senha, tipo, tentativas, cpf, ativo, telefone, foto FROM usuario WHERE id_usuario = ?",
+                        (user_id,))
+                    usuario_completo = cursor.fetchone()
+                else:
+                    flash("Sessão inválida. Faça login novamente.", "error")
+                    session.pop('usuario', None)
+                    return redirect(url_for('login'))
+
+                if usuario_completo:
+                    usuario_list = list(usuario_completo)
+                    if not usuario_list[9] or usuario_list[9] == 'None':
+                        usuario_list[9] = 'default.png'
+                    session['usuario'] = tuple(usuario_list)
+                    usuario = session['usuario']
+                else:
+                    flash("Erro ao carregar dados do usuário. Faça login novamente.", "error")
+                    session.pop('usuario', None)
+                    return redirect(url_for('login'))
+
             id_usuario = usuario[0]
 
             # CORREÇÃO: Buscar transações EXCLUINDO parcelas de empréstimo para cálculo da renda real
@@ -393,17 +467,12 @@ def dashboard():
                 elif tipo.lower() == 'despesa':
                     total_despesas += valor
 
-
             renda_liquida_real = total_receitas - total_despesas
-
 
             if renda_liquida_real <= 0:
                 limite_emprestimo = 0
             else:
-
                 limite_emprestimo = renda_liquida_real * 0.35
-
-
 
             # Buscar TODOS os empréstimos ativos do usuário
             cursor.execute("""
@@ -485,13 +554,13 @@ def dashboard():
                                    emprestimos=emprestimos,
                                    valor_emprestimos=valor_total_emprestimos  # Valor total dos empréstimos
                                    )
-    except Exception as e:
-        flash(f"Erro ao carregar dashboard: {e}", "error")
-        print(f"ERRO DETALHADO: {str(e)}")
-        session.pop('usuario', None)
-        return redirect(url_for('login'))
-    finally:
-        cursor.close()
+        except Exception as e:
+            flash(f"Erro ao carregar dashboard: {e}", "error")
+            print(f"ERRO DETALHADO: {str(e)}")
+            session.pop('usuario', None)
+            return redirect(url_for('login'))
+        finally:
+            cursor.close()
 # Define a rota para '/logout'.
 @app.route('/logout')
 # Define a função 'logout' para encerrar a sessão do usuário.
@@ -742,6 +811,10 @@ def confirmar_emprestimo():
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
 
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
+
     simulacao = session.get('simulacao_resultado')
     if not simulacao:
         flash("Nenhuma simulação encontrada. Por favor, faça uma simulação primeiro.", "error")
@@ -865,6 +938,10 @@ def nova_simulacao():
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
 
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
+
     cursor = con.cursor()
     cursor.execute("""
         SELECT DISTINCT u.NOME
@@ -946,12 +1023,11 @@ def nova_simulacao():
         juros_total = total_pagar - PV
         lucro_mensal = juros_total / n
 
-        # **CORREÇÃO MÍNIMA: Usar a mesma lógica do dashboard para calcular renda líquida**
+        # Calcular renda líquida atual (sem parcelas futuras)
         cursor.execute("""
             SELECT TIPO, VALOR, DESCRICAO 
             FROM TRANSACOES 
             WHERE ID_USUARIO = ?
-            AND (DESCRICAO NOT LIKE '%Parcela%empréstimo%' AND DESCRICAO NOT LIKE '%Parcela%do empréstimo%')
         """, (id_usuario,))
         transacoes = cursor.fetchall()
 
@@ -961,16 +1037,19 @@ def nova_simulacao():
         for transacao in transacoes:
             tipo = transacao[0]
             valor_transacao = float(transacao[1])
+            descricao = transacao[2].lower() if transacao[2] else ""
 
-            if tipo.lower() == 'receita':
-                total_receitas += valor_transacao
-            elif tipo.lower() == 'despesa':
-                total_despesas_atual += valor_transacao
+            # Ignorar parcelas de empréstimo no cálculo das despesas normais
+            if 'parcela de empréstimo' not in descricao:
+                if tipo.lower() == 'receita':
+                    total_receitas += valor_transacao
+                elif tipo.lower() == 'despesa':
+                    total_despesas_atual += valor_transacao
 
-        # **CORREÇÃO MÍNIMA: Calcular renda líquida igual ao dashboard**
+        # Calcular renda líquida atual
         renda_liquida_atual = total_receitas - total_despesas_atual
 
-        # **CORREÇÃO MÍNIMA: Limite baseado na renda líquida REAL (35%)**
+        # **NOVA LÓGICA: Limite baseado na parcela mensal (35% da renda líquida)**
         limite_parcela_mensal = renda_liquida_atual * 0.35
         if limite_parcela_mensal < 0:
             limite_parcela_mensal = 0
@@ -988,9 +1067,9 @@ def nova_simulacao():
             else:
                 risco = "Alto"
 
-            # MENSAGEM CLARA
-            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}). "
-                  f"Risco: {risco}. Reduza o valor ou aumente o prazo do empréstimo.", "error")
+            # MENSAGEM ATUALIZADA COM INFORMAÇÃO DO RISCO
+            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}) "
+                  f" e seu risco está {risco}. Reduza o valor ou aumente o prazo do empréstimo.", "error")
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
@@ -1017,7 +1096,7 @@ def nova_simulacao():
             'lucro': lucro_mensal,
             'comprometimento': comprometimento,
             'risco': risco,
-            'limite_parcela': limite_parcela_mensal,
+            'limite_parcela': limite_parcela_mensal,  # Adicionar o limite para exibir
             'data_criacao': datetime.now().strftime('%d/%m/%Y')
         }
 
@@ -1031,11 +1110,15 @@ def nova_simulacao():
         cursor.close()
 
 # Define a rota para '/app/simulacao/criar'.
-@app.route('/app/simulacao/resultado')
+@app.route('/app/simulacao/resultado') #sprint
 def resultado_simulacao():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
+
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
 
     simulacao = session.get('simulacao_resultado')
 
@@ -1054,8 +1137,8 @@ def resultado_simulacao():
                            comprometimento=simulacao['comprometimento'],
                            risco=simulacao['risco'],
                            limite_parcela=simulacao['limite_parcela'],
-                           data_criacao=simulacao['data_criacao'],
-                           taxa_juros=simulacao.get('taxa_juros', 0))  # Adicionar taxa para debug
+                           data_criacao=simulacao['data_criacao'])
+
 # Define a rota para '/app/transacoes'.
 # Define a rota '/app/transacoes' para acessar a página de transações
 @app.route('/app/transacoes')
@@ -1063,6 +1146,9 @@ def transacoes():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
 
     id_usuario = session['usuario'][0]
     cursor = con.cursor()
@@ -1123,6 +1209,10 @@ def nova_receita():
         # Redireciona para a página de login
         return redirect(url_for('login'))
 
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
+
     # Verifica se a requisição é do tipo POST (envio de formulário)
     if request.method == 'POST':
         # Obtém o ID do usuário da sessão (primeira posição do array)
@@ -1136,6 +1226,9 @@ def nova_receita():
         # Obtém a descrição do formulário
         descricao = request.form['descricao']
         classificacao = request.form['classificacao']
+
+        # NOVO: Verificar se é transação fixa
+        eh_fixa = True if classificacao == 'Fixa' else False
 
         # Tenta converter o valor para float e validá-lo
         try:
@@ -1158,17 +1251,28 @@ def nova_receita():
             # Formata a data para o padrão ISO (banco de dados)
             data_formatada = data_obj.strftime('%Y-%m-%d')
 
+            # VALIDAÇÃO: Verificar se a data não é anterior ao dia atual
+            data_hoje = datetime.now().date()
+            if data_obj.date() < data_hoje:
+                flash("Não é permitido cadastrar receitas com data retroativa.", "error")
+                return redirect(url_for('nova_receita'))
+
             # Cria cursor para executar queries no banco
             cursor = con.cursor()
             # Executa query para inserir nova transação na tabela
             cursor.execute("""
-                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO)
-                VALUES (?, ?, ?, ?, ?,?)
-            """, (id_usuario, tipo, valor, descricao, data_formatada, classificacao))
+                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO, EH_FIXA)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (id_usuario, tipo, valor, descricao, data_formatada, classificacao, eh_fixa))
             # Confirma a transação no banco de dados
             con.commit()
-            # Exibe mensagem de sucesso para o usuário
-            flash("Receita cadastrada com sucesso!", "success")
+
+            # Mensagem personalizada baseada no tipo de transação
+            if eh_fixa:
+                flash("Receita fixa cadastrada com sucesso! Ela será repetida mensalmente nos relatórios.", "success")
+            else:
+                flash("Receita cadastrada com sucesso!", "success")
+
             # Redireciona para a página de transações após sucesso
             return redirect(url_for('transacoes'))
         except Exception as e:
@@ -1275,6 +1379,10 @@ def nova_despesa():
         # Redireciona para a página de login
         return redirect(url_for('login'))
 
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
+
     # Verifica se a requisição é do tipo POST (envio de formulário)
     if request.method == 'POST':
         # Obtém o ID do usuário da sessão (primeira posição do array)
@@ -1288,6 +1396,9 @@ def nova_despesa():
         # Obtém a descrição da despesa do formulário
         descricao = request.form['descricao']
         classificacao = request.form['classificacao']
+
+        # NOVO: Verificar se é transação fixa
+        eh_fixa = True if classificacao == 'Fixa' else False
 
         # Tenta converter o valor para float e validá-lo
         try:
@@ -1310,17 +1421,28 @@ def nova_despesa():
             # Formata a data para o padrão ISO (banco de dados)
             data_formatada = data_obj.strftime('%Y-%m-%d')
 
+            # VALIDAÇÃO: Verificar se a data não é anterior ao dia atual
+            data_hoje = datetime.now().date()
+            if data_obj.date() < data_hoje:
+                flash("Não é permitido cadastrar despesas com data retroativa.", "error")
+                return redirect(url_for('nova_despesa'))
+
             # Cria cursor para executar queries no banco
             cursor = con.cursor()
             # Executa query para inserir nova transação na tabela TRANSACOES
             cursor.execute("""
-                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO)
-                VALUES (?, ?, ?, ?, ?,?)
-            """, (id_usuario, tipo, valor, descricao, data_formatada, classificacao))
+                INSERT INTO TRANSACOES (ID_USUARIO, TIPO, VALOR, DESCRICAO, DATA_TRANSACAO, CLASSIFICACAO, EH_FIXA)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (id_usuario, tipo, valor, descricao, data_formatada, classificacao, eh_fixa))
             # Confirma a transação no banco de dados
             con.commit()
-            # Exibe mensagem de sucesso para o usuário
-            flash("Despesa cadastrada com sucesso!", "success")
+
+            # Mensagem personalizada baseada no tipo de transação
+            if eh_fixa:
+                flash("Despesa fixa cadastrada com sucesso! Ela será repetida mensalmente nos relatórios.", "success")
+            else:
+                flash("Despesa cadastrada com sucesso!", "success")
+
             # Redireciona para a página de transações após sucesso
             return redirect(url_for('transacoes'))
         except Exception as e:
@@ -1335,7 +1457,6 @@ def nova_despesa():
     # (para requisições GET ou se houve erro no POST)
     return render_template('nova_despesa.html')
 
-
 # Define a rota '/editar_transacao/<int:id_transacao>' que aceita GET e POST
 # O <int:id_transacao> captura um parâmetro inteiro da URL
 @app.route('/editar_transacao/<int:id_transacao>', methods=['GET', 'POST'])
@@ -1343,6 +1464,10 @@ def editar_transacao(id_transacao):
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
         return redirect(url_for('login'))
+
+    resultado = verificar_tipo_usuario()
+    if resultado:
+        return resultado
 
     id_usuario = session['usuario'][0]
     cursor = con.cursor()
@@ -1454,7 +1579,7 @@ def admin_users():
     # Inicia um bloco de tratamento de erros.
     try:
         # Executa uma consulta para selecionar todos os usuários.
-        cursor.execute("SELECT id_usuario, nome, email, tipo, tentativas, ativo, cpf, telefone FROM usuario")
+        cursor.execute("SELECT id_usuario, nome, email, tipo, tentativas, ativo, cpf, telefone FROM usuario ORDER BY id_usuario ASC")
         # Armazena todos os resultados da consulta na lista.
         all_users = cursor.fetchall()
     # Se ocorrer um erro na consulta.
@@ -1767,7 +1892,7 @@ def relatorio_emprestimos():
         cursor.close()
 
 
-@app.route('/app/relatorios/transacoes', methods=['POST']) #spirnt
+@app.route('/app/relatorios/transacoes', methods=['POST'])
 def relatorio_transacoes():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1781,23 +1906,89 @@ def relatorio_transacoes():
     try:
         id_usuario = session['usuario'][0]
 
+        # Buscar todas as transações do usuário
         cursor.execute("""
-            SELECT tipo, valor, descricao, data_transacao, classificacao
+            SELECT tipo, valor, descricao, data_transacao, classificacao, eh_fixa
             FROM transacoes
-            WHERE id_usuario = ? AND data_transacao BETWEEN ? AND ?
+            WHERE id_usuario = ? 
             ORDER BY data_transacao DESC
-        """, (id_usuario, data_inicio, data_fim))
+        """, (id_usuario,))
 
-        transacoes = cursor.fetchall()
+        todas_transacoes = cursor.fetchall()
 
-        saldo = 0
-        for transacao in transacoes:
-            valor = float(transacao[1])
-            if transacao[0].lower() == 'receita':
-                saldo += valor
+        # Converter datas para objetos date (apenas a parte da data, sem hora)
+        data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+        data_fim_obj = datetime.strptime(data_fim, '%Y-%m-%d').date()
+
+        # Lista para armazenar todas as transações do período (incluindo as fixas replicadas)
+        transacoes_periodo = []
+
+        for transacao in todas_transacoes:
+            tipo, valor, descricao, data_transacao, classificacao, eh_fixa = transacao
+
+            # Converter data da transação para objeto date
+            if isinstance(data_transacao, str):
+                data_trans_obj = datetime.strptime(data_transacao.split()[0], '%Y-%m-%d').date()
             else:
-                saldo -= valor
+                data_trans_obj = data_transacao.date() if hasattr(data_transacao, 'date') else data_transacao
 
+            valor_float = float(valor)
+            eh_fixa_bool = bool(eh_fixa)
+
+            if eh_fixa_bool:
+                # Para transação fixa: replicar para cada mês dentro do período
+                data_atual = data_trans_obj
+
+                # Enquanto a data atual estiver dentro do período
+                while data_atual <= data_fim_obj:
+                    if data_atual >= data_inicio_obj:
+                        # Adicionar cópia da transação para este mês
+                        transacoes_periodo.append({
+                            'tipo': tipo,
+                            'valor': valor_float,
+                            'descricao': f"{descricao} (Fixa - {data_atual.strftime('%m/%Y')})",
+                            'data_transacao': data_atual,
+                            'classificacao': classificacao,
+                            'eh_fixa': True
+                        })
+
+                    # Avançar para o próximo mês
+                    if data_atual.month == 12:
+                        data_atual = data_atual.replace(year=data_atual.year + 1, month=1)
+                    else:
+                        data_atual = data_atual.replace(month=data_atual.month + 1)
+
+                    # Garantir que ainda é um objeto date
+                    if not isinstance(data_atual, date):
+                        data_atual = data_atual.date() if hasattr(data_atual, 'date') else data_atual
+
+            else:
+                # Para transação variável: só adicionar se estiver dentro do período
+                if data_inicio_obj <= data_trans_obj <= data_fim_obj:
+                    transacoes_periodo.append({
+                        'tipo': tipo,
+                        'valor': valor_float,
+                        'descricao': descricao,
+                        'data_transacao': data_trans_obj,
+                        'classificacao': classificacao,
+                        'eh_fixa': False
+                    })
+
+        # Ordenar transações por data (convertendo para datetime para ordenação)
+        transacoes_periodo.sort(
+            key=lambda x: datetime.combine(x['data_transacao'], datetime.min.time()) if isinstance(x['data_transacao'],
+                                                                                                   date) else x[
+                'data_transacao'], reverse=True)
+
+        # Calcular saldo
+        saldo = 0
+        for transacao in transacoes_periodo:
+            if transacao['tipo'].lower() == 'receita':
+                saldo += transacao['valor']
+            else:
+                saldo -= transacao['valor']
+
+        # Gerar PDF
         pdf = FPDF()
         pdf.add_page()
 
@@ -1808,8 +1999,8 @@ def relatorio_transacoes():
 
         # Informações do relatório
         pdf.set_font('Arial', '', 10)
-        data_inicio_br = datetime.strptime(data_inicio, '%Y-%m-%d').strftime('%d/%m/%Y')
-        data_fim_br = datetime.strptime(data_fim, '%Y-%m-%d').strftime('%d/%m/%Y')
+        data_inicio_br = data_inicio_obj.strftime('%d/%m/%Y')
+        data_fim_br = data_fim_obj.strftime('%d/%m/%Y')
 
         pdf.cell(0, 10, f'Período: {data_inicio_br} a {data_fim_br}', 0, 1)
         pdf.cell(0, 10, f'Usuário: {session["usuario"][1]}', 0, 1)
@@ -1819,60 +2010,54 @@ def relatorio_transacoes():
         # Saldo e total
         pdf.set_font('Arial', 'B', 12)
         pdf.cell(0, 10, f'Saldo no período: R$ {saldo:.2f}', 0, 1)
-        pdf.cell(0, 10, f'Total de Transações: {len(transacoes)}', 0, 1)
+        pdf.cell(0, 10, f'Total de Transações: {len(transacoes_periodo)}', 0, 1)
         pdf.ln(5)
 
         # Tabela de transações
-        if transacoes:
-            # Cabeçalhos da tabela - COM ALINHAMENTO CORRETO
+        if transacoes_periodo:
+            # Cabeçalhos da tabela
             pdf.set_font('Arial', 'B', 10)
-            col_widths = [25, 30, 60, 40, 25]
+            col_widths = [25, 30, 60, 40, 25, 20]
 
-            headers = ['Tipo', 'Valor', 'Descrição', 'Data', 'Categoria']
+            headers = ['Tipo', 'Valor', 'Descrição', 'Data', 'Categoria', 'Fixa']
 
-            # Desenhar cabeçalhos com alinhamento específico
-            pdf.cell(col_widths[0], 10, headers[0], 1, 0, 'C')  # Tipo - Centralizado
-            pdf.cell(col_widths[1], 10, headers[1], 1, 0, 'R')  # Valor - Direita ✅
-            pdf.cell(col_widths[2], 10, headers[2], 1, 0, 'L')  # Descrição - Esquerda
-            pdf.cell(col_widths[3], 10, headers[3], 1, 0, 'C')  # Data - Centralizado
-            pdf.cell(col_widths[4], 10, headers[4], 1, 0, 'C')  # Categoria - Centralizado
+            # Desenhar cabeçalhos
+            pdf.cell(col_widths[0], 10, headers[0], 1, 0, 'C')
+            pdf.cell(col_widths[1], 10, headers[1], 1, 0, 'R')
+            pdf.cell(col_widths[2], 10, headers[2], 1, 0, 'L')
+            pdf.cell(col_widths[3], 10, headers[3], 1, 0, 'C')
+            pdf.cell(col_widths[4], 10, headers[4], 1, 0, 'C')
+            pdf.cell(col_widths[5], 10, headers[5], 1, 0, 'C')
             pdf.ln()
 
             # Dados da tabela
             pdf.set_font('Arial', '', 8)
 
-            for trans in transacoes:
-                tipo = trans[0].capitalize()
-                valor = float(trans[1])
+            for trans in transacoes_periodo:
+                tipo = trans['tipo'].capitalize()
+                valor = trans['valor']
+                descricao = trans['descricao']
 
-                descricao = trans[2]
-                if descricao:
-                    descricao = descricao.capitalize()
-                descricao = descricao[:25] + '...' if len(descricao) > 200 else descricao
-
-                # Formatar data
-                data_trans = trans[3]
-                if data_trans:
-                    if isinstance(data_trans, str):
-                        try:
-                            data_obj = datetime.strptime(data_trans.split()[0], '%Y-%m-%d')
-                            data_formatada = data_obj.strftime('%d/%m/%Y')
-                        except:
-                            data_formatada = "Data inválida"
-                    else:
-                        data_formatada = data_trans.strftime('%d/%m/%Y')
+                # Formatar data para exibição
+                data_trans = trans['data_transacao']
+                if isinstance(data_trans, date):
+                    data_formatada = data_trans.strftime('%d/%m/%Y')
                 else:
-                    data_formatada = "N/A"
+                    data_formatada = "Data inválida"
 
-                categoria = trans[4] if trans[4] else 'Outros'
+                categoria = trans['classificacao'] if trans['classificacao'] else 'Outros'
                 categoria = categoria.capitalize()
+                fixa = 'Sim' if trans['eh_fixa'] else 'Não'
 
-                # Dados com mesmo alinhamento dos cabeçalhos
+                # Truncar descrição se for muito longa
+                descricao = descricao[:25] + '...' if len(descricao) > 25 else descricao
+
                 pdf.cell(col_widths[0], 8, tipo, 1, 0, 'C')
                 pdf.cell(col_widths[1], 8, f'R$ {valor:.2f}', 1, 0, 'R')
                 pdf.cell(col_widths[2], 8, descricao, 1, 0, 'L')
                 pdf.cell(col_widths[3], 8, data_formatada, 1, 0, 'C')
                 pdf.cell(col_widths[4], 8, categoria, 1, 0, 'C')
+                pdf.cell(col_widths[5], 8, fixa, 1, 0, 'C')
                 pdf.ln()
         else:
             pdf.set_font('Arial', 'I', 12)
@@ -1891,59 +2076,8 @@ def relatorio_transacoes():
         cursor.close()
 
 
-
 if __name__ == '__main__':
     criar_admin_fixo()
     # Inicia o servidor de desenvolvimento do Flask com o modo de depuração ativado.
     app.run(debug=True)
 
-### **Linguagem Python (Palavras-chave e Funções Nativas)**
-# `from`: Para importar partes de uma biblioteca.
-# `import`: Para importar uma biblioteca inteira.
-# `def`: Para definir uma função.
-# `if`, `elif`, `else`: Para criar blocos de condição.
-# `for`: Para criar laços de repetição.
-# `in`: Usado em laços `for` e para verificar se um item existe em uma lista, string ou dicionário (como `if 'usuario' in session`).
-# `try`, `except`, `finally`: Para tratamento de erros e exceções.
-# `return`: Para retornar um valor de uma função.
-# `len()`: Para obter o tamanho de uma string ou lista.
-# `True`, `False`: Valores booleanos.
-# `not`: Operador lógico de negação.
-# `and`: Operador lógico "E".
-# `is`: Para verificar identidade (usado em `char.isupper()`, `char.islower()`, `char.isdigit()`).
-
-### **Framework Flask**
-# `Flask()`: Para criar a instância da sua aplicação web.
-# `@app.route()`: Decorador para definir as URLs (rotas) da aplicação.
-# `app.run()`: Para iniciar o servidor de desenvolvimento.
-# `app.secret_key`: Para configurar a chave secreta da sessão.
-# `render_template()`: Para carregar e exibir um arquivo HTML.
-# `redirect()`: Para redirecionar o usuário para outra URL.
-# `url_for()`: Para gerar URLs dinamicamente a partir do nome da função da rota.
-# `session`: Objeto para armazenar informações do usuário entre requisições (login).
-# `request`: Objeto que contém as informações da requisição do usuário (como dados de formulário com `request.form`).
-# `flash()`: Para exibir mensagens temporárias para o usuário (alertas de sucesso ou erro).
-
-# **Biblioteca Flask-Bcrypt (Segurança de Senha)**
-# `generate_password_hash()`: Para criptografar (gerar o hash) de uma senha.
-# `check_password_hash()`: Para comparar uma senha em texto puro com uma senha criptografada.
-
-# **Biblioteca FDB (Banco de Dados Firebird)**
-# `fdb.connect()`: Para estabelecer a conexão com o banco de dados.
-# `con.cursor()`: Para criar um objeto cursor que executa os comandos SQL.
-# `con.commit()`: Para salvar (confirmar) as alterações feitas no banco de dados.
-# `cursor.execute()`: Para executar um comando SQL.
-# `cursor.fetchone()`: Para buscar apenas um resultado da sua consulta SQL.
-# `cursor.fetchall()`: Para buscar todos os resultados da sua consulta SQL.
-# `cursor.close()`: Para fechar o cursor e liberar recursos.
-
-### **Biblioteca Datetime (Datas e Horas)**
-# `date.today()`: Para obter a data atual.
-
-# **Comandos SQL (dentro de strings)**
-# `SELECT`: Para consultar dados.
-# `INSERT INTO`: Para inserir novos registros.
-# `UPDATE`: Para atualizar registros existentes.
-# `DELETE FROM`: Para apagar registros.
-# `WHERE`: Para filtrar os registros em uma consulta.
-# `INNER JOIN`: Para combinar tabelas com base em uma coluna em comum.i{% extends 'templateDashboard.html' %}

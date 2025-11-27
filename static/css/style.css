@@ -901,7 +901,8 @@ footer {
 
 /* Container principal das mensagens flash */
 .flash-messages-container {
-    width: 100%; /* Ocupa toda a largura disponível */
+    width: 70%;
+     /* Ocupa toda a largura disponível */
     margin-bottom: 1.5rem; /* Espaço abaixo do container */
     display: flex; /* Ativa o Flexbox */
     flex-direction: column; /* Organiza as mensagens em coluna */
