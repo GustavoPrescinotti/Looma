@@ -20,7 +20,7 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-14-11\Looma.FDB'
+database = r'C:\Users\Aluno\Desktop\Looma-apresentacao-igor\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
@@ -946,11 +946,12 @@ def nova_simulacao():
         juros_total = total_pagar - PV
         lucro_mensal = juros_total / n
 
-        # Calcular renda líquida atual (sem parcelas futuras)
+        # **CORREÇÃO MÍNIMA: Usar a mesma lógica do dashboard para calcular renda líquida**
         cursor.execute("""
             SELECT TIPO, VALOR, DESCRICAO 
             FROM TRANSACOES 
             WHERE ID_USUARIO = ?
+            AND (DESCRICAO NOT LIKE '%Parcela%empréstimo%' AND DESCRICAO NOT LIKE '%Parcela%do empréstimo%')
         """, (id_usuario,))
         transacoes = cursor.fetchall()
 
@@ -960,19 +961,16 @@ def nova_simulacao():
         for transacao in transacoes:
             tipo = transacao[0]
             valor_transacao = float(transacao[1])
-            descricao = transacao[2].lower() if transacao[2] else ""
 
-            # Ignorar parcelas de empréstimo no cálculo das despesas normais
-            if 'parcela de empréstimo' not in descricao:
-                if tipo.lower() == 'receita':
-                    total_receitas += valor_transacao
-                elif tipo.lower() == 'despesa':
-                    total_despesas_atual += valor_transacao
+            if tipo.lower() == 'receita':
+                total_receitas += valor_transacao
+            elif tipo.lower() == 'despesa':
+                total_despesas_atual += valor_transacao
 
-        # Calcular renda líquida atual
+        # **CORREÇÃO MÍNIMA: Calcular renda líquida igual ao dashboard**
         renda_liquida_atual = total_receitas - total_despesas_atual
 
-        # **NOVA LÓGICA: Limite baseado na parcela mensal (35% da renda líquida)**
+        # **CORREÇÃO MÍNIMA: Limite baseado na renda líquida REAL (35%)**
         limite_parcela_mensal = renda_liquida_atual * 0.35
         if limite_parcela_mensal < 0:
             limite_parcela_mensal = 0
@@ -990,9 +988,9 @@ def nova_simulacao():
             else:
                 risco = "Alto"
 
-            # MENSAGEM ATUALIZADA COM INFORMAÇÃO DO RISCO
-            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}) "
-                  f" e seu risco está {risco}. Reduza o valor ou aumente o prazo do empréstimo.", "error")
+            # MENSAGEM CLARA
+            flash(f"Parcela mensal (R$ {PMT:.2f}) excede seu limite permitido (R$ {limite_parcela_mensal:.2f}). "
+                  f"Risco: {risco}. Reduza o valor ou aumente o prazo do empréstimo.", "error")
             return render_template('nova_simulacao.html', admins=admins, current_year=current_year,
                                    current_date=current_date)
 
@@ -1019,7 +1017,7 @@ def nova_simulacao():
             'lucro': lucro_mensal,
             'comprometimento': comprometimento,
             'risco': risco,
-            'limite_parcela': limite_parcela_mensal,  # Adicionar o limite para exibir
+            'limite_parcela': limite_parcela_mensal,
             'data_criacao': datetime.now().strftime('%d/%m/%Y')
         }
 
@@ -1033,7 +1031,7 @@ def nova_simulacao():
         cursor.close()
 
 # Define a rota para '/app/simulacao/criar'.
-@app.route('/app/simulacao/resultado') #sprint
+@app.route('/app/simulacao/resultado')
 def resultado_simulacao():
     if 'usuario' not in session:
         flash("Você precisa fazer login para acessar esta página.", "error")
@@ -1056,8 +1054,8 @@ def resultado_simulacao():
                            comprometimento=simulacao['comprometimento'],
                            risco=simulacao['risco'],
                            limite_parcela=simulacao['limite_parcela'],
-                           data_criacao=simulacao['data_criacao'])
-
+                           data_criacao=simulacao['data_criacao'],
+                           taxa_juros=simulacao.get('taxa_juros', 0))  # Adicionar taxa para debug
 # Define a rota para '/app/transacoes'.
 # Define a rota '/app/transacoes' para acessar a página de transações
 @app.route('/app/transacoes')
