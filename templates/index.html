@@ -69,7 +69,7 @@
 
     <section id="contato" class="secao-contato">
         <!-- Container de mensagens flash adicionado aqui -->
-        <div class="flash-messages-container">
+        <div class="messages-container">
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             {% for category, message in messages %}

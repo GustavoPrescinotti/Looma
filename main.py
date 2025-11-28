@@ -21,11 +21,11 @@ app.secret_key = 'IgorELaisMeDeemNota'
 # Define o endereço do servidor do banco de dados.
 host = 'localhost'
 # Define o caminho para o arquivo do banco de dados Firebird.
-database = r'C:\Users\Aluno\Desktop\Looma-correcao\Looma.FDB'
+database = r'C:\Users\Aluno\Downloads\Looma.FDB'
 # Define o nome de usuário para a conexão com o banco de dados.
 user = 'sysdba'
 # Define a senha para a conexão com o banco de dados.
-password = 'masterkey'
+password = 'sysdba'
 
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -1773,118 +1773,176 @@ def relatorios():
     return render_template('relatorios.html')
 
 
-@app.route('/app/relatorios/emprestimos') #sprint
+# --- ADICIONE ESTA CLASSE ANTES DAS ROTAS DE RELATÓRIO ---
+
+class PDFPersonalizado(FPDF):
+    def header(self):
+        # Logo (Caminho, x, y, largura)
+        # Ajuste o caminho conforme necessário. Se der erro, use o caminho completo (r'C:\...')
+        try:
+            self.image('static/img/Logo_pdf.png', 10, 9, 33)
+        except:
+            pass  # Se não achar a logo, segue sem ela
+
+        # Fonte Arial Bold 15
+        self.set_font('Arial', 'B', 15)
+        # Move para a direita
+        self.cell(80)
+        # Título
+        self.set_text_color(44, 62, 80)  # Cor Azul Escuro (RGB)
+        self.cell(30, 10, 'Relatório de Empréstimos', 0, 0, 'C')
+        # Quebra de linha
+        self.ln(35)
+
+        # Linha divisória colorida
+
+
+
+    def footer(self):
+        # Posiciona a 1.5 cm do fim da página
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.set_text_color(128, 128, 128)  # Cinza
+        # Número da página
+        self.cell(0, 10, 'Página ' + str(self.page_no()) + '/{nb}', 0, 0, 'C')
+
+
+# --- ATUALIZE A SUA ROTA DE EMPRÉSTIMOS ---
+
+@app.route('/app/relatorios/emprestimos', methods=['GET', 'POST'])
 def relatorio_emprestimos():
     if 'usuario' not in session:
-        flash("Você precisa fazer login para acessar esta página.", "error")
+        flash("Faça login.", "error")
         return redirect(url_for('login'))
 
+    # Configuração de Datas (Padrão: Ano Atual)
+    if request.method == 'GET':
+        ano = datetime.now().year
+        data_inicio = f"{ano}-01-01"
+        data_fim = f"{ano}-12-31"
+    else:
+        data_inicio = request.form.get('data_inicio')
+        data_fim = request.form.get('data_fim')
+
     cursor = con.cursor()
-
     try:
-        if session['usuario'][4] == 'admin':
-            cursor.execute("""
-                SELECT u.nome, e.valor_emprestimo, e.parcela_mensal, e.parcelas_restantes, 
-                       e.data_contratacao, e.status
-                FROM emprestimos e
-                JOIN usuario u ON e.id_usuario = u.id_usuario
-                ORDER BY e.data_contratacao DESC
-            """)
-        else:
-            cursor.execute("""
-                SELECT u.nome, e.valor_emprestimo, e.parcela_mensal, e.parcelas_restantes, 
-                       e.data_contratacao, e.status
-                FROM emprestimos e
-                JOIN usuario u ON e.id_usuario = u.id_usuario
-                WHERE e.id_usuario = ?
-                ORDER BY e.data_contratacao DESC
-            """, (session['usuario'][0],))
+        id_usuario = session['usuario'][0]
+        eh_admin = session['usuario'][4] == 'admin'
 
-        emprestimos = cursor.fetchall()
+        # Query para buscar parcelas de empréstimo dentro do período
+        # Filtra por CLASSIFICACAO='Empréstimo' ou descricao contendo 'Parcela'
+        query = """
+            SELECT t.DATA_TRANSACAO, t.VALOR, t.DESCRICAO, u.NOME
+            FROM TRANSACOES t
+            JOIN USUARIO u ON t.ID_USUARIO = u.ID_USUARIO
+            WHERE (t.CLASSIFICACAO = 'Empréstimo' OR t.DESCRICAO LIKE '%Parcela%')
+            AND t.DATA_TRANSACAO BETWEEN ? AND ?
+        """
+        params = [data_inicio, data_fim]
 
-        pdf = FPDF()
+        if not eh_admin:
+            query += " AND t.ID_USUARIO = ?"
+            params.append(id_usuario)
+
+        query += " ORDER BY t.DATA_TRANSACAO ASC"
+
+        cursor.execute(query, tuple(params))
+        parcelas = cursor.fetchall()
+
+        # Agrupamento por Mês
+        dados_por_mes = {}
+        meses_nomes = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho',
+                       7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
+
+        total_geral = 0.0
+
+        for p in parcelas:
+            # Tratamento de data
+            dt_trans = p[0]
+            if isinstance(dt_trans, str): dt_trans = datetime.strptime(dt_trans.split()[0], '%Y-%m-%d')
+
+            # Chave: "Janeiro 2025"
+            chave = f"{meses_nomes[dt_trans.month]} {dt_trans.year}"
+
+            if chave not in dados_por_mes:
+                dados_por_mes[chave] = {'itens': [], 'total': 0.0}
+
+            valor = float(p[1])
+            dados_por_mes[chave]['itens'].append({
+                'data': dt_trans.strftime('%d/%m/%Y'),
+                'valor': valor,
+                'descricao': p[2],
+                'nome': p[3]
+            })
+            dados_por_mes[chave]['total'] += valor
+            total_geral += valor
+
+        # Geração do PDF
+        pdf = PDFPersonalizado()
+        pdf.alias_nb_pages()
         pdf.add_page()
 
-        # Cabeçalho do relatório
-        pdf.set_font('Arial', 'B', 16)
-        pdf.cell(0, 10, 'Relatório de Empréstimos - Looma', 0, 1, 'C')
-        pdf.ln(5)
-
-        # Informações do relatório
+        # Cabeçalho de Informações
         pdf.set_font('Arial', '', 10)
-        pdf.cell(0, 10, f'Gerado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
-        if session['usuario'][4] == 'admin':
-            pdf.cell(0, 10, 'Tipo: Relatório Geral (Todos os usuários)', 0, 1)
+        di_fmt = datetime.strptime(data_inicio, '%Y-%m-%d').strftime('%d/%m/%Y')
+        df_fmt = datetime.strptime(data_fim, '%Y-%m-%d').strftime('%d/%m/%Y')
+        pdf.cell(0, 6, f'Período: {di_fmt} até {df_fmt}', 0, 1)
+        pdf.cell(0, 6, f'Gerado por: {session["usuario"][1]}', 0, 1)
+        pdf.ln(5)
+
+        if not dados_por_mes:
+            pdf.set_font('Arial', 'I', 12)
+            pdf.cell(0, 10, 'Nenhuma parcela encontrada neste período.', 0, 1, 'C')
         else:
-            pdf.cell(0, 10, f'Usuário: {session["usuario"][1]}', 0, 1)
-        pdf.ln(5)
+            # Loop pelos meses
+            for mes_ano, dados in dados_por_mes.items():
+                qtd = len(dados['itens'])
 
-        # Cabeçalhos da tabela - COM ALINHAMENTO CORRETO
-        pdf.set_font('Arial', 'B', 10)
-        col_widths = [40, 30, 30, 30, 30, 20]
+                # Título do Mês (Destaque conforme pedido)
+                # Ex: "Janeiro 2025 - 3 parcelas - Total: R$ 500.00"
+                pdf.set_font('Arial', 'B', 12)
+                pdf.set_fill_color(52, 152, 219)  # Azul
+                pdf.set_text_color(255, 255, 255)  # Branco
+                titulo = f"{mes_ano} - {qtd} parcelas - Total: R$ {dados['total']:,.2f}"
+                pdf.cell(0, 8, titulo, 0, 1, 'L', True)
 
-        headers = ['Cliente', 'Valor Total', 'Parcela', 'Parcelas Rest.', 'Data Contrato', 'Status']
+                # Cabeçalho da Tabela
+                pdf.set_font('Arial', 'B', 9)
+                pdf.set_text_color(0, 0, 0)
+                pdf.set_fill_color(230, 230, 230)
 
-        # Desenhar cabeçalhos com alinhamento específico
-        pdf.cell(col_widths[0], 10, headers[0], 1, 0, 'C')  # Cliente - Centralizado
-        pdf.cell(col_widths[1], 10, headers[1], 1, 0, 'R')  # Valor Total - Direita ✅
-        pdf.cell(col_widths[2], 10, headers[2], 1, 0, 'R')  # Parcela - Direita ✅
-        pdf.cell(col_widths[3], 10, headers[3], 1, 0, 'C')  # Parcelas Rest. - Centralizado
-        pdf.cell(col_widths[4], 10, headers[4], 1, 0, 'C')  # Data Contrato - Centralizado
-        pdf.cell(col_widths[5], 10, headers[5], 1, 0, 'C')  # Status - Centralizado
-        pdf.ln()
+                # Larguras das colunas
+                cw = [30, 90, 40] if not eh_admin else [30, 70, 40, 20]  # Ajuste se for admin
 
-        # Dados da tabela
-        pdf.set_font('Arial', '', 8)
-        total_emprestimos = 0
+                pdf.cell(30, 6, 'Vencimento', 1, 0, 'C', True)
+                pdf.cell(90 if not eh_admin else 60, 6, 'Descrição', 1, 0, 'L', True)
+                if eh_admin: pdf.cell(50, 6, 'Cliente', 1, 0, 'L', True)
+                pdf.cell(0, 6, 'Valor', 1, 1, 'R', True)  # 0 vai até o fim da linha
 
-        for emp in emprestimos:
-            nome = emp[0]
-            nome = nome[:15] + '...' if len(nome) > 15 else nome
-            valor_total = float(emp[1])
-            parcela = float(emp[2])
-            parcelas_rest = int(emp[3])
+                # Linhas
+                pdf.set_font('Arial', '', 9)
+                for item in dados['itens']:
+                    pdf.cell(30, 6, item['data'], 1, 0, 'C')
+                    pdf.cell(90 if not eh_admin else 60, 6, item['descricao'][:40], 1, 0, 'L')
+                    if eh_admin: pdf.cell(50, 6, item['nome'][:25], 1, 0, 'L')
+                    pdf.cell(0, 6, f"R$ {item['valor']:,.2f}", 1, 1, 'R')
 
-            # Formatar data
-            data_contrato = emp[4]
-            if data_contrato:
-                if isinstance(data_contrato, str):
-                    try:
-                        data_obj = datetime.strptime(data_contrato.split()[0], '%Y-%m-%d')
-                        data_formatada = data_obj.strftime('%d/%m/%Y')
-                    except:
-                        data_formatada = "Data inválida"
-                else:
-                    data_formatada = data_contrato.strftime('%d/%m/%Y')
-            else:
-                data_formatada = "N/A"
+                pdf.ln(5)  # Espaço entre meses
 
-            status = emp[5].capitalize()
-            total_emprestimos += valor_total
+            # Total Geral
+            pdf.ln(5)
+            pdf.set_font('Arial', 'B', 12)
+            pdf.set_fill_color(44, 62, 80)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(0, 10, f"TOTAL GERAL: R$ {total_geral:,.2f}", 0, 1, 'R', True)
 
-            # Dados com mesmo alinhamento dos cabeçalhos
-            pdf.cell(col_widths[0], 8, nome, 1, 0, 'C')
-            pdf.cell(col_widths[1], 8, f'R$ {valor_total:.2f}', 1, 0, 'R')
-            pdf.cell(col_widths[2], 8, f'R$ {parcela:.2f}', 1, 0, 'R')
-            pdf.cell(col_widths[3], 8, str(parcelas_rest), 1, 0, 'C')
-            pdf.cell(col_widths[4], 8, data_formatada, 1, 0, 'C')
-            pdf.cell(col_widths[5], 8, status, 1, 0, 'C')
-            pdf.ln()
-
-        # Rodapé com totais
-        pdf.ln(5)
-        pdf.set_font('Arial', 'B', 10)
-        pdf.cell(0, 10, f'Total de Empréstimos: R$ {total_emprestimos:.2f}', 0, 1)
-        pdf.cell(0, 10, f'Total de Registros: {len(emprestimos)}', 0, 1)
-
-        # Salvar e retornar
-        filename = f"relatorio_emprestimos_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        filename = f"fluxo_emprestimos_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
         pdf.output(f"uploads/{filename}")
-
         return send_from_directory('uploads', filename, as_attachment=True)
 
     except Exception as e:
         flash(f"Erro ao gerar relatório: {e}", "error")
+        print(f"ERRO PDF: {e}")
         return redirect(url_for('relatorios'))
     finally:
         cursor.close()
@@ -1904,176 +1962,227 @@ def relatorio_transacoes():
     try:
         id_usuario = session['usuario'][0]
 
-        # Buscar todas as transações do usuário
-        cursor.execute("""
-            SELECT tipo, valor, descricao, data_transacao, classificacao, eh_fixa
-            FROM transacoes
-            WHERE id_usuario = ? 
-            ORDER BY data_transacao DESC
-        """, (id_usuario,))
+        # 1. Busca transações no banco
+        try:
+            cursor.execute("""
+                SELECT tipo, valor, descricao, data_transacao, classificacao, eh_fixa
+                FROM transacoes
+                WHERE id_usuario = ? 
+                ORDER BY data_transacao ASC
+            """, (id_usuario,))
+        except fdb.DatabaseError as db_err:
+            if "Column unknown" in str(db_err):
+                cursor.execute("""
+                    SELECT tipo, valor, descricao, data_transacao, classificacao, 0
+                    FROM transacoes
+                    WHERE id_usuario = ? 
+                    ORDER BY data_transacao ASC
+                """, (id_usuario,))
+            else:
+                raise db_err
 
         todas_transacoes = cursor.fetchall()
 
-        # Converter datas para objetos date (apenas a parte da data, sem hora)
+        # 2. Processamento: Expandir Fixas e Filtrar por Data
         data_inicio_obj = datetime.strptime(data_inicio, '%Y-%m-%d').date()
         data_fim_obj = datetime.strptime(data_fim, '%Y-%m-%d').date()
 
-        # Lista para armazenar todas as transações do período (incluindo as fixas replicadas)
-        transacoes_periodo = []
+        transacoes_finais = []
 
         for transacao in todas_transacoes:
             tipo, valor, descricao, data_transacao, classificacao, eh_fixa = transacao
 
-            # Converter data da transação para objeto date
+            # Garante que é objeto date
             if isinstance(data_transacao, str):
-                data_trans_obj = datetime.strptime(data_transacao.split()[0], '%Y-%m-%d').date()
+                data_base = datetime.strptime(data_transacao.split()[0], '%Y-%m-%d').date()
             else:
-                data_trans_obj = data_transacao.date() if hasattr(data_transacao, 'date') else data_transacao
+                data_base = data_transacao.date() if hasattr(data_transacao, 'date') else data_transacao
 
             valor_float = float(valor)
             eh_fixa_bool = bool(eh_fixa)
 
             if eh_fixa_bool:
-                # Para transação fixa: replicar para cada mês dentro do período
-                data_atual = data_trans_obj
+                # Lógica para REPETIR transações fixas (Salário, Aluguel, etc) mês a mês
+                data_atual = data_base
 
-                # Enquanto a data atual estiver dentro do período
+                # Avança a data até chegar perto do inicio selecionado para não processar anos passados desnecessariamente
+                while data_atual < data_inicio_obj:
+                    # Avança um mês
+                    mes = data_atual.month
+                    ano = data_atual.year
+                    if mes == 12:
+                        mes = 1
+                        ano += 1
+                    else:
+                        mes += 1
+                    try:
+                        data_atual = date(ano, mes, data_atual.day)
+                    except ValueError:
+                        data_atual = date(ano, mes, 28)
+
+                # Agora adiciona enquanto estiver dentro do prazo final
                 while data_atual <= data_fim_obj:
                     if data_atual >= data_inicio_obj:
-                        # Adicionar cópia da transação para este mês
-                        transacoes_periodo.append({
+                        transacoes_finais.append({
                             'tipo': tipo,
                             'valor': valor_float,
-                            'descricao': f"{descricao} (Fixa - {data_atual.strftime('%m/%Y')})",
-                            'data_transacao': data_atual,
-                            'classificacao': classificacao,
-                            'eh_fixa': True
+                            'descricao': f"{descricao} (Fixo)",
+                            'data': data_atual,
+                            'classificacao': classificacao
                         })
 
-                    # Avançar para o próximo mês
-                    if data_atual.month == 12:
-                        data_atual = data_atual.replace(year=data_atual.year + 1, month=1)
+                    # Avança um mês para a próxima iteração
+                    mes = data_atual.month
+                    ano = data_atual.year
+                    if mes == 12:
+                        mes = 1
+                        ano += 1
                     else:
-                        data_atual = data_atual.replace(month=data_atual.month + 1)
-
-                    # Garantir que ainda é um objeto date
-                    if not isinstance(data_atual, date):
-                        data_atual = data_atual.date() if hasattr(data_atual, 'date') else data_atual
+                        mes += 1
+                    try:
+                        data_atual = date(ano, mes, data_atual.day)
+                    except ValueError:
+                        data_atual = date(ano, mes, 28)
 
             else:
-                # Para transação variável: só adicionar se estiver dentro do período
-                if data_inicio_obj <= data_trans_obj <= data_fim_obj:
-                    transacoes_periodo.append({
+                # Transações normais (incluindo parcelas de empréstimo já lançadas individualmente no banco)
+                if data_inicio_obj <= data_base <= data_fim_obj:
+                    transacoes_finais.append({
                         'tipo': tipo,
                         'valor': valor_float,
                         'descricao': descricao,
-                        'data_transacao': data_trans_obj,
-                        'classificacao': classificacao,
-                        'eh_fixa': False
+                        'data': data_base,
+                        'classificacao': classificacao
                     })
 
-        # Ordenar transações por data (convertendo para datetime para ordenação)
-        transacoes_periodo.sort(
-            key=lambda x: datetime.combine(x['data_transacao'], datetime.min.time()) if isinstance(x['data_transacao'],
-                                                                                                   date) else x[
-                'data_transacao'], reverse=True)
+        # 3. Agrupamento por Mês (Igual ao Relatório de Empréstimos)
+        # Ordena por data para garantir a ordem cronológica
+        transacoes_finais.sort(key=lambda x: x['data'])
 
-        # Calcular saldo
-        saldo = 0
-        for transacao in transacoes_periodo:
-            if transacao['tipo'].lower() == 'receita':
-                saldo += transacao['valor']
-            else:
-                saldo -= transacao['valor']
+        dados_por_mes = {}
+        meses_nomes = {1: 'Janeiro', 2: 'Fevereiro', 3: 'Março', 4: 'Abril', 5: 'Maio', 6: 'Junho',
+                       7: 'Julho', 8: 'Agosto', 9: 'Setembro', 10: 'Outubro', 11: 'Novembro', 12: 'Dezembro'}
 
-        # Gerar PDF
-        pdf = FPDF()
+        saldo_geral_periodo = 0.0
+
+        for item in transacoes_finais:
+            dt = item['data']
+            chave_mes = f"{meses_nomes[dt.month]} {dt.year}"
+
+            # Calcula impacto no saldo
+            val = item['valor']
+            if item['tipo'].lower() == 'despesa':
+                val = -val
+
+            saldo_geral_periodo += val
+
+            if chave_mes not in dados_por_mes:
+                dados_por_mes[chave_mes] = {'itens': [], 'saldo_mensal': 0.0}
+
+            dados_por_mes[chave_mes]['itens'].append(item)
+            dados_por_mes[chave_mes]['saldo_mensal'] += val
+
+        # ==============================================================================
+        # GERAÇÃO DO PDF (Visual Agrupado por Mês)
+        # ==============================================================================
+
+        pdf = PDFPersonalizado()
+        pdf.alias_nb_pages()
         pdf.add_page()
 
-        # Cabeçalho do relatório
-        pdf.set_font('Arial', 'B', 16)
-        pdf.cell(0, 10, 'Relatório de Transações - Looma', 0, 1, 'C')
-        pdf.ln(5)
-
-        # Informações do relatório
+        # Cabeçalho do Relatório
         pdf.set_font('Arial', '', 10)
-        data_inicio_br = data_inicio_obj.strftime('%d/%m/%Y')
-        data_fim_br = data_fim_obj.strftime('%d/%m/%Y')
+        di_fmt = data_inicio_obj.strftime('%d/%m/%Y')
+        df_fmt = data_fim_obj.strftime('%d/%m/%Y')
 
-        pdf.cell(0, 10, f'Período: {data_inicio_br} a {data_fim_br}', 0, 1)
-        pdf.cell(0, 10, f'Usuário: {session["usuario"][1]}', 0, 1)
-        pdf.cell(0, 10, f'Gerado em: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1)
+        pdf.cell(0, 6, f'Período: {di_fmt} a {df_fmt}', 0, 1)
+        pdf.cell(0, 6, f'Cliente: {session["usuario"][1]}', 0, 1)
         pdf.ln(5)
 
-        # Saldo e total
+        # Saldo Total do Período no topo
         pdf.set_font('Arial', 'B', 12)
-        pdf.cell(0, 10, f'Saldo no período: R$ {saldo:.2f}', 0, 1)
-        pdf.cell(0, 10, f'Total de Transações: {len(transacoes_periodo)}', 0, 1)
+        pdf.cell(40, 10, 'Saldo do Período: ', 0, 0)
+        if saldo_geral_periodo >= 0:
+            pdf.set_text_color(39, 174, 96)  # Verde
+        else:
+            pdf.set_text_color(192, 57, 43)  # Vermelho
+        pdf.cell(0, 10, f'R$ {saldo_geral_periodo:,.2f}', 0, 1)
+        pdf.set_text_color(0, 0, 0)
         pdf.ln(5)
 
-        # Tabela de transações
-        if transacoes_periodo:
-            # Cabeçalhos da tabela
-            pdf.set_font('Arial', 'B', 10)
-            col_widths = [25, 30, 60, 40, 25, 20]
-
-            headers = ['Tipo', 'Valor', 'Descrição', 'Data', 'Categoria', 'Fixa']
-
-            # Desenhar cabeçalhos
-            pdf.cell(col_widths[0], 10, headers[0], 1, 0, 'C')
-            pdf.cell(col_widths[1], 10, headers[1], 1, 0, 'R')
-            pdf.cell(col_widths[2], 10, headers[2], 1, 0, 'L')
-            pdf.cell(col_widths[3], 10, headers[3], 1, 0, 'C')
-            pdf.cell(col_widths[4], 10, headers[4], 1, 0, 'C')
-            pdf.cell(col_widths[5], 10, headers[5], 1, 0, 'C')
-            pdf.ln()
-
-            # Dados da tabela
-            pdf.set_font('Arial', '', 8)
-
-            for trans in transacoes_periodo:
-                tipo = trans['tipo'].capitalize()
-                valor = trans['valor']
-                descricao = trans['descricao']
-
-                # Formatar data para exibição
-                data_trans = trans['data_transacao']
-                if isinstance(data_trans, date):
-                    data_formatada = data_trans.strftime('%d/%m/%Y')
-                else:
-                    data_formatada = "Data inválida"
-
-                categoria = trans['classificacao'] if trans['classificacao'] else 'Outros'
-                categoria = categoria.capitalize()
-                fixa = 'Sim' if trans['eh_fixa'] else 'Não'
-
-                # Truncar descrição se for muito longa
-                descricao = descricao[:25] + '...' if len(descricao) > 25 else descricao
-
-                pdf.cell(col_widths[0], 8, tipo, 1, 0, 'C')
-                pdf.cell(col_widths[1], 8, f'R$ {valor:.2f}', 1, 0, 'R')
-                pdf.cell(col_widths[2], 8, descricao, 1, 0, 'L')
-                pdf.cell(col_widths[3], 8, data_formatada, 1, 0, 'C')
-                pdf.cell(col_widths[4], 8, categoria, 1, 0, 'C')
-                pdf.cell(col_widths[5], 8, fixa, 1, 0, 'C')
-                pdf.ln()
-        else:
+        if not dados_por_mes:
             pdf.set_font('Arial', 'I', 12)
-            pdf.cell(0, 10, 'Nenhuma transação encontrada para o período selecionado.', 0, 1, 'C')
+            pdf.cell(0, 10, 'Nenhuma transação encontrada neste período.', 0, 1, 'C')
+        else:
+            # Loop pelos Meses (Janeiro, Fevereiro...)
+            for mes_ano, dados in dados_por_mes.items():
+                qtd = len(dados['itens'])
+                saldo_mes = dados['saldo_mensal']
 
-        # Salvar e retornar
+                # --- Cabeçalho do Mês (Azul) ---
+                pdf.set_font('Arial', 'B', 12)
+                pdf.set_fill_color(52, 152, 219)  # Azul
+                pdf.set_text_color(255, 255, 255)  # Branco
+
+                # Texto do título do mês (Ex: Janeiro 2025 - Saldo: R$ 500.00)
+                titulo = f"{mes_ano} - Saldo Mensal: R$ {saldo_mes:,.2f}"
+                pdf.cell(0, 8, titulo, 0, 1, 'L', True)
+
+                # --- Cabeçalho da Tabela ---
+                pdf.set_font('Arial', 'B', 9)
+                pdf.set_text_color(0, 0, 0)
+                pdf.set_fill_color(230, 230, 230)  # Cinza claro
+
+                # Larguras: Data, Tipo, Descrição, Valor
+                col_w = [25, 25, 110, 30]
+
+                pdf.cell(col_w[0], 6, 'Data', 1, 0, 'C', True)
+                pdf.cell(col_w[1], 6, 'Tipo', 1, 0, 'C', True)
+                pdf.cell(col_w[2], 6, 'Descrição', 1, 0, 'L', True)
+                pdf.cell(col_w[3], 6, 'Valor', 1, 1, 'R', True)
+
+                # --- Itens do Mês ---
+                pdf.set_font('Arial', '', 9)
+                fill = False  # Alternar cores
+
+                for item in dados['itens']:
+                    if fill:
+                        pdf.set_fill_color(245, 245, 245)
+                    else:
+                        pdf.set_fill_color(255, 255, 255)
+
+                    data_fmt = item['data'].strftime('%d/%m/%Y')
+                    tipo = item['tipo'].capitalize()
+
+                    # Cor do Texto do Tipo
+                    if tipo.lower() == 'receita':
+                        pdf.set_text_color(39, 174, 96)
+                    else:
+                        pdf.set_text_color(192, 57, 43)
+
+                    pdf.cell(col_w[0], 6, data_fmt, 1, 0, 'C', fill)
+                    pdf.cell(col_w[1], 6, tipo, 1, 0, 'C', fill)
+
+                    # Volta para preto para o resto
+                    pdf.set_text_color(0, 0, 0)
+                    pdf.cell(col_w[2], 6, item['descricao'][:55], 1, 0, 'L', fill)
+                    pdf.cell(col_w[3], 6, f"R$ {item['valor']:,.2f}", 1, 1, 'R', fill)
+
+                    fill = not fill
+
+                pdf.ln(5)  # Espaço entre os meses
+
         filename = f'relatorio_transacoes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
         pdf.output(f"uploads/{filename}")
 
         return send_from_directory('uploads', filename, as_attachment=True)
 
     except Exception as e:
+        print(f"Erro PDF: {str(e)}")
         flash(f'Erro ao gerar relatório: {e}', 'error')
         return redirect(url_for('relatorios'))
     finally:
         cursor.close()
-
-
 if __name__ == '__main__':
     criar_admin_fixo()
     # Inicia o servidor de desenvolvimento do Flask com o modo de depuração ativado.
